@@ -31,11 +31,8 @@ credentials.json
 backend/app/data/photos/*
 !backend/app/data/photos/README.md
 
-# 작업 중 끌어온 원본 스크린샷 (photos/에 복사본이 있다)
-/스크린샷*.png
 
-# 실데이터 수집 캐시 (scripts/fetch_real_vacancies.py).
-# 공공데이터포털 API 응답에서 생성되며 수집 시점에 따라 내용이 달라진다.
-# 데모를 고정하고 싶으면 이 줄을 지우고 커밋해도 된다 (개인정보는 없고,
-# 모두 공개 상가·건축물대장 정보다).
-backend/app/data/real/
+
+# 건축물대장 응답의 런타임 디스크 캐시 (app/services/register_cache.py).
+# 라이브 검색이 스스로 채우는 파생 데이터라 추적하지 않는다. 지워도 다시 채워진다.
+backend/app/data/cache/

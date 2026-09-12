@@ -1,0 +1,140 @@
+{
+  "is_mock": false,
+  "data_reference_month": "2026-09",
+  "months": [
+    "2026-09"
+  ],
+  "description": "소상공인시장진흥공단 상가(상권)정보 API와 국토교통부 건축HUB 건축물대장정보 API를 건물 단위로 조인해 산출한 공실 추정치입니다. 두 API 모두 공실 여부를 직접 제공하지 않으므로, 건축물대장에 근린생활시설·판매시설로 등재된 층 중 상가정보에 등록 점포가 0건인 층을 공실 후보로 판정했습니다. 전체 상가가 아니라 조회한 표본 기준이며, 상가정보가 분기 스냅샷이라 신규 개업이 아직 반영되지 않은 층이 공실로 잡힐 수 있습니다. 과거 이력이 없어 월별 추이는 제공하지 않습니다.",
+  "regions": [
+    {
+      "id": "gochang",
+      "scope": "district",
+      "region_name": "고창군",
+      "lat": 35.8242,
+      "lng": 127.148,
+      "total_units": 8,
+      "avg_vacancy_period_months": 0.0,
+      "top_recommended_business": "카페",
+      "monthly_vacant_units": [
+        0
+      ]
+    },
+    {
+      "id": "gunsan",
+      "scope": "district",
+      "region_name": "군산시",
+      "lat": 35.963573,
+      "lng": 126.717888,
+      "total_units": 10,
+      "avg_vacancy_period_months": 0.0,
+      "top_recommended_business": "카페",
+      "monthly_vacant_units": [
+        2
+      ]
+    },
+    {
+      "id": "gimje",
+      "scope": "district",
+      "region_name": "김제시",
+      "lat": 35.805553,
+      "lng": 126.889328,
+      "total_units": 10,
+      "avg_vacancy_period_months": 0.0,
+      "top_recommended_business": "병원",
+      "monthly_vacant_units": [
+        1
+      ]
+    },
+    {
+      "id": "namwon",
+      "scope": "district",
+      "region_name": "남원시",
+      "lat": 35.413083,
+      "lng": 127.385055,
+      "total_units": 12,
+      "avg_vacancy_period_months": 0.0,
+      "top_recommended_business": "카페",
+      "monthly_vacant_units": [
+        6
+      ]
+    },
+    {
+      "id": "muju",
+      "scope": "district",
+      "region_name": "무주군",
+      "lat": 35.8242,
+      "lng": 127.148,
+      "total_units": 4,
+      "avg_vacancy_period_months": 0.0,
+      "top_recommended_business": "카페",
+      "monthly_vacant_units": [
+        0
+      ]
+    },
+    {
+      "id": "buan",
+      "scope": "district",
+      "region_name": "부안군",
+      "lat": 35.728141,
+      "lng": 126.73228,
+      "total_units": 13,
+      "avg_vacancy_period_months": 0.0,
+      "top_recommended_business": "스터디카페",
+      "monthly_vacant_units": [
+        5
+      ]
+    },
+    {
+      "id": "sunchang",
+      "scope": "district",
+      "region_name": "순창군",
+      "lat": 35.8242,
+      "lng": 127.148,
+      "total_units": 2,
+      "avg_vacancy_period_months": 0.0,
+      "top_recommended_business": "카페",
+      "monthly_vacant_units": [
+        0
+      ]
+    },
+    {
+      "id": "wanju",
+      "scope": "district",
+      "region_name": "완주군",
+      "lat": 35.8242,
+      "lng": 127.148,
+      "total_units": 2,
+      "avg_vacancy_period_months": 0.0,
+      "top_recommended_business": "카페",
+      "monthly_vacant_units": [
+        0
+      ]
+    },
+    {
+      "id": "iksan",
+      "scope": "district",
+      "region_name": "익산시",
+      "lat": 35.947512,
+      "lng": 126.941283,
+      "total_units": 27,
+      "avg_vacancy_period_months": 0.0,
+      "top_recommended_business": "편의점",
+      "monthly_vacant_units": [
+        13
+      ]
+    },
+    {
+      "id": "imsil",
+      "scope": "district",
+      "region_name": "임실군",
+      "lat": 35.8242,
+      "lng": 127.148,
+      "total_units": 1,
+      "avg_vacancy_period_months": 0.0,
+      "top_recommended_business": "카페",
+      "monthly_vacant_units": [
+        0
+      ]
+    }
+  ]
+}

@@ -15,7 +15,10 @@ import logging
 import os
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any, Optional
+
+if TYPE_CHECKING:  # 런타임 순환 임포트를 피한다 (live_search가 이 모듈을 참조하지는 않지만 대칭을 지킨다).
+    from app.services.live_search import VacancySet
 
 logger = logging.getLogger(__name__)
 
@@ -68,6 +71,28 @@ class DataProvider(ABC):
     @abstractmethod
     def get_permits(self, business_type: str) -> list[str]:
         ...
+
+    def search_vacancies(self, region_pref: str = "상관없음") -> "VacancySet":
+        """
+        희망 지역 기준 공실 매물 집합. 매칭 라우터의 후보 풀이 여기서 나온다.
+
+        기본 구현은 미리 로드해 둔 전체 목록을 그대로 돌려준다 — 목업과 디스크
+        캐시(RealSanggaProvider)는 검색 범위라는 개념이 없기 때문이다.
+        LiveSanggaProvider만 이 메서드를 요청 시점 API 호출로 오버라이드한다.
+        """
+        from app.services.live_search import VacancySet
+
+        buildings = {}
+        for summary in self.list_buildings():
+            building = self.get_building(summary["id"])
+            if building is not None:
+                buildings[summary["id"]] = building
+        return VacancySet(
+            buildings=buildings,
+            market={building_id: self.get_market_data(building_id) for building_id in buildings},
+            meta=dict(getattr(self, "meta", {}) or {}),
+            live=False,
+        )
 
     def get_data_sources(self, building_id: str) -> dict[str, str]:
         """
@@ -139,13 +164,15 @@ class MockDataProvider(DataProvider):
 
 def _build_provider() -> DataProvider:
     """
-    실데이터 캐시가 있으면 RealSanggaProvider, 없으면 MockDataProvider.
+    서비스키가 있으면 LiveSanggaProvider(요청마다 API 조회), 없고 캐시만 있으면
+    RealSanggaProvider, 둘 다 없으면 MockDataProvider.
 
     캐시는 scripts/fetch_real_vacancies.py가 app/data/real/에 만든다(상가정보 API +
     건축물대장 API 조인 결과). 캐시가 깨져 있어도 데모가 멈추지 않도록 예외를
     흡수하고 목업으로 내려간다.
 
     CHAEUM_FORCE_MOCK=1 을 주면 캐시가 있어도 목업을 쓴다 (목업/실데이터 비교용).
+    CHAEUM_LIVE_SEARCH=0 을 주면 라이브 검색을 끄고 디스크 캐시만 쓴다.
     """
     if os.environ.get("CHAEUM_FORCE_MOCK") == "1":
         logger.info("CHAEUM_FORCE_MOCK=1 — MockDataProvider를 사용합니다.")
@@ -153,7 +180,15 @@ def _build_provider() -> DataProvider:
 
     # 순환 임포트를 피하려고 함수 안에서 임포트한다
     # (real_data_provider가 이 모듈의 DataProvider/DATA_DIR를 참조한다).
-    from app.services import real_data_provider
+    from app.services import live_data_provider, real_data_provider
+
+    # 1순위: 요청 시점에 두 API를 직접 조회하는 라이브 검색. 서비스키만 있으면
+    # 디스크 캐시가 없어도 뜬다 (검색 실패 시 캐시가 있으면 그쪽으로 폴백한다).
+    if live_data_provider.is_enabled():
+        try:
+            return live_data_provider.LiveSanggaProvider()
+        except Exception as exc:  # 기동 실패는 데모를 멈추지 않는다.
+            logger.warning("라이브 검색 provider 기동에 실패했습니다: %s", exc)
 
     if not real_data_provider.cache_is_available():
         logger.info(

@@ -185,6 +185,42 @@ def count_competitors(
     return same, len(nearby)
 
 
+# --- 조회 대상 선별 -------------------------------------------------------------
+
+
+def candidate_priority(building: dict[str, Any]) -> tuple[int, int]:
+    """
+    건축물대장을 조회할 우선순위. 작은 값이 먼저.
+
+    공실 판정의 신뢰도(assess_floor_vacancy)가 그대로 등급이 되도록,
+    신뢰도가 높게 나올 수 있는 건물부터 조회한다:
+
+      0순위  층 표기 없는 점포 0건 + 층이 찍힌 점포 2건 이상 -> 신뢰도 높음 가능
+      1순위  층 표기 없는 점포 0건 + 층이 찍힌 점포 1건      -> 보통
+      2순위  층 표기 없는 점포가 있는 건물                   -> 낮음
+
+    점포 수가 적은 건물만 앞세우면 1개 점포 건물만 뽑혀서 모든 매물이 '보통'으로
+    고정된다 — 실수집에서 125건 전부 보통으로 나와 확인한 문제다. 같은 순위
+    안에서는 점포가 적은 건물(빈 층이 있을 여지가 큰 건물)을 먼저 본다.
+
+    사전 수집 스크립트(scripts/fetch_real_vacancies.py)와 런타임 라이브 검색
+    (live_search.py)이 같은 기준으로 뽑아야 두 경로의 결과가 어긋나지 않는다.
+    """
+    by_floor = building.get("stores_by_floor", {})
+    unknown = len(by_floor.get(None, ()))
+    known = sum(len(stores) for floor, stores in by_floor.items() if floor is not None)
+
+    if unknown:
+        tier = 2
+    elif known >= 2:
+        tier = 0
+    elif known == 1:
+        tier = 1
+    else:
+        tier = 2
+    return (tier, len(building.get("stores", ())))
+
+
 # --- 진단 점수 ----------------------------------------------------------------
 
 

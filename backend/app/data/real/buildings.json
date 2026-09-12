@@ -1,0 +1,1541 @@
+{
+  "r017754f2ac": {
+    "id": "r017754f2ac",
+    "name": "수송동 상가 3층",
+    "address": "전북특별자치도 군산시 수송안길 37 3층",
+    "floor": 3,
+    "area_pyeong": 45.8,
+    "area_sqm": 151.54,
+    "built_year": 2016,
+    "risk_grade": "낮음",
+    "region": "수송동",
+    "signgu_name": "군산시",
+    "thumbnail_color": "#E4D3E8",
+    "diagnosis": {
+      "aging_score": 86.0,
+      "accessibility_score": 74.0,
+      "lighting_score": 84.5
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.9628713296283,
+    "lng": 126.716726309799,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 3층 용도: 휴게음식점 휴게음식점",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "휴게음식점 휴게음식점",
+      "floor_label": "3층",
+      "floor_area_sqm": 151.54,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "11891100237583",
+      "bld_mng_no": "4513014100108530003000001",
+      "structure": "철근콘크리트구조",
+      "elevators": 1,
+      "ground_floors": 3,
+      "underground_floors": 0,
+      "total_area": 748.94,
+      "main_purpose": "제2종근린생활시설 제1,2종근린생활시설",
+      "register_params": {
+        "sigunguCd": "52130",
+        "bjdongCd": "14100",
+        "platGbCd": "0",
+        "bun": "0853",
+        "ji": "0003"
+      }
+    },
+    "nearby_store_names": [
+      "디바제에스프레소바",
+      "어반"
+    ]
+  },
+  "reb811a12a3": {
+    "id": "reb811a12a3",
+    "name": "수송동 상가 지1층",
+    "address": "전북특별자치도 군산시 수송로 215 지1층",
+    "floor": -1,
+    "area_pyeong": 5.2,
+    "area_sqm": 17.08,
+    "built_year": 2011,
+    "risk_grade": "보통",
+    "region": "수송동",
+    "signgu_name": "군산시",
+    "thumbnail_color": "#C8EFCE",
+    "diagnosis": {
+      "aging_score": 79.0,
+      "accessibility_score": 60.0,
+      "lighting_score": 25.0
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.9642737061297,
+    "lng": 126.719049339981,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 지1층 용도: 기타제1종근린생활시설 PIT층",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "기타제1종근린생활시설 PIT층",
+      "floor_label": "지1층",
+      "floor_area_sqm": 17.08,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "11891100201882",
+      "bld_mng_no": "4513014100108500010000001",
+      "structure": "철근콘크리트구조",
+      "elevators": 1,
+      "ground_floors": 4,
+      "underground_floors": 1,
+      "total_area": 904.4,
+      "main_purpose": "제2종근린생활시설 제1,2종근린생활시설",
+      "register_params": {
+        "sigunguCd": "52130",
+        "bjdongCd": "14100",
+        "platGbCd": "0",
+        "bun": "0850",
+        "ji": "0010"
+      }
+    },
+    "nearby_store_names": [
+      "탕화쿵푸마라탕",
+      "으뜸스시군산"
+    ]
+  },
+  "r82a003e640": {
+    "id": "r82a003e640",
+    "name": "요촌동 상가 1층",
+    "address": "전북특별자치도 김제시 요촌중4길 116 1층",
+    "floor": 1,
+    "area_pyeong": 44.8,
+    "area_sqm": 148.25,
+    "built_year": 2001,
+    "risk_grade": "낮음",
+    "region": "요촌동",
+    "signgu_name": "김제시",
+    "thumbnail_color": "#E0CDDF",
+    "diagnosis": {
+      "aging_score": 65.0,
+      "accessibility_score": 95.0,
+      "lighting_score": 70.0
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.8055529228007,
+    "lng": 126.889328399739,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 1층 용도: 일반음식점 일반음식점",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "일반음식점 일반음식점",
+      "floor_label": "1층",
+      "floor_area_sqm": 148.25,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "119313704",
+      "bld_mng_no": "4521010100105690016055233",
+      "structure": "철근콘크리트구조",
+      "elevators": 0,
+      "ground_floors": 3,
+      "underground_floors": 0,
+      "total_area": 444.75,
+      "main_purpose": "제2종근린생활시설 제2종근린생활시설,단독주택",
+      "register_params": {
+        "sigunguCd": "52210",
+        "bjdongCd": "10100",
+        "platGbCd": "0",
+        "bun": "0569",
+        "ji": "0016"
+      }
+    },
+    "nearby_store_names": [
+      "더숲협동조합",
+      "강살리기김제네트워크"
+    ]
+  },
+  "r04bc489790": {
+    "id": "r04bc489790",
+    "name": "남원축협빌딩 1층",
+    "address": "전북특별자치도 남원시 붕맛길 99 1층",
+    "floor": 1,
+    "area_pyeong": 132.2,
+    "area_sqm": 437.05,
+    "built_year": 1996,
+    "risk_grade": "낮음",
+    "region": "향교동",
+    "signgu_name": "남원시",
+    "thumbnail_color": "#CDDCDA",
+    "diagnosis": {
+      "aging_score": 58.0,
+      "accessibility_score": 95.0,
+      "lighting_score": 62.0
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.416617536428,
+    "lng": 127.384020469512,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 1층 용도: 소매점 소매점 / 금융업소 금융업소 / 기타사무소 관리실",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "소매점 소매점 / 금융업소 금융업소 / 기타사무소 관리실",
+      "floor_label": "1층",
+      "floor_area_sqm": 437.05,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "119217993",
+      "bld_mng_no": "4519011100102630003316246",
+      "structure": "철근콘크리트구조",
+      "elevators": 0,
+      "ground_floors": 4,
+      "underground_floors": 1,
+      "total_area": 2080.54,
+      "main_purpose": "제1종근린생활시설 1종근린생활시설",
+      "register_params": {
+        "sigunguCd": "52190",
+        "bjdongCd": "11100",
+        "platGbCd": "0",
+        "bun": "0263",
+        "ji": "0003"
+      }
+    },
+    "nearby_store_names": [
+      "김진수세무회계사무소",
+      "도반필라테스"
+    ]
+  },
+  "rbc5f611ff4": {
+    "id": "rbc5f611ff4",
+    "name": "남원축협빌딩 2층",
+    "address": "전북특별자치도 남원시 붕맛길 99 2층",
+    "floor": 2,
+    "area_pyeong": 130.7,
+    "area_sqm": 431.93,
+    "built_year": 1996,
+    "risk_grade": "보통",
+    "region": "향교동",
+    "signgu_name": "남원시",
+    "thumbnail_color": "#CADBE7",
+    "diagnosis": {
+      "aging_score": 58.0,
+      "accessibility_score": 62.0,
+      "lighting_score": 67.0
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.416617536428,
+    "lng": 127.384020469512,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 2층 용도: 소매점 소매점",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "소매점 소매점",
+      "floor_label": "2층",
+      "floor_area_sqm": 431.93,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "119217993",
+      "bld_mng_no": "4519011100102630003316246",
+      "structure": "철근콘크리트구조",
+      "elevators": 0,
+      "ground_floors": 4,
+      "underground_floors": 1,
+      "total_area": 2080.54,
+      "main_purpose": "제1종근린생활시설 1종근린생활시설",
+      "register_params": {
+        "sigunguCd": "52190",
+        "bjdongCd": "11100",
+        "platGbCd": "0",
+        "bun": "0263",
+        "ji": "0003"
+      }
+    },
+    "nearby_store_names": [
+      "김진수세무회계사무소",
+      "도반필라테스"
+    ]
+  },
+  "rba3a8fb5fa": {
+    "id": "rba3a8fb5fa",
+    "name": "동충동 상가 지하1층",
+    "address": "전북특별자치도 남원시 용성로 71 지하1층",
+    "floor": -1,
+    "area_pyeong": 10.3,
+    "area_sqm": 34.2,
+    "built_year": 1986,
+    "risk_grade": "높음",
+    "region": "동충동",
+    "signgu_name": "남원시",
+    "thumbnail_color": "#CBE8BE",
+    "diagnosis": {
+      "aging_score": 44.0,
+      "accessibility_score": 42.0,
+      "lighting_score": 25.0
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.4091890952634,
+    "lng": 127.384524685642,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 지하1층 용도: 기타제1종근린생활시설 보일러실",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "기타제1종근린생활시설 보일러실",
+      "floor_label": "지하1층",
+      "floor_area_sqm": 34.2,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "119212814",
+      "bld_mng_no": "4519010100101060001000001",
+      "structure": "철근콘크리트구조",
+      "elevators": 0,
+      "ground_floors": 3,
+      "underground_floors": 1,
+      "total_area": 429.66,
+      "main_purpose": "제1종근린생활시설 제1종근린생활시설, 제2종근린생활시설",
+      "register_params": {
+        "sigunguCd": "52190",
+        "bjdongCd": "10100",
+        "platGbCd": "0",
+        "bun": "0106",
+        "ji": "0001"
+      }
+    },
+    "nearby_store_names": [
+      "테라컴퓨터",
+      "굿바이마켓"
+    ]
+  },
+  "rd247d457e6": {
+    "id": "rd247d457e6",
+    "name": "죽항동 상가 2층",
+    "address": "전북특별자치도 남원시 동문로 33-2 2층",
+    "floor": 2,
+    "area_pyeong": 50.2,
+    "area_sqm": 165.86,
+    "built_year": 1990,
+    "risk_grade": "보통",
+    "region": "죽항동",
+    "signgu_name": "남원시",
+    "thumbnail_color": "#D8D2EB",
+    "diagnosis": {
+      "aging_score": 49.6,
+      "accessibility_score": 62.0,
+      "lighting_score": 81.0
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.4085630190496,
+    "lng": 127.385831811696,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 2층 용도: 기타제1종근린생활시설 점포, 사무실",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "기타제1종근린생활시설 점포, 사무실",
+      "floor_label": "2층",
+      "floor_area_sqm": 165.86,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "119214365",
+      "bld_mng_no": "4519010300101630000308087",
+      "structure": "철근콘크리트구조",
+      "elevators": 0,
+      "ground_floors": 2,
+      "underground_floors": 0,
+      "total_area": 332.98,
+      "main_purpose": "제1종근린생활시설 근린생활시설",
+      "register_params": {
+        "sigunguCd": "52190",
+        "bjdongCd": "10300",
+        "platGbCd": "0",
+        "bun": "0163",
+        "ji": "0000"
+      }
+    },
+    "nearby_store_names": [
+      "서윤네일",
+      "더샵"
+    ]
+  },
+  "r716d8dca53": {
+    "id": "r716d8dca53",
+    "name": "동충동 상가 지하1층",
+    "address": "전북특별자치도 남원시 동문로 91 지하1층",
+    "floor": -1,
+    "area_pyeong": 89.5,
+    "area_sqm": 295.71,
+    "built_year": 1997,
+    "risk_grade": "높음",
+    "region": "동충동",
+    "signgu_name": "남원시",
+    "thumbnail_color": "#D1CAC0",
+    "diagnosis": {
+      "aging_score": 59.4,
+      "accessibility_score": 42.0,
+      "lighting_score": 17.0
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.4137541647352,
+    "lng": 127.385966654728,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 지하1층 용도: 소매점 슈퍼",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "소매점 슈퍼",
+      "floor_label": "지하1층",
+      "floor_area_sqm": 295.71,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "119213305",
+      "bld_mng_no": "4519010100103420004319469",
+      "structure": "철근콘크리트구조",
+      "elevators": 0,
+      "ground_floors": 3,
+      "underground_floors": 1,
+      "total_area": 1059.62,
+      "main_purpose": "제1종근린생활시설 근린생활시설",
+      "register_params": {
+        "sigunguCd": "52190",
+        "bjdongCd": "10100",
+        "platGbCd": "0",
+        "bun": "0342",
+        "ji": "0004"
+      }
+    },
+    "nearby_store_names": [
+      "신아로마",
+      "문메디칼"
+    ]
+  },
+  "r2fcc1b4531": {
+    "id": "r2fcc1b4531",
+    "name": "동충동 상가 1층",
+    "address": "전북특별자치도 남원시 동문로 91 1층",
+    "floor": 1,
+    "area_pyeong": 73.2,
+    "area_sqm": 241.97,
+    "built_year": 1997,
+    "risk_grade": "낮음",
+    "region": "동충동",
+    "signgu_name": "남원시",
+    "thumbnail_color": "#D8CCEA",
+    "diagnosis": {
+      "aging_score": 59.4,
+      "accessibility_score": 95.0,
+      "lighting_score": 62.0
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.4137541647352,
+    "lng": 127.385966654728,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 1층 용도: 소매점 소매점/인터넷컴퓨터게임시설제공업소",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "소매점 소매점/인터넷컴퓨터게임시설제공업소",
+      "floor_label": "1층",
+      "floor_area_sqm": 241.97,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "119213305",
+      "bld_mng_no": "4519010100103420004319469",
+      "structure": "철근콘크리트구조",
+      "elevators": 0,
+      "ground_floors": 3,
+      "underground_floors": 1,
+      "total_area": 1059.62,
+      "main_purpose": "제1종근린생활시설 근린생활시설",
+      "register_params": {
+        "sigunguCd": "52190",
+        "bjdongCd": "10100",
+        "platGbCd": "0",
+        "bun": "0342",
+        "ji": "0004"
+      }
+    },
+    "nearby_store_names": [
+      "신아로마",
+      "문메디칼"
+    ]
+  },
+  "rcb4024b5d6": {
+    "id": "rcb4024b5d6",
+    "name": "매점부안효요양병원 지하1층",
+    "address": "전북특별자치도 부안군 행안면 염소로 25 지하1층",
+    "floor": -1,
+    "area_pyeong": 778.4,
+    "area_sqm": 2573.38,
+    "built_year": 2006,
+    "risk_grade": "높음",
+    "region": "행안면",
+    "signgu_name": "부안군",
+    "thumbnail_color": "#E6EAE4",
+    "diagnosis": {
+      "aging_score": 72.0,
+      "accessibility_score": 60.0,
+      "lighting_score": 17.0
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.7304398306393,
+    "lng": 126.721331937233,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 지하1층 용도: 병원 의료시설(병원) / 장례식장 의료시설(장례식장) / 장례식장 제2종근린생활시설(일반음식점)",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "병원 의료시설(병원) / 장례식장 의료시설(장례식장) / 장례식장 제2종근린생활시설(일반음식점)",
+      "floor_label": "지하1층",
+      "floor_area_sqm": 2573.38,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "1201112397",
+      "bld_mng_no": "4580033021102210025000001",
+      "structure": "일반철골구조",
+      "elevators": 2,
+      "ground_floors": 4,
+      "underground_floors": 1,
+      "total_area": 9919.31,
+      "main_purpose": "의료시설 의료시설(병원(노인전문병원,장례식장))",
+      "register_params": {
+        "sigunguCd": "52800",
+        "bjdongCd": "33021",
+        "platGbCd": "0",
+        "bun": "0221",
+        "ji": "0002"
+      }
+    },
+    "nearby_store_names": [
+      "효장례식장유",
+      "효마트"
+    ]
+  },
+  "r8ae1db8baa": {
+    "id": "r8ae1db8baa",
+    "name": "부안읍 상가 지하1층",
+    "address": "전북특별자치도 부안군 부안읍 동중길 26 지하1층",
+    "floor": -1,
+    "area_pyeong": 36.3,
+    "area_sqm": 120.0,
+    "built_year": 1983,
+    "risk_grade": "높음",
+    "region": "부안읍",
+    "signgu_name": "부안군",
+    "thumbnail_color": "#D5E9BE",
+    "diagnosis": {
+      "aging_score": 39.8,
+      "accessibility_score": 42.0,
+      "lighting_score": 25.0
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.7300396434992,
+    "lng": 126.735702686763,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 지하1층 용도: 소매점 점포",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "소매점 점포",
+      "floor_label": "지하1층",
+      "floor_area_sqm": 120.0,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "120113063",
+      "bld_mng_no": "4580025021101170000026343",
+      "structure": "철근콘크리트구조",
+      "elevators": 0,
+      "ground_floors": 3,
+      "underground_floors": 1,
+      "total_area": 587.89,
+      "main_purpose": "제1종근린생활시설 점포",
+      "register_params": {
+        "sigunguCd": "52800",
+        "bjdongCd": "25021",
+        "platGbCd": "0",
+        "bun": "0117",
+        "ji": "0000"
+      }
+    },
+    "nearby_store_names": [
+      "박정희세무회계사무소",
+      "명탐정공인행정사사무소"
+    ]
+  },
+  "r23fa88158c": {
+    "id": "r23fa88158c",
+    "name": "부안읍 상가 3층",
+    "address": "전북특별자치도 부안군 부안읍 동중길 26 3층",
+    "floor": 3,
+    "area_pyeong": 45.4,
+    "area_sqm": 150.03,
+    "built_year": 1983,
+    "risk_grade": "보통",
+    "region": "부안읍",
+    "signgu_name": "부안군",
+    "thumbnail_color": "#E8EDC2",
+    "diagnosis": {
+      "aging_score": 39.8,
+      "accessibility_score": 49.0,
+      "lighting_score": 84.5
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.7300396434992,
+    "lng": 126.735702686763,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 3층 용도: 소매점 점포",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "소매점 점포",
+      "floor_label": "3층",
+      "floor_area_sqm": 150.03,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "120113063",
+      "bld_mng_no": "4580025021101170000026343",
+      "structure": "철근콘크리트구조",
+      "elevators": 0,
+      "ground_floors": 3,
+      "underground_floors": 1,
+      "total_area": 587.89,
+      "main_purpose": "제1종근린생활시설 점포",
+      "register_params": {
+        "sigunguCd": "52800",
+        "bjdongCd": "25021",
+        "platGbCd": "0",
+        "bun": "0117",
+        "ji": "0000"
+      }
+    },
+    "nearby_store_names": [
+      "박정희세무회계사무소",
+      "명탐정공인행정사사무소"
+    ]
+  },
+  "r604b028736": {
+    "id": "r604b028736",
+    "name": "부안읍 상가 2층",
+    "address": "전북특별자치도 부안군 부안읍 석정로 207 2층",
+    "floor": 2,
+    "area_pyeong": 60.1,
+    "area_sqm": 198.55,
+    "built_year": 1981,
+    "risk_grade": "보통",
+    "region": "부안읍",
+    "signgu_name": "부안군",
+    "thumbnail_color": "#EEDEE1",
+    "diagnosis": {
+      "aging_score": 37.0,
+      "accessibility_score": 62.0,
+      "lighting_score": 81.0
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.7271142346037,
+    "lng": 126.737403451854,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 2층 용도: 소매점 점포",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "소매점 점포",
+      "floor_label": "2층",
+      "floor_area_sqm": 198.55,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "120116013",
+      "bld_mng_no": "4580025024105740147023927",
+      "structure": "철근콘크리트구조",
+      "elevators": 0,
+      "ground_floors": 2,
+      "underground_floors": 0,
+      "total_area": 388.55,
+      "main_purpose": "제1종근린생활시설 점포, 주택",
+      "register_params": {
+        "sigunguCd": "52800",
+        "bjdongCd": "25024",
+        "platGbCd": "0",
+        "bun": "0574",
+        "ji": "0147"
+      }
+    },
+    "nearby_store_names": [
+      "중앙스튜디오",
+      "뽀바뽀바"
+    ]
+  },
+  "red45f3c965": {
+    "id": "red45f3c965",
+    "name": "부안읍 상가 2층",
+    "address": "전북특별자치도 부안군 부안읍 오리정로 84-1 2층",
+    "floor": 2,
+    "area_pyeong": 22.2,
+    "area_sqm": 73.27,
+    "built_year": 1993,
+    "risk_grade": "보통",
+    "region": "부안읍",
+    "signgu_name": "부안군",
+    "thumbnail_color": "#DBDECF",
+    "diagnosis": {
+      "aging_score": 53.8,
+      "accessibility_score": 62.0,
+      "lighting_score": 81.0
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.7230719869099,
+    "lng": 126.731260536526,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 2층 용도: 금융업소 근린생활시설(금융업소)",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "금융업소 근린생활시설(금융업소)",
+      "floor_label": "2층",
+      "floor_area_sqm": 73.27,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "120114948",
+      "bld_mng_no": "4580025022105240013023227",
+      "structure": "철근콘크리트구조",
+      "elevators": 0,
+      "ground_floors": 2,
+      "underground_floors": 0,
+      "total_area": 146.54,
+      "main_purpose": "제2종근린생활시설 제2종근린생활시설(금융업소, 학원)",
+      "register_params": {
+        "sigunguCd": "52800",
+        "bjdongCd": "25022",
+        "platGbCd": "0",
+        "bun": "0524",
+        "ji": "0013"
+      }
+    },
+    "nearby_store_names": [
+      "복덩이인력",
+      "노블영어교습소"
+    ]
+  },
+  "re261ae5609": {
+    "id": "re261ae5609",
+    "name": "전체 2층",
+    "address": "전북특별자치도 익산시 배산로3길 44 2층",
+    "floor": 2,
+    "area_pyeong": 104.1,
+    "area_sqm": 344.28,
+    "built_year": 2011,
+    "risk_grade": "낮음",
+    "region": "모현동1가",
+    "signgu_name": "익산시",
+    "thumbnail_color": "#CCCAE1",
+    "diagnosis": {
+      "aging_score": 79.0,
+      "accessibility_score": 75.0,
+      "lighting_score": 67.0
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.9469033133186,
+    "lng": 126.936258712303,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 2층 용도: 일반음식점 일반음식점",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "일반음식점 일반음식점",
+      "floor_label": "2층",
+      "floor_area_sqm": 344.28,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "11901100196668",
+      "bld_mng_no": "4514011400108820000000001",
+      "structure": "철근콘크리트구조",
+      "elevators": 1,
+      "ground_floors": 5,
+      "underground_floors": 0,
+      "total_area": 1406.1,
+      "main_purpose": "제2종근린생활시설 제1,2종근생 및 교육연구시설",
+      "register_params": {
+        "sigunguCd": "52140",
+        "bjdongCd": "11400",
+        "platGbCd": "0",
+        "bun": "0882",
+        "ji": "0000"
+      }
+    },
+    "nearby_store_names": [
+      "서울조이치과의원",
+      "마크브라운"
+    ]
+  },
+  "r0b8f48929d": {
+    "id": "r0b8f48929d",
+    "name": "모현동1가 상가 2층",
+    "address": "전북특별자치도 익산시 선화로1길 20 2층",
+    "floor": 2,
+    "area_pyeong": 134.1,
+    "area_sqm": 443.27,
+    "built_year": 2019,
+    "risk_grade": "낮음",
+    "region": "모현동1가",
+    "signgu_name": "익산시",
+    "thumbnail_color": "#D6CAD8",
+    "diagnosis": {
+      "aging_score": 90.2,
+      "accessibility_score": 75.0,
+      "lighting_score": 67.0
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.9513926440879,
+    "lng": 126.938460850028,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 2층 용도: 의원 제1종근린생활시설(의원)",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "의원 제1종근린생활시설(의원)",
+      "floor_label": "2층",
+      "floor_area_sqm": 443.27,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "11901100268201",
+      "bld_mng_no": "4514011400108420000000001",
+      "structure": "철근콘크리트구조",
+      "elevators": 1,
+      "ground_floors": 5,
+      "underground_floors": 1,
+      "total_area": 2723.49,
+      "main_purpose": "제1종근린생활시설 제1종근린생활시설",
+      "register_params": {
+        "sigunguCd": "52140",
+        "bjdongCd": "11400",
+        "platGbCd": "0",
+        "bun": "0842",
+        "ji": "0000"
+      }
+    },
+    "nearby_store_names": [
+      "하우스터디익산모현센터스터디카페",
+      "모현우리약국"
+    ]
+  },
+  "r3c4b2d70d2": {
+    "id": "r3c4b2d70d2",
+    "name": "모현동1가 상가 3층",
+    "address": "전북특별자치도 익산시 선화로1길 20 3층",
+    "floor": 3,
+    "area_pyeong": 134.1,
+    "area_sqm": 443.27,
+    "built_year": 2019,
+    "risk_grade": "낮음",
+    "region": "모현동1가",
+    "signgu_name": "익산시",
+    "thumbnail_color": "#DEE8E4",
+    "diagnosis": {
+      "aging_score": 90.2,
+      "accessibility_score": 74.0,
+      "lighting_score": 70.5
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.9513926440879,
+    "lng": 126.938460850028,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 3층 용도: 일반음식점 제2종근린생활시설(일반음식점)",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "일반음식점 제2종근린생활시설(일반음식점)",
+      "floor_label": "3층",
+      "floor_area_sqm": 443.27,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "11901100268201",
+      "bld_mng_no": "4514011400108420000000001",
+      "structure": "철근콘크리트구조",
+      "elevators": 1,
+      "ground_floors": 5,
+      "underground_floors": 1,
+      "total_area": 2723.49,
+      "main_purpose": "제1종근린생활시설 제1종근린생활시설",
+      "register_params": {
+        "sigunguCd": "52140",
+        "bjdongCd": "11400",
+        "platGbCd": "0",
+        "bun": "0842",
+        "ji": "0000"
+      }
+    },
+    "nearby_store_names": [
+      "하우스터디익산모현센터스터디카페",
+      "모현우리약국"
+    ]
+  },
+  "rb983a64a5a": {
+    "id": "rb983a64a5a",
+    "name": "모현동1가 상가 4층",
+    "address": "전북특별자치도 익산시 선화로1길 20 4층",
+    "floor": 4,
+    "area_pyeong": 134.1,
+    "area_sqm": 443.27,
+    "built_year": 2019,
+    "risk_grade": "낮음",
+    "region": "모현동1가",
+    "signgu_name": "익산시",
+    "thumbnail_color": "#E7E0C1",
+    "diagnosis": {
+      "aging_score": 90.2,
+      "accessibility_score": 70.0,
+      "lighting_score": 74.0
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.9513926440879,
+    "lng": 126.938460850028,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 4층 용도: 일반음식점 제2종근린생활시설(일반음식점)",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "일반음식점 제2종근린생활시설(일반음식점)",
+      "floor_label": "4층",
+      "floor_area_sqm": 443.27,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "11901100268201",
+      "bld_mng_no": "4514011400108420000000001",
+      "structure": "철근콘크리트구조",
+      "elevators": 1,
+      "ground_floors": 5,
+      "underground_floors": 1,
+      "total_area": 2723.49,
+      "main_purpose": "제1종근린생활시설 제1종근린생활시설",
+      "register_params": {
+        "sigunguCd": "52140",
+        "bjdongCd": "11400",
+        "platGbCd": "0",
+        "bun": "0842",
+        "ji": "0000"
+      }
+    },
+    "nearby_store_names": [
+      "하우스터디익산모현센터스터디카페",
+      "모현우리약국"
+    ]
+  },
+  "rb0e4851187": {
+    "id": "rb0e4851187",
+    "name": "모현동1가 상가 1층",
+    "address": "전북특별자치도 익산시 배산로14길 3 1층",
+    "floor": 1,
+    "area_pyeong": 39.3,
+    "area_sqm": 129.78,
+    "built_year": 1996,
+    "risk_grade": "낮음",
+    "region": "모현동1가",
+    "signgu_name": "익산시",
+    "thumbnail_color": "#EAD2D3",
+    "diagnosis": {
+      "aging_score": 58.0,
+      "accessibility_score": 95.0,
+      "lighting_score": 70.0
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.9459766706199,
+    "lng": 126.939418220688,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 1층 용도: 소매점 소매점",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "소매점 소매점",
+      "floor_label": "1층",
+      "floor_area_sqm": 129.78,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "1190119326",
+      "bld_mng_no": "4514011400106830001090444",
+      "structure": "철근콘크리트구조",
+      "elevators": 0,
+      "ground_floors": 3,
+      "underground_floors": 0,
+      "total_area": 389.34,
+      "main_purpose": "제2종근린생활시설 제1,2종 근린생활시설",
+      "register_params": {
+        "sigunguCd": "52140",
+        "bjdongCd": "11400",
+        "platGbCd": "0",
+        "bun": "0683",
+        "ji": "0001"
+      }
+    },
+    "nearby_store_names": [
+      "플랜H헤어살롱",
+      "상명수학학원"
+    ]
+  },
+  "re8e3d131ab": {
+    "id": "re8e3d131ab",
+    "name": "파라다이스프라자 2층",
+    "address": "전북특별자치도 익산시 선화로3길 17 2층",
+    "floor": 2,
+    "area_pyeong": 133.5,
+    "area_sqm": 441.45,
+    "built_year": 2012,
+    "risk_grade": "낮음",
+    "region": "모현동1가",
+    "signgu_name": "익산시",
+    "thumbnail_color": "#E1C9D3",
+    "diagnosis": {
+      "aging_score": 80.4,
+      "accessibility_score": 75.0,
+      "lighting_score": 67.0
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.9509066487387,
+    "lng": 126.939791315529,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 2층 용도: 일반음식점 일반음식점",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "일반음식점 일반음식점",
+      "floor_label": "2층",
+      "floor_area_sqm": 441.45,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "11901100204637",
+      "bld_mng_no": "4514011400108540000000001",
+      "structure": "철근콘크리트구조",
+      "elevators": 1,
+      "ground_floors": 6,
+      "underground_floors": 1,
+      "total_area": 2598.91,
+      "main_purpose": "제1종근린생활시설 제1.2종근린생활시설",
+      "register_params": {
+        "sigunguCd": "52140",
+        "bjdongCd": "11400",
+        "platGbCd": "0",
+        "bun": "0854",
+        "ji": "0000"
+      }
+    },
+    "nearby_store_names": [
+      "크리미의원",
+      "말자싸롱익산모현점"
+    ]
+  },
+  "re80a6e0008": {
+    "id": "re80a6e0008",
+    "name": "모현동1가 상가 1층",
+    "address": "전북특별자치도 익산시 배산로 149 1층",
+    "floor": 1,
+    "area_pyeong": 284.3,
+    "area_sqm": 939.85,
+    "built_year": 2016,
+    "risk_grade": "낮음",
+    "region": "모현동1가",
+    "signgu_name": "익산시",
+    "thumbnail_color": "#D8CFD3",
+    "diagnosis": {
+      "aging_score": 86.0,
+      "accessibility_score": 95.0,
+      "lighting_score": 62.0
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.9511232837617,
+    "lng": 126.940467281377,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 1층 용도: 소매점 소매점",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "소매점 소매점",
+      "floor_label": "1층",
+      "floor_area_sqm": 939.85,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "11901100233873",
+      "bld_mng_no": "4514011400103740008000001",
+      "structure": "철골철근콘크리트구조",
+      "elevators": 1,
+      "ground_floors": 4,
+      "underground_floors": 2,
+      "total_area": 5263.62,
+      "main_purpose": "운동시설 운동시설",
+      "register_params": {
+        "sigunguCd": "52140",
+        "bjdongCd": "11400",
+        "platGbCd": "0",
+        "bun": "0861",
+        "ji": "0000"
+      }
+    },
+    "nearby_store_names": [
+      "월드락볼링장",
+      "월드스타"
+    ]
+  },
+  "r37decf5824": {
+    "id": "r37decf5824",
+    "name": "모현동1가 상가 1층",
+    "address": "전북특별자치도 익산시 선화로 95 1층",
+    "floor": 1,
+    "area_pyeong": 21.7,
+    "area_sqm": 71.9,
+    "built_year": 2019,
+    "risk_grade": "낮음",
+    "region": "모현동1가",
+    "signgu_name": "익산시",
+    "thumbnail_color": "#DFCEE1",
+    "diagnosis": {
+      "aging_score": 90.2,
+      "accessibility_score": 95.0,
+      "lighting_score": 70.0
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.9491410013363,
+    "lng": 126.941377642158,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 1층 용도: 소매점 소매점",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "소매점 소매점",
+      "floor_label": "1층",
+      "floor_area_sqm": 71.9,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "11901100263921",
+      "bld_mng_no": "4514011400103390000091436",
+      "structure": "일반철골구조",
+      "elevators": 0,
+      "ground_floors": 3,
+      "underground_floors": 0,
+      "total_area": 148.8,
+      "main_purpose": "제2종근린생활시설 제1종근린생활시설",
+      "register_params": {
+        "sigunguCd": "52140",
+        "bjdongCd": "11400",
+        "platGbCd": "0",
+        "bun": "0339",
+        "ji": "0000"
+      }
+    },
+    "nearby_store_names": [
+      "정윤과학",
+      "벨톤보청기"
+    ]
+  },
+  "r02a2fa0af2": {
+    "id": "r02a2fa0af2",
+    "name": "조은빌딩 지하1층",
+    "address": "전북특별자치도 익산시 고현로 89 지하1층",
+    "floor": -1,
+    "area_pyeong": 87.1,
+    "area_sqm": 287.91,
+    "built_year": 1994,
+    "risk_grade": "높음",
+    "region": "모현동1가",
+    "signgu_name": "익산시",
+    "thumbnail_color": "#CFD7C9",
+    "diagnosis": {
+      "aging_score": 55.2,
+      "accessibility_score": 42.0,
+      "lighting_score": 17.0
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.9450501768436,
+    "lng": 126.943065318404,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 지하1층 용도: 휴게음식점 다방",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "휴게음식점 다방",
+      "floor_label": "지하1층",
+      "floor_area_sqm": 287.91,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "1190119656",
+      "bld_mng_no": "4514011400102620007089560",
+      "structure": "철근콘크리트구조",
+      "elevators": 0,
+      "ground_floors": 4,
+      "underground_floors": 1,
+      "total_area": 1430.83,
+      "main_purpose": "제1종근린생활시설 근린생활시설, 교육연구시설, 주택",
+      "register_params": {
+        "sigunguCd": "52140",
+        "bjdongCd": "11400",
+        "platGbCd": "0",
+        "bun": "0261",
+        "ji": "0001"
+      }
+    },
+    "nearby_store_names": [
+      "검은깨시장통닭",
+      "수정당구장"
+    ]
+  },
+  "r8660d1bb54": {
+    "id": "r8660d1bb54",
+    "name": "조은빌딩 3층",
+    "address": "전북특별자치도 익산시 고현로 89 3층",
+    "floor": 3,
+    "area_pyeong": 87.1,
+    "area_sqm": 287.91,
+    "built_year": 1994,
+    "risk_grade": "보통",
+    "region": "모현동1가",
+    "signgu_name": "익산시",
+    "thumbnail_color": "#CDD5D2",
+    "diagnosis": {
+      "aging_score": 55.2,
+      "accessibility_score": 49.0,
+      "lighting_score": 70.5
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.9450501768436,
+    "lng": 126.943065318404,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 3층 용도: 기타제1종근린생활시설 근생",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "기타제1종근린생활시설 근생",
+      "floor_label": "3층",
+      "floor_area_sqm": 287.91,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "1190119656",
+      "bld_mng_no": "4514011400102620007089560",
+      "structure": "철근콘크리트구조",
+      "elevators": 0,
+      "ground_floors": 4,
+      "underground_floors": 1,
+      "total_area": 1430.83,
+      "main_purpose": "제1종근린생활시설 근린생활시설, 교육연구시설, 주택",
+      "register_params": {
+        "sigunguCd": "52140",
+        "bjdongCd": "11400",
+        "platGbCd": "0",
+        "bun": "0261",
+        "ji": "0001"
+      }
+    },
+    "nearby_store_names": [
+      "검은깨시장통닭",
+      "수정당구장"
+    ]
+  },
+  "r2e1a3ad258": {
+    "id": "r2e1a3ad258",
+    "name": "조은빌딩 4층",
+    "address": "전북특별자치도 익산시 고현로 89 4층",
+    "floor": 4,
+    "area_pyeong": 87.1,
+    "area_sqm": 287.91,
+    "built_year": 1994,
+    "risk_grade": "보통",
+    "region": "모현동1가",
+    "signgu_name": "익산시",
+    "thumbnail_color": "#E8C6E3",
+    "diagnosis": {
+      "aging_score": 55.2,
+      "accessibility_score": 40.0,
+      "lighting_score": 80.0
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.9450501768436,
+    "lng": 126.943065318404,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 4층 용도: 기타제1종근린생활시설 주택",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "기타제1종근린생활시설 주택",
+      "floor_label": "4층",
+      "floor_area_sqm": 287.91,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "1190119656",
+      "bld_mng_no": "4514011400102620007089560",
+      "structure": "철근콘크리트구조",
+      "elevators": 0,
+      "ground_floors": 4,
+      "underground_floors": 1,
+      "total_area": 1430.83,
+      "main_purpose": "제1종근린생활시설 근린생활시설, 교육연구시설, 주택",
+      "register_params": {
+        "sigunguCd": "52140",
+        "bjdongCd": "11400",
+        "platGbCd": "0",
+        "bun": "0261",
+        "ji": "0001"
+      }
+    },
+    "nearby_store_names": [
+      "검은깨시장통닭",
+      "수정당구장"
+    ]
+  },
+  "re4f01f63c9": {
+    "id": "re4f01f63c9",
+    "name": "모현동1가 상가 지하1층",
+    "address": "전북특별자치도 익산시 선화로10길 8 지하1층",
+    "floor": -1,
+    "area_pyeong": 10.6,
+    "area_sqm": 35.0,
+    "built_year": 1995,
+    "risk_grade": "높음",
+    "region": "모현동1가",
+    "signgu_name": "익산시",
+    "thumbnail_color": "#D8D1CA",
+    "diagnosis": {
+      "aging_score": 56.6,
+      "accessibility_score": 42.0,
+      "lighting_score": 25.0
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.9474487263952,
+    "lng": 126.945756909859,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 지하1층 용도: 기타공공시설 근린생활시설",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "기타공공시설 근린생활시설",
+      "floor_label": "지하1층",
+      "floor_area_sqm": 35.0,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "1190118647",
+      "bld_mng_no": "4514011400101860079090760",
+      "structure": "철근콘크리트구조",
+      "elevators": 0,
+      "ground_floors": 3,
+      "underground_floors": 1,
+      "total_area": 824.5,
+      "main_purpose": "제2종근린생활시설 근린생활시설",
+      "register_params": {
+        "sigunguCd": "52140",
+        "bjdongCd": "11400",
+        "platGbCd": "0",
+        "bun": "0186",
+        "ji": "0079"
+      }
+    },
+    "nearby_store_names": [
+      "두발창조",
+      "박영길복싱클럽"
+    ]
+  },
+  "rae835755ab": {
+    "id": "rae835755ab",
+    "name": "중앙동3가 상가 2층",
+    "address": "전북특별자치도 익산시 평동로7길 57 2층",
+    "floor": 2,
+    "area_pyeong": 88.3,
+    "area_sqm": 291.99,
+    "built_year": 2026,
+    "risk_grade": "낮음",
+    "region": "중앙동3가",
+    "signgu_name": "익산시",
+    "thumbnail_color": "#E0C4E9",
+    "diagnosis": {
+      "aging_score": 100,
+      "accessibility_score": 75.0,
+      "lighting_score": 73.0
+    },
+    "data_reference_month": "2026-09",
+    "lat": 35.93683352711,
+    "lng": 126.949033384907,
+    "vacancy": {
+      "estimated": true,
+      "confidence": "high",
+      "method": "층별 미등록 추론",
+      "basis": [
+        "건축물대장 2층 용도: 사무소 제2종근린생활시설(사무소-사무소)",
+        "상가정보 해당 층 등록 점포 0건 (건물 전체 2건)"
+      ],
+      "register_purpose": "사무소 제2종근린생활시설(사무소-사무소)",
+      "floor_label": "2층",
+      "floor_area_sqm": 291.99,
+      "building_store_count": 2,
+      "floor_store_count": 0,
+      "unknown_floor_store_count": 0
+    },
+    "register": {
+      "mgm_bldrgst_pk": "1000000000000007435567",
+      "bld_mng_no": "4514010500101250000087703",
+      "structure": "철근콘크리트구조",
+      "elevators": 1,
+      "ground_floors": 2,
+      "underground_floors": 0,
+      "total_area": 740.64,
+      "main_purpose": "제1종근린생활시설 우체국",
+      "register_params": {
+        "sigunguCd": "52140",
+        "bjdongCd": "10500",
+        "platGbCd": "0",
+        "bun": "0125",
+        "ji": "0000"
+      }
+    },
+    "nearby_store_names": [
+      "토실",
+      "함께나눔"
+    ]
+  }
+}

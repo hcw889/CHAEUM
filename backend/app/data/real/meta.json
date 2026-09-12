@@ -1,0 +1,39 @@
+{
+  "collected_at": "2026-09-13T00:12:46",
+  "finished_at": "2026-09-13T00:14:14",
+  "data_reference_month": "2026-09",
+  "collection_mode": "centers",
+  "center_radius_m": 2000,
+  "bbox": null,
+  "grid_step_deg": null,
+  "ctprvn_codes": [
+    "52",
+    "45"
+  ],
+  "store_count": 34691,
+  "building_count": 19718,
+  "buildings_queried": 100,
+  "register_found": 96,
+  "register_missing": 4,
+  "register_errors": 0,
+  "commercial_floors_surveyed": 89,
+  "vacancy_candidates": 27,
+  "vacancy_method": "층별 미등록 추론",
+  "business_types": [
+    "카페",
+    "학원",
+    "병원",
+    "편의점",
+    "스터디카페"
+  ],
+  "sources": {
+    "stores": "소상공인시장진흥공단_상가(상권)정보 API",
+    "register": "국토교통부_건축HUB_건축물대장정보 서비스"
+  },
+  "service_key_mode": {
+    "sangga": "SANGGA_API_SERVICE_KEY",
+    "register": "BLDRGST_API_SERVICE_KEY"
+  },
+  "sangga_base_url": "http://apis.data.go.kr/B553077/api/open/sdsc2",
+  "bldrgst_base_url": "http://apis.data.go.kr/1613000/BldRgstHubService"
+}

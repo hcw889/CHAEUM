@@ -6,9 +6,10 @@ from typing import Any, Optional
 from fastapi import APIRouter, Depends
 
 from app.models.schemas import MatchRequest, MatchResponse
-from app.services import match_orchestrator, matching_agents
+from app.services import live_data_provider, match_orchestrator, matching_agents
 from app.services.building_location import get_building_location
 from app.services.data_provider import DataProvider, MockDataProvider, get_data_provider
+from app.services.live_search import VacancySet
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +44,35 @@ MOCK_SOURCE_NOTE = (
 )
 
 
+def _search_scope_note(vacancy_set: VacancySet) -> str:
+    """어느 지점 반경을 방금 훑었는지 한 줄. 결과가 지역과 어긋나 보일 때의 단서다."""
+    center = (vacancy_set.meta.get("center") or {}).get("region_name")
+    radius = vacancy_set.meta.get("radius_m")
+    if not center or not radius:
+        return ""
+    return "{} 중심 반경 {:,}m를 지금 조회했습니다 (점포 {:,}건 / 건물 {:,}개 대장 확인). ".format(
+        center,
+        radius,
+        vacancy_set.meta.get("store_count", 0),
+        vacancy_set.meta.get("buildings_queried", 0),
+    )
+
+
+def _source_note(provider: DataProvider, vacancy_set: VacancySet) -> str:
+    """화면 상단 출처 문구. 라이브 조회분인지 마지막 수집분인지를 구분해 준다."""
+    if isinstance(provider, MockDataProvider):
+        return MOCK_SOURCE_NOTE
+    if vacancy_set.live:
+        return _search_scope_note(vacancy_set) + live_data_provider.LIVE_SOURCE_NOTE
+
+    reason = vacancy_set.meta.get("fallback_reason")
+    if reason:
+        return "{} (라이브 조회에 실패해 마지막 수집분을 보여 드립니다: {})".format(
+            REAL_SOURCE_NOTE, reason
+        )
+    return REAL_SOURCE_NOTE
+
+
 def _resolve_market_entry(market_data: dict, business_type: str) -> dict:
     """
     business_type이 수집된 업종 목록(카페/학원/병원/편의점/스터디카페)에 없는
@@ -58,8 +88,16 @@ def _resolve_market_entry(market_data: dict, business_type: str) -> dict:
     }
 
 
-def _region_matches(building: dict, region_pref: str) -> bool:
-    """희망 지역과 매물 지역이 맞는지. 지역명 단위가 섞여 있어 부분 일치로 본다."""
+def _region_matches(building: dict, region_pref: str, region_scoped: bool = False) -> bool:
+    """
+    희망 지역과 매물 지역이 맞는지. 지역명 단위가 섞여 있어 부분 일치로 본다.
+
+    region_scoped=True는 후보 자체가 이미 그 지역 반경에서 나왔다는 뜻이다
+    (라이브 검색). 이때 다시 이름으로 거르면 안 된다 — 희망 지역은 "전주역"인데
+    매물의 region은 법정동("고사동")이라 문자열이 겹치지 않아 전부 탈락한다.
+    """
+    if region_scoped:
+        return True
     if not region_pref or region_pref == "상관없음":
         return True
     region = (building.get("region") or "").strip()
@@ -68,7 +106,9 @@ def _region_matches(building: dict, region_pref: str) -> bool:
     return region_pref in region or region in region_pref
 
 
-def _passes_filter(building: dict, raw_entry: dict, payload: MatchRequest) -> bool:
+def _passes_filter(
+    building: dict, raw_entry: dict, payload: MatchRequest, region_scoped: bool = False
+) -> bool:
     """
     4-agent 스코어링 전에 돌리는 값싼 선별 조건.
 
@@ -77,7 +117,7 @@ def _passes_filter(building: dict, raw_entry: dict, payload: MatchRequest) -> bo
     나머지를 점수순으로 채워 넣는다. 희망 지역/평수/예산을 좁게 넣었을 때
     결과가 한두 건으로 쪼그라드는 일을 막기 위한 설계다.
     """
-    if not _region_matches(building, payload.region_pref):
+    if not _region_matches(building, payload.region_pref, region_scoped):
         return False
 
     if payload.area_pyeong:
@@ -96,7 +136,9 @@ def _passes_filter(building: dict, raw_entry: dict, payload: MatchRequest) -> bo
     return True
 
 
-def _prefilter_score(building: dict, raw_entry: dict, payload: MatchRequest) -> float:
+def _prefilter_score(
+    building: dict, raw_entry: dict, payload: MatchRequest, region_scoped: bool = False
+) -> float:
     """
     사전 정렬용 근사 점수. 본 스코어링(matching_agents)과 같은 방향이지만
     LLM/Vision 호출 없이 숫자만 본다.
@@ -125,7 +167,7 @@ def _prefilter_score(building: dict, raw_entry: dict, payload: MatchRequest) -> 
     # 희망 지역 일치와 공실 추정 신뢰도를 가산한다. 본 스코어링에서도 반영되는
     # 요소지만, 사전 정렬 단계에서 같은 지역/신뢰도 높은 매물을 앞세워야
     # SCORING_LIMIT에서 잘려 나가지 않는다.
-    if _region_matches(building, payload.region_pref) and payload.region_pref != "상관없음":
+    if _region_matches(building, payload.region_pref, region_scoped) and payload.region_pref != "상관없음":
         score += 8.0
 
     confidence_bonus = {"high": 6.0, "medium": 3.0, "low": 0.0}
@@ -133,27 +175,37 @@ def _prefilter_score(building: dict, raw_entry: dict, payload: MatchRequest) -> 
     return score + confidence_bonus.get(vacancy.get("confidence", ""), 0.0)
 
 
-def _candidate_pool(provider: DataProvider, payload: MatchRequest) -> tuple[list[dict], list[dict], int]:
+def _candidate_pool(
+    provider: DataProvider, payload: MatchRequest
+) -> tuple[list[dict], list[dict], int, "VacancySet"]:
     """
-    (스코어링 대상 건물, 각 건물의 raw 시장 신호, 조건을 만족한 후보 수).
+    (스코어링 대상 건물, 각 건물의 raw 시장 신호, 조건을 만족한 후보 수, 검색 결과).
 
     조건을 만족한 매물을 점수순으로 먼저 담고, SCORING_LIMIT에 못 미치면 나머지
     매물로 채운다. 그래서 조건을 좁게 넣어도 추천 목록이 비지 않고, 매물이 수백
     건인 실데이터에서는 조건에 맞는 것들이 자연스럽게 앞을 차지한다.
     """
+    # 후보 풀은 provider가 정한다. LiveSanggaProvider면 여기서 상가정보/건축물대장
+    # API를 실제로 호출해 희망 지역 반경을 새로 훑고, 캐시/목업 provider면 미리
+    # 로드해 둔 전체 목록이 그대로 온다 (DataProvider.search_vacancies 기본 구현).
+    vacancy_set = provider.search_vacancies(payload.region_pref)
+    # 라이브 검색 결과는 이미 희망 지역 반경만 담고 있다. 지역 필터를 한 번 더
+    # 거는 대신 그 사실을 아래로 넘긴다 (_region_matches 주석 참고).
+    region_scoped = vacancy_set.live
+
     matched: list[tuple[float, dict, dict]] = []
     others: list[tuple[float, dict, dict]] = []
 
-    for summary in provider.list_buildings():
-        building = provider.get_building(summary["id"])
-        if building is None:
-            continue
-
-        market_data = provider.get_market_data(building["id"])
+    for building_id, building in vacancy_set.buildings.items():
+        market_data = vacancy_set.market.get(building_id) or {}
         raw_entry = _resolve_market_entry(market_data, payload.business_type)
-        entry = (_prefilter_score(building, raw_entry, payload), building, raw_entry)
+        entry = (
+            _prefilter_score(building, raw_entry, payload, region_scoped),
+            building,
+            raw_entry,
+        )
 
-        if _passes_filter(building, raw_entry, payload):
+        if _passes_filter(building, raw_entry, payload, region_scoped):
             matched.append(entry)
         else:
             others.append(entry)
@@ -167,12 +219,18 @@ def _candidate_pool(provider: DataProvider, payload: MatchRequest) -> tuple[list
         selected = selected + others[: SCORING_LIMIT - len(selected)]
 
     logger.info(
-        "match: 조건 만족 %d건 / 전체 %d건 → 스코어링 %d건",
-        len(matched),
+        "match: %s 후보 %d건 중 조건 만족 %d건 → 스코어링 %d건",
+        "라이브" if vacancy_set.live else "캐시",
         len(matched) + len(others),
+        len(matched),
         len(selected),
     )
-    return [item[1] for item in selected], [item[2] for item in selected], len(matched)
+    return (
+        [item[1] for item in selected],
+        [item[2] for item in selected],
+        len(matched),
+        vacancy_set,
+    )
 
 
 def _vacancy_payload(building: dict) -> Optional[dict[str, Any]]:
@@ -200,7 +258,7 @@ def match_buildings(payload: MatchRequest, provider: DataProvider = Depends(get_
     priority_weights = matching_agents.get_priority_weights(payload.priority)
     user_budget = payload.budget.model_dump()
 
-    buildings, raw_entries, total_candidates = _candidate_pool(provider, payload)
+    buildings, raw_entries, total_candidates, vacancy_set = _candidate_pool(provider, payload)
 
     matches = []
     for building, raw_entry in zip(buildings, raw_entries):
@@ -258,7 +316,7 @@ def match_buildings(payload: MatchRequest, provider: DataProvider = Depends(get_
     return MatchResponse(
         matches=matches,
         data_mode="real" if is_real else "mock",
-        source_note=REAL_SOURCE_NOTE if is_real else MOCK_SOURCE_NOTE,
+        source_note=_source_note(provider, vacancy_set),
         total_candidates=total_candidates,
     )
 
@@ -270,18 +328,28 @@ def match_options(provider: DataProvider = Depends(get_data_provider)):
     지역만 보여야 한다 (없는 지역을 고르면 결과가 비어 버린다).
     """
     is_real = not isinstance(provider, MockDataProvider)
+    is_live = isinstance(provider, live_data_provider.LiveSanggaProvider)
     regions = None
     if hasattr(provider, "region_options"):
         regions = provider.region_options()  # type: ignore[attr-defined]
 
     meta = getattr(provider, "meta", {}) or {}
+    source_note = MOCK_SOURCE_NOTE
+    if is_live:
+        source_note = live_data_provider.LIVE_SOURCE_NOTE
+    elif is_real:
+        source_note = REAL_SOURCE_NOTE
+
     return {
         "data_mode": "real" if is_real else "mock",
+        # 라이브 검색은 지역을 고르는 순간 후보가 정해지므로, 미리 담아 둔 매물 수를
+        # 세는 것이 의미가 없다. 마지막 검색의 후보 수를 대신 내려 준다.
+        "live_search": is_live,
         "region_options": regions,
         "business_types": provider.list_business_types(),
-        "building_count": len(provider.list_buildings()),
+        "building_count": meta.get("vacancy_candidates", len(provider.list_buildings())),
         "collected_at": meta.get("collected_at"),
         "data_reference_month": meta.get("data_reference_month"),
         "sources": meta.get("sources"),
-        "source_note": REAL_SOURCE_NOTE if is_real else MOCK_SOURCE_NOTE,
+        "source_note": source_note,
     }

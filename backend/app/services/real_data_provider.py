@@ -2,12 +2,13 @@
 RealSanggaProvider — 실데이터(상가정보 + 건축물대장)로 만든 공실 매물을 제공한다.
 
 scripts/fetch_real_vacancies.py가 app/data/real/ 에 써 둔 캐시를 읽는다. 런타임에
-API를 호출하지 않는 이유는 두 가지다:
-  - 건축물대장은 건물당 2회 호출이라, 매칭 요청마다 돌리면 응답이 수십 초가 된다
-  - 공공데이터포털 개발계정은 일일 호출 한도가 있어 데모 중 소진될 수 있다
+API를 호출하지 않으므로 검색 범위라는 개념이 없고, 어떤 조건으로 매칭을 걸어도
+후보는 마지막 수집분 전체다.
 
-캐시가 없으면 get_data_provider()가 MockDataProvider로 폴백하므로, 이 클래스는
-캐시가 있다는 전제만 지킨다.
+요청 시점에 지역별로 새로 조회하는 쪽은 LiveSanggaProvider(live_data_provider.py)이며,
+서비스키가 있으면 그쪽이 기본이다. 이 클래스는 두 자리에 남는다:
+  - 서비스키가 없는 환경의 실데이터 경로
+  - 라이브 검색이 실패했을 때(쿼터/점검) LiveSanggaProvider가 내려오는 폴백
 
 DataProvider 인터페이스를 그대로 구현하므로 라우터/스코어링은 수정할 필요가 없다.
 다만 get_data_sources()는 의미 있게 오버라이드한다 — 어떤 필드가 실데이터이고
@@ -76,12 +77,15 @@ class RealSanggaProvider(DataProvider):
         self._real_dir = real_dir
         self._data_dir = data_dir
 
-        self._buildings: dict[str, Any] = _read_json(real_dir / "buildings.json")
-        self._market_data: dict[str, Any] = _read_json(real_dir / "market_data.json")
-        self._region_stats: dict[str, Any] = _read_json(real_dir / "region_stats.json")
-        self._meta: dict[str, Any] = (
-            _read_json(real_dir / "meta.json") if (real_dir / "meta.json").is_file() else {}
+        # 파일이 없어도 빈 값으로 뜬다. LiveSanggaProvider가 디스크 캐시 없이도
+        # (라이브 검색만으로) 기동할 수 있어야 하기 때문이다. cache_is_available()이
+        # True인 평소 경로에서는 동작이 이전과 같다.
+        self._buildings: dict[str, Any] = _read_json_or(real_dir / "buildings.json", {})
+        self._market_data: dict[str, Any] = _read_json_or(real_dir / "market_data.json", {})
+        self._region_stats: dict[str, Any] = _read_json_or(
+            real_dir / "region_stats.json", _read_json(data_dir / "region_stats.json")
         )
+        self._meta: dict[str, Any] = _read_json_or(real_dir / "meta.json", {})
         # 인허가 요건은 두 API가 주지 않는 법령 정보라 기존 목업 JSON을 그대로 쓴다.
         self._permits: dict[str, Any] = _read_json(data_dir / "permits.json")
 
@@ -253,6 +257,17 @@ class RealSanggaProvider(DataProvider):
 
 def _read_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _read_json_or(path: Path, default: Any) -> Any:
+    """없거나 깨진 캐시 파일은 기본값으로 대체한다 (라이브 검색 단독 기동용)."""
+    if not path.is_file():
+        return default
+    try:
+        return _read_json(path)
+    except (OSError, ValueError) as exc:
+        logger.warning("캐시 파일을 읽지 못해 기본값을 씁니다 (%s): %s", path.name, exc)
+        return default
 
 
 def _normalize(text: str) -> str:

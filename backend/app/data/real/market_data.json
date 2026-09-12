@@ -1,0 +1,1136 @@
+{
+  "r017754f2ac": {
+    "카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 93.5,
+      "estimated_rent": 1060000,
+      "competitor_count": 34,
+      "nearby_store_count": 451
+    },
+    "학원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 53.6,
+      "estimated_rent": 1060000,
+      "competitor_count": 24,
+      "nearby_store_count": 451
+    },
+    "병원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 40.8,
+      "estimated_rent": 1060000,
+      "competitor_count": 8,
+      "nearby_store_count": 451
+    },
+    "편의점": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 73.6,
+      "estimated_rent": 1060000,
+      "competitor_count": 7,
+      "nearby_store_count": 451
+    },
+    "스터디카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 49.2,
+      "estimated_rent": 1060000,
+      "competitor_count": 4,
+      "nearby_store_count": 451
+    }
+  },
+  "reb811a12a3": {
+    "카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 80.4,
+      "estimated_rent": 130000,
+      "competitor_count": 30,
+      "nearby_store_count": 498
+    },
+    "학원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 56.7,
+      "estimated_rent": 130000,
+      "competitor_count": 33,
+      "nearby_store_count": 498
+    },
+    "병원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 40.6,
+      "estimated_rent": 130000,
+      "competitor_count": 8,
+      "nearby_store_count": 498
+    },
+    "편의점": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 64.7,
+      "estimated_rent": 130000,
+      "competitor_count": 8,
+      "nearby_store_count": 498
+    },
+    "스터디카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 51.5,
+      "estimated_rent": 130000,
+      "competitor_count": 4,
+      "nearby_store_count": 498
+    }
+  },
+  "r82a003e640": {
+    "카페": {
+      "foot_traffic_index": 88.3,
+      "competition_saturation_index": 45.0,
+      "demographic_fit_index": 57.6,
+      "estimated_rent": 1700000,
+      "competitor_count": 9,
+      "nearby_store_count": 159
+    },
+    "학원": {
+      "foot_traffic_index": 88.3,
+      "competition_saturation_index": 81.8,
+      "demographic_fit_index": 53.9,
+      "estimated_rent": 1700000,
+      "competitor_count": 9,
+      "nearby_store_count": 159
+    },
+    "병원": {
+      "foot_traffic_index": 88.3,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 35.0,
+      "estimated_rent": 1700000,
+      "competitor_count": 0,
+      "nearby_store_count": 159
+    },
+    "편의점": {
+      "foot_traffic_index": 88.3,
+      "competition_saturation_index": 50.0,
+      "demographic_fit_index": 57.6,
+      "estimated_rent": 1700000,
+      "competitor_count": 2,
+      "nearby_store_count": 159
+    },
+    "스터디카페": {
+      "foot_traffic_index": 88.3,
+      "competition_saturation_index": 50.0,
+      "demographic_fit_index": 50.1,
+      "estimated_rent": 1700000,
+      "competitor_count": 1,
+      "nearby_store_count": 159
+    }
+  },
+  "r04bc489790": {
+    "카페": {
+      "foot_traffic_index": 73.3,
+      "competition_saturation_index": 15.0,
+      "demographic_fit_index": 74.4,
+      "estimated_rent": 5290000,
+      "competitor_count": 3,
+      "nearby_store_count": 132
+    },
+    "학원": {
+      "foot_traffic_index": 73.3,
+      "competition_saturation_index": 18.2,
+      "demographic_fit_index": 41.1,
+      "estimated_rent": 5290000,
+      "competitor_count": 2,
+      "nearby_store_count": 132
+    },
+    "병원": {
+      "foot_traffic_index": 73.3,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 38.0,
+      "estimated_rent": 5290000,
+      "competitor_count": 0,
+      "nearby_store_count": 132
+    },
+    "편의점": {
+      "foot_traffic_index": 73.3,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 75.9,
+      "estimated_rent": 5290000,
+      "competitor_count": 4,
+      "nearby_store_count": 132
+    },
+    "스터디카페": {
+      "foot_traffic_index": 73.3,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 38.0,
+      "estimated_rent": 5290000,
+      "competitor_count": 0,
+      "nearby_store_count": 132
+    }
+  },
+  "rbc5f611ff4": {
+    "카페": {
+      "foot_traffic_index": 73.3,
+      "competition_saturation_index": 15.0,
+      "demographic_fit_index": 74.4,
+      "estimated_rent": 2880000,
+      "competitor_count": 3,
+      "nearby_store_count": 132
+    },
+    "학원": {
+      "foot_traffic_index": 73.3,
+      "competition_saturation_index": 18.2,
+      "demographic_fit_index": 41.1,
+      "estimated_rent": 2880000,
+      "competitor_count": 2,
+      "nearby_store_count": 132
+    },
+    "병원": {
+      "foot_traffic_index": 73.3,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 38.0,
+      "estimated_rent": 2880000,
+      "competitor_count": 0,
+      "nearby_store_count": 132
+    },
+    "편의점": {
+      "foot_traffic_index": 73.3,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 75.9,
+      "estimated_rent": 2880000,
+      "competitor_count": 4,
+      "nearby_store_count": 132
+    },
+    "스터디카페": {
+      "foot_traffic_index": 73.3,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 38.0,
+      "estimated_rent": 2880000,
+      "competitor_count": 0,
+      "nearby_store_count": 132
+    }
+  },
+  "rba3a8fb5fa": {
+    "카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 40.0,
+      "demographic_fit_index": 79.9,
+      "estimated_rent": 190000,
+      "competitor_count": 8,
+      "nearby_store_count": 205
+    },
+    "학원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 27.3,
+      "demographic_fit_index": 38.9,
+      "estimated_rent": 190000,
+      "competitor_count": 3,
+      "nearby_store_count": 205
+    },
+    "병원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 75.0,
+      "demographic_fit_index": 44.8,
+      "estimated_rent": 190000,
+      "competitor_count": 6,
+      "nearby_store_count": 205
+    },
+    "편의점": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 25.0,
+      "demographic_fit_index": 58.4,
+      "estimated_rent": 190000,
+      "competitor_count": 1,
+      "nearby_store_count": 205
+    },
+    "스터디카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 38.9,
+      "estimated_rent": 190000,
+      "competitor_count": 0,
+      "nearby_store_count": 205
+    }
+  },
+  "rd247d457e6": {
+    "카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 30.0,
+      "demographic_fit_index": 81.6,
+      "estimated_rent": 1100000,
+      "competitor_count": 6,
+      "nearby_store_count": 219
+    },
+    "학원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 36.4,
+      "demographic_fit_index": 39.6,
+      "estimated_rent": 1100000,
+      "competitor_count": 4,
+      "nearby_store_count": 219
+    },
+    "병원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 48.7,
+      "estimated_rent": 1100000,
+      "competitor_count": 8,
+      "nearby_store_count": 219
+    },
+    "편의점": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 50.0,
+      "demographic_fit_index": 54.2,
+      "estimated_rent": 1100000,
+      "competitor_count": 2,
+      "nearby_store_count": 219
+    },
+    "스터디카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 38.7,
+      "estimated_rent": 1100000,
+      "competitor_count": 0,
+      "nearby_store_count": 219
+    }
+  },
+  "r716d8dca53": {
+    "카페": {
+      "foot_traffic_index": 71.7,
+      "competition_saturation_index": 20.0,
+      "demographic_fit_index": 72.2,
+      "estimated_rent": 1610000,
+      "competitor_count": 4,
+      "nearby_store_count": 129
+    },
+    "학원": {
+      "foot_traffic_index": 71.7,
+      "competition_saturation_index": 27.3,
+      "demographic_fit_index": 45.9,
+      "estimated_rent": 1610000,
+      "competitor_count": 3,
+      "nearby_store_count": 129
+    },
+    "병원": {
+      "foot_traffic_index": 71.7,
+      "competition_saturation_index": 12.5,
+      "demographic_fit_index": 39.7,
+      "estimated_rent": 1610000,
+      "competitor_count": 1,
+      "nearby_store_count": 129
+    },
+    "편의점": {
+      "foot_traffic_index": 71.7,
+      "competition_saturation_index": 50.0,
+      "demographic_fit_index": 66.0,
+      "estimated_rent": 1610000,
+      "competitor_count": 2,
+      "nearby_store_count": 129
+    },
+    "스터디카페": {
+      "foot_traffic_index": 71.7,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 39.7,
+      "estimated_rent": 1610000,
+      "competitor_count": 0,
+      "nearby_store_count": 129
+    }
+  },
+  "r2fcc1b4531": {
+    "카페": {
+      "foot_traffic_index": 71.7,
+      "competition_saturation_index": 20.0,
+      "demographic_fit_index": 72.2,
+      "estimated_rent": 2930000,
+      "competitor_count": 4,
+      "nearby_store_count": 129
+    },
+    "학원": {
+      "foot_traffic_index": 71.7,
+      "competition_saturation_index": 27.3,
+      "demographic_fit_index": 45.9,
+      "estimated_rent": 2930000,
+      "competitor_count": 3,
+      "nearby_store_count": 129
+    },
+    "병원": {
+      "foot_traffic_index": 71.7,
+      "competition_saturation_index": 12.5,
+      "demographic_fit_index": 39.7,
+      "estimated_rent": 2930000,
+      "competitor_count": 1,
+      "nearby_store_count": 129
+    },
+    "편의점": {
+      "foot_traffic_index": 71.7,
+      "competition_saturation_index": 50.0,
+      "demographic_fit_index": 66.0,
+      "estimated_rent": 2930000,
+      "competitor_count": 2,
+      "nearby_store_count": 129
+    },
+    "스터디카페": {
+      "foot_traffic_index": 71.7,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 39.7,
+      "estimated_rent": 2930000,
+      "competitor_count": 0,
+      "nearby_store_count": 129
+    }
+  },
+  "rcb4024b5d6": {
+    "카페": {
+      "foot_traffic_index": 10,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 35.0,
+      "estimated_rent": 11210000,
+      "competitor_count": 0,
+      "nearby_store_count": 14
+    },
+    "학원": {
+      "foot_traffic_index": 10,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 35.0,
+      "estimated_rent": 11210000,
+      "competitor_count": 0,
+      "nearby_store_count": 14
+    },
+    "병원": {
+      "foot_traffic_index": 10,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 35.0,
+      "estimated_rent": 11210000,
+      "competitor_count": 0,
+      "nearby_store_count": 14
+    },
+    "편의점": {
+      "foot_traffic_index": 10,
+      "competition_saturation_index": 50.0,
+      "demographic_fit_index": 35.0,
+      "estimated_rent": 11210000,
+      "competitor_count": 2,
+      "nearby_store_count": 14
+    },
+    "스터디카페": {
+      "foot_traffic_index": 10,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 35.0,
+      "estimated_rent": 11210000,
+      "competitor_count": 0,
+      "nearby_store_count": 14
+    }
+  },
+  "r8ae1db8baa": {
+    "카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 80.0,
+      "demographic_fit_index": 62.0,
+      "estimated_rent": 520000,
+      "competitor_count": 16,
+      "nearby_store_count": 267
+    },
+    "학원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 27.3,
+      "demographic_fit_index": 40.2,
+      "estimated_rent": 520000,
+      "competitor_count": 3,
+      "nearby_store_count": 267
+    },
+    "병원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 12.5,
+      "demographic_fit_index": 38.7,
+      "estimated_rent": 520000,
+      "competitor_count": 1,
+      "nearby_store_count": 267
+    },
+    "편의점": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 75.0,
+      "demographic_fit_index": 54.5,
+      "estimated_rent": 520000,
+      "competitor_count": 3,
+      "nearby_store_count": 267
+    },
+    "스터디카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 38.0,
+      "estimated_rent": 520000,
+      "competitor_count": 0,
+      "nearby_store_count": 267
+    }
+  },
+  "r23fa88158c": {
+    "카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 80.0,
+      "demographic_fit_index": 62.0,
+      "estimated_rent": 610000,
+      "competitor_count": 16,
+      "nearby_store_count": 267
+    },
+    "학원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 27.3,
+      "demographic_fit_index": 40.2,
+      "estimated_rent": 610000,
+      "competitor_count": 3,
+      "nearby_store_count": 267
+    },
+    "병원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 12.5,
+      "demographic_fit_index": 38.7,
+      "estimated_rent": 610000,
+      "competitor_count": 1,
+      "nearby_store_count": 267
+    },
+    "편의점": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 75.0,
+      "demographic_fit_index": 54.5,
+      "estimated_rent": 610000,
+      "competitor_count": 3,
+      "nearby_store_count": 267
+    },
+    "스터디카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 38.0,
+      "estimated_rent": 610000,
+      "competitor_count": 0,
+      "nearby_store_count": 267
+    }
+  },
+  "r604b028736": {
+    "카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 75.0,
+      "demographic_fit_index": 82.5,
+      "estimated_rent": 1060000,
+      "competitor_count": 15,
+      "nearby_store_count": 526
+    },
+    "학원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 54.5,
+      "demographic_fit_index": 43.0,
+      "estimated_rent": 1060000,
+      "competitor_count": 6,
+      "nearby_store_count": 526
+    },
+    "병원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 87.5,
+      "demographic_fit_index": 43.7,
+      "estimated_rent": 1060000,
+      "competitor_count": 7,
+      "nearby_store_count": 526
+    },
+    "편의점": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 58.6,
+      "estimated_rent": 1060000,
+      "competitor_count": 5,
+      "nearby_store_count": 526
+    },
+    "스터디카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 38.4,
+      "estimated_rent": 1060000,
+      "competitor_count": 0,
+      "nearby_store_count": 526
+    }
+  },
+  "red45f3c965": {
+    "카페": {
+      "foot_traffic_index": 50.6,
+      "competition_saturation_index": 35.0,
+      "demographic_fit_index": 46.0,
+      "estimated_rent": 390000,
+      "competitor_count": 7,
+      "nearby_store_count": 91
+    },
+    "학원": {
+      "foot_traffic_index": 50.6,
+      "competition_saturation_index": 27.3,
+      "demographic_fit_index": 43.8,
+      "estimated_rent": 390000,
+      "competitor_count": 3,
+      "nearby_store_count": 91
+    },
+    "병원": {
+      "foot_traffic_index": 50.6,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 35.0,
+      "estimated_rent": 390000,
+      "competitor_count": 0,
+      "nearby_store_count": 91
+    },
+    "편의점": {
+      "foot_traffic_index": 50.6,
+      "competition_saturation_index": 25.0,
+      "demographic_fit_index": 57.0,
+      "estimated_rent": 390000,
+      "competitor_count": 1,
+      "nearby_store_count": 91
+    },
+    "스터디카페": {
+      "foot_traffic_index": 50.6,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 41.6,
+      "estimated_rent": 390000,
+      "competitor_count": 0,
+      "nearby_store_count": 91
+    }
+  },
+  "re261ae5609": {
+    "카페": {
+      "foot_traffic_index": 26.7,
+      "competition_saturation_index": 35.0,
+      "demographic_fit_index": 60.0,
+      "estimated_rent": 2980000,
+      "competitor_count": 7,
+      "nearby_store_count": 48
+    },
+    "학원": {
+      "foot_traffic_index": 26.7,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 93.3,
+      "estimated_rent": 2980000,
+      "competitor_count": 11,
+      "nearby_store_count": 48
+    },
+    "병원": {
+      "foot_traffic_index": 26.7,
+      "competition_saturation_index": 12.5,
+      "demographic_fit_index": 39.2,
+      "estimated_rent": 2980000,
+      "competitor_count": 1,
+      "nearby_store_count": 48
+    },
+    "편의점": {
+      "foot_traffic_index": 26.7,
+      "competition_saturation_index": 25.0,
+      "demographic_fit_index": 72.5,
+      "estimated_rent": 2980000,
+      "competitor_count": 1,
+      "nearby_store_count": 48
+    },
+    "스터디카페": {
+      "foot_traffic_index": 26.7,
+      "competition_saturation_index": 50.0,
+      "demographic_fit_index": 85.0,
+      "estimated_rent": 2980000,
+      "competitor_count": 1,
+      "nearby_store_count": 48
+    }
+  },
+  "r0b8f48929d": {
+    "카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 85.0,
+      "demographic_fit_index": 67.3,
+      "estimated_rent": 3840000,
+      "competitor_count": 17,
+      "nearby_store_count": 186
+    },
+    "학원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 18.2,
+      "demographic_fit_index": 44.7,
+      "estimated_rent": 3840000,
+      "competitor_count": 2,
+      "nearby_store_count": 186
+    },
+    "병원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 87.5,
+      "demographic_fit_index": 49.0,
+      "estimated_rent": 3840000,
+      "competitor_count": 7,
+      "nearby_store_count": 186
+    },
+    "편의점": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 50.0,
+      "demographic_fit_index": 55.4,
+      "estimated_rent": 3840000,
+      "competitor_count": 2,
+      "nearby_store_count": 186
+    },
+    "스터디카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 39.3,
+      "estimated_rent": 3840000,
+      "competitor_count": 2,
+      "nearby_store_count": 186
+    }
+  },
+  "r3c4b2d70d2": {
+    "카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 85.0,
+      "demographic_fit_index": 67.3,
+      "estimated_rent": 2930000,
+      "competitor_count": 17,
+      "nearby_store_count": 186
+    },
+    "학원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 18.2,
+      "demographic_fit_index": 44.7,
+      "estimated_rent": 2930000,
+      "competitor_count": 2,
+      "nearby_store_count": 186
+    },
+    "병원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 87.5,
+      "demographic_fit_index": 49.0,
+      "estimated_rent": 2930000,
+      "competitor_count": 7,
+      "nearby_store_count": 186
+    },
+    "편의점": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 50.0,
+      "demographic_fit_index": 55.4,
+      "estimated_rent": 2930000,
+      "competitor_count": 2,
+      "nearby_store_count": 186
+    },
+    "스터디카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 39.3,
+      "estimated_rent": 2930000,
+      "competitor_count": 2,
+      "nearby_store_count": 186
+    }
+  },
+  "rb983a64a5a": {
+    "카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 85.0,
+      "demographic_fit_index": 67.3,
+      "estimated_rent": 2440000,
+      "competitor_count": 17,
+      "nearby_store_count": 186
+    },
+    "학원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 18.2,
+      "demographic_fit_index": 44.7,
+      "estimated_rent": 2440000,
+      "competitor_count": 2,
+      "nearby_store_count": 186
+    },
+    "병원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 87.5,
+      "demographic_fit_index": 49.0,
+      "estimated_rent": 2440000,
+      "competitor_count": 7,
+      "nearby_store_count": 186
+    },
+    "편의점": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 50.0,
+      "demographic_fit_index": 55.4,
+      "estimated_rent": 2440000,
+      "competitor_count": 2,
+      "nearby_store_count": 186
+    },
+    "스터디카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 39.3,
+      "estimated_rent": 2440000,
+      "competitor_count": 2,
+      "nearby_store_count": 186
+    }
+  },
+  "rb0e4851187": {
+    "카페": {
+      "foot_traffic_index": 52.2,
+      "competition_saturation_index": 35.0,
+      "demographic_fit_index": 95,
+      "estimated_rent": 2040000,
+      "competitor_count": 7,
+      "nearby_store_count": 94
+    },
+    "학원": {
+      "foot_traffic_index": 52.2,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 73.3,
+      "estimated_rent": 2040000,
+      "competitor_count": 13,
+      "nearby_store_count": 94
+    },
+    "병원": {
+      "foot_traffic_index": 52.2,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 39.3,
+      "estimated_rent": 2040000,
+      "competitor_count": 0,
+      "nearby_store_count": 94
+    },
+    "편의점": {
+      "foot_traffic_index": 52.2,
+      "competition_saturation_index": 50.0,
+      "demographic_fit_index": 95,
+      "estimated_rent": 2040000,
+      "competitor_count": 2,
+      "nearby_store_count": 94
+    },
+    "스터디카페": {
+      "foot_traffic_index": 52.2,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 69.0,
+      "estimated_rent": 2040000,
+      "competitor_count": 3,
+      "nearby_store_count": 94
+    }
+  },
+  "re8e3d131ab": {
+    "카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 67.2,
+      "estimated_rent": 3820000,
+      "competitor_count": 20,
+      "nearby_store_count": 205
+    },
+    "학원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 36.4,
+      "demographic_fit_index": 44.8,
+      "estimated_rent": 3820000,
+      "competitor_count": 4,
+      "nearby_store_count": 205
+    },
+    "병원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 50.6,
+      "estimated_rent": 3820000,
+      "competitor_count": 9,
+      "nearby_store_count": 205
+    },
+    "편의점": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 75.0,
+      "demographic_fit_index": 55.5,
+      "estimated_rent": 3820000,
+      "competitor_count": 3,
+      "nearby_store_count": 205
+    },
+    "스터디카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 40.9,
+      "estimated_rent": 3820000,
+      "competitor_count": 2,
+      "nearby_store_count": 205
+    }
+  },
+  "re80a6e0008": {
+    "카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 66.3,
+      "estimated_rent": 14780000,
+      "competitor_count": 21,
+      "nearby_store_count": 211
+    },
+    "학원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 36.4,
+      "demographic_fit_index": 43.5,
+      "estimated_rent": 14780000,
+      "competitor_count": 4,
+      "nearby_store_count": 211
+    },
+    "병원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 51.1,
+      "estimated_rent": 14780000,
+      "competitor_count": 10,
+      "nearby_store_count": 211
+    },
+    "편의점": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 75.0,
+      "demographic_fit_index": 54.9,
+      "estimated_rent": 14780000,
+      "competitor_count": 3,
+      "nearby_store_count": 211
+    },
+    "스터디카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 40.7,
+      "estimated_rent": 14780000,
+      "competitor_count": 2,
+      "nearby_store_count": 211
+    }
+  },
+  "r37decf5824": {
+    "카페": {
+      "foot_traffic_index": 81.1,
+      "competition_saturation_index": 75.0,
+      "demographic_fit_index": 82.9,
+      "estimated_rent": 1130000,
+      "competitor_count": 15,
+      "nearby_store_count": 146
+    },
+    "학원": {
+      "foot_traffic_index": 81.1,
+      "competition_saturation_index": 27.3,
+      "demographic_fit_index": 41.8,
+      "estimated_rent": 1130000,
+      "competitor_count": 3,
+      "nearby_store_count": 146
+    },
+    "병원": {
+      "foot_traffic_index": 81.1,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 52.8,
+      "estimated_rent": 1130000,
+      "competitor_count": 9,
+      "nearby_store_count": 146
+    },
+    "편의점": {
+      "foot_traffic_index": 81.1,
+      "competition_saturation_index": 75.0,
+      "demographic_fit_index": 69.2,
+      "estimated_rent": 1130000,
+      "competitor_count": 3,
+      "nearby_store_count": 146
+    },
+    "스터디카페": {
+      "foot_traffic_index": 81.1,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 41.8,
+      "estimated_rent": 1130000,
+      "competitor_count": 2,
+      "nearby_store_count": 146
+    }
+  },
+  "r02a2fa0af2": {
+    "카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 25.0,
+      "demographic_fit_index": 95,
+      "estimated_rent": 2040000,
+      "competitor_count": 5,
+      "nearby_store_count": 183
+    },
+    "학원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 81.8,
+      "demographic_fit_index": 55.8,
+      "estimated_rent": 2040000,
+      "competitor_count": 9,
+      "nearby_store_count": 183
+    },
+    "병원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 39.4,
+      "estimated_rent": 2040000,
+      "competitor_count": 0,
+      "nearby_store_count": 183
+    },
+    "편의점": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 95,
+      "estimated_rent": 2040000,
+      "competitor_count": 0,
+      "nearby_store_count": 183
+    },
+    "스터디카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 48.1,
+      "estimated_rent": 2040000,
+      "competitor_count": 2,
+      "nearby_store_count": 183
+    }
+  },
+  "r8660d1bb54": {
+    "카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 25.0,
+      "demographic_fit_index": 95,
+      "estimated_rent": 1900000,
+      "competitor_count": 5,
+      "nearby_store_count": 183
+    },
+    "학원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 81.8,
+      "demographic_fit_index": 55.8,
+      "estimated_rent": 1900000,
+      "competitor_count": 9,
+      "nearby_store_count": 183
+    },
+    "병원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 39.4,
+      "estimated_rent": 1900000,
+      "competitor_count": 0,
+      "nearby_store_count": 183
+    },
+    "편의점": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 95,
+      "estimated_rent": 1900000,
+      "competitor_count": 0,
+      "nearby_store_count": 183
+    },
+    "스터디카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 48.1,
+      "estimated_rent": 1900000,
+      "competitor_count": 2,
+      "nearby_store_count": 183
+    }
+  },
+  "r2e1a3ad258": {
+    "카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 25.0,
+      "demographic_fit_index": 95,
+      "estimated_rent": 1590000,
+      "competitor_count": 5,
+      "nearby_store_count": 183
+    },
+    "학원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 81.8,
+      "demographic_fit_index": 55.8,
+      "estimated_rent": 1590000,
+      "competitor_count": 9,
+      "nearby_store_count": 183
+    },
+    "병원": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 39.4,
+      "estimated_rent": 1590000,
+      "competitor_count": 0,
+      "nearby_store_count": 183
+    },
+    "편의점": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 95,
+      "estimated_rent": 1590000,
+      "competitor_count": 0,
+      "nearby_store_count": 183
+    },
+    "스터디카페": {
+      "foot_traffic_index": 100,
+      "competition_saturation_index": 100,
+      "demographic_fit_index": 48.1,
+      "estimated_rent": 1590000,
+      "competitor_count": 2,
+      "nearby_store_count": 183
+    }
+  },
+  "re4f01f63c9": {
+    "카페": {
+      "foot_traffic_index": 74.4,
+      "competition_saturation_index": 20.0,
+      "demographic_fit_index": 84.3,
+      "estimated_rent": 250000,
+      "competitor_count": 4,
+      "nearby_store_count": 134
+    },
+    "학원": {
+      "foot_traffic_index": 74.4,
+      "competition_saturation_index": 72.7,
+      "demographic_fit_index": 51.4,
+      "estimated_rent": 250000,
+      "competitor_count": 8,
+      "nearby_store_count": 134
+    },
+    "병원": {
+      "foot_traffic_index": 74.4,
+      "competition_saturation_index": 25.0,
+      "demographic_fit_index": 41.0,
+      "estimated_rent": 250000,
+      "competitor_count": 2,
+      "nearby_store_count": 134
+    },
+    "편의점": {
+      "foot_traffic_index": 74.4,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 78.3,
+      "estimated_rent": 250000,
+      "competitor_count": 0,
+      "nearby_store_count": 134
+    },
+    "스터디카페": {
+      "foot_traffic_index": 74.4,
+      "competition_saturation_index": 50.0,
+      "demographic_fit_index": 48.4,
+      "estimated_rent": 250000,
+      "competitor_count": 1,
+      "nearby_store_count": 134
+    }
+  },
+  "rae835755ab": {
+    "카페": {
+      "foot_traffic_index": 67.2,
+      "competition_saturation_index": 25.0,
+      "demographic_fit_index": 79.6,
+      "estimated_rent": 2530000,
+      "competitor_count": 5,
+      "nearby_store_count": 121
+    },
+    "학원": {
+      "foot_traffic_index": 67.2,
+      "competition_saturation_index": 54.5,
+      "demographic_fit_index": 48.2,
+      "estimated_rent": 2530000,
+      "competitor_count": 6,
+      "nearby_store_count": 121
+    },
+    "병원": {
+      "foot_traffic_index": 67.2,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 36.7,
+      "estimated_rent": 2530000,
+      "competitor_count": 0,
+      "nearby_store_count": 121
+    },
+    "편의점": {
+      "foot_traffic_index": 67.2,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 51.5,
+      "estimated_rent": 2530000,
+      "competitor_count": 0,
+      "nearby_store_count": 121
+    },
+    "스터디카페": {
+      "foot_traffic_index": 67.2,
+      "competition_saturation_index": 0,
+      "demographic_fit_index": 46.6,
+      "estimated_rent": 2530000,
+      "competitor_count": 0,
+      "nearby_store_count": 121
+    }
+  }
+}
