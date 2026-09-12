@@ -63,7 +63,7 @@ test("매물 선택기를 바꾸면 새 ID를 조회하고 이전 선택을 초�
   await page.getByRole("button", { name: /^남쪽 상권/ }).click();
 
   const response = page.waitForResponse("**/api/buildings/b2/footfall?day_type=weekday");
-  await page.getByRole("combobox", { name: "데모 매물" }).selectOption("b2");
+  await page.getByRole("combobox", { name: "매물 선택" }).selectOption("b2");
   await response;
   await expect(page).toHaveURL("/diagnosis/b2#visualize");
   await expect(page.getByText(/전주시 태평동 2 반경/)).toBeVisible();

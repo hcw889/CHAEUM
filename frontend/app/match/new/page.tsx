@@ -248,11 +248,11 @@ function WizardBody() {
         <Card className="mb-6 border-accent/30 bg-accent-soft/40">
           <div className="mb-3 flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold text-accent-text">⚡ 예비창업자 빠른 데모</p>
+              <p className="text-sm font-semibold text-accent-text">⚡ 추천 시나리오로 바로 시작</p>
               <p className="mt-1 text-xs text-muted">
-                {dataMode === "real"
-                  ? `공공데이터로 수집한 공실 추정 매물 ${listingCount ?? 0}건에서 조건별 추천 결과를 바로 확인하세요.`
-                  : `${listingCount ?? 15}개 목업 매물에서 조건별 추천 결과를 바로 확인하세요.`}
+                {dataMode === "real" && listingCount
+                  ? `공공데이터로 수집한 공실 추정 매물 ${listingCount}건에서 조건별 추천 결과를 바로 확인하세요.`
+                  : "대표 창업 조건을 골라 추천 결과를 바로 확인하세요."}
               </p>
             </div>
             <button onClick={() => setShowPresets(false)} className="text-xs text-muted hover:text-foreground">

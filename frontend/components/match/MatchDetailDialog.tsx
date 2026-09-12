@@ -88,7 +88,7 @@ export default function MatchDetailDialog({ match, priority, onClose }: {
               <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.15em] text-accent-text">LOCATION CLOSE-UP</span>
               <p className="text-sm font-semibold">{match.address}</p>
               <p className="mt-1 text-xs text-muted">
-                {match.location?.is_approximate ? "시연용 대표 위치 · 실제 건물 위치와 다를 수 있습니다." : "선택한 매물 주변을 확대해 살펴보세요."}
+                {match.location?.is_approximate ? "대표 위치 · 실제 건물 위치와 다를 수 있습니다." : "선택한 매물 주변을 확대해 살펴보세요."}
               </p>
             </div>
           </div>

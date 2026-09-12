@@ -117,8 +117,8 @@ export default function ReportSection() {
           </Card>
 
           <p className="mt-8 text-center text-xs text-muted">
-            본 리포트는 채움(Chaeum) MVP의 mock 데이터를 기반으로 생성되었으며, 실제 서비스에서는 실시간 데이터 연동
-            결과로 대체됩니다.
+            본 리포트는 소상공인시장진흥공단 상가(상권)정보와 국토교통부 건축물대장 공공데이터를 기반으로 생성되었으며,
+            임대료·유동인구 등 일부 지표는 추정치를 포함합니다.
           </p>
         </>
       )}

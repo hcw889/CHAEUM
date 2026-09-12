@@ -17,7 +17,7 @@ export function BuildingSwitcher({ currentId }: { currentId: string }) {
 
   return (
     <label className="no-print flex items-center gap-2 text-sm text-muted">
-      데모 매물
+      매물 선택
       <select
         value={currentId}
         onChange={(e) => {
