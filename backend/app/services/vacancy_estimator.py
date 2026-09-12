@@ -283,12 +283,22 @@ def assess_floor_vacancy(building: dict[str, Any], floor_info: dict[str, Any]) -
 
     total_stores = len(building.get("stores", ()))
     unknown_floor = _unknown_floor_store_count(building)
-
-    # 신뢰도: 같은 건물에 층이 찍힌 점포가 많을수록 "이 층만 비었다"는 판정이 믿을 만하다.
     known_floor_stores = total_stores - unknown_floor
-    if known_floor_stores >= 3 and unknown_floor == 0:
+
+    # 신뢰도는 "층 단위로 볼 수 있는 건물인가"로 결정한다.
+    #
+    # 실수집 측정값이 기준이다: 상가정보의 flrNo는 절반(50.3%)이 비어 있고,
+    # 건물관리번호로 묶은 건물의 점포 수는 평균 1.8건이다. 그래서 "층이 찍힌 점포
+    # 3건 이상"을 높음으로 잡으면 사실상 아무 매물도 높음이 되지 않는다.
+    #
+    # 층 표기가 없는 점포가 하나라도 있으면 그 점포가 바로 이 층에 있을 수 있으므로
+    # 낮음이다. 그게 이 추정의 가장 큰 오판 경로다.
+    if unknown_floor > 0:
+        confidence = "low"
+    elif known_floor_stores >= 2:
+        # 서로 다른 층에 점포가 찍혀 있으면 층 구분이 실제로 기록되는 건물이라는 뜻이다.
         confidence = "high"
-    elif known_floor_stores >= 1:
+    elif known_floor_stores == 1:
         confidence = "medium"
     else:
         confidence = "low"

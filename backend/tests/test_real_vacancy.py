@@ -39,15 +39,15 @@ SANGGA_RAW = [
         "ldongCd": "5211110100",
         "ldongNm": "고사동",
         "plotSctCd": "1",
-        "lnbrMnnm": "123",
-        "lnbrSlno": "4",
+        "lnoMnno": 123,
+        "lnoSlno": 4,
         "bldMngNo": "5211110100101230004000001",
         "bldNm": "온잇빌딩",
         "rdnmAdr": "전북특별자치도 전주시 완산구 충경로 12",
-        "flrNo": "1",
+        "flrNo": 1,
         "hoNo": "101",
-        "lon": "127.140123",
-        "lat": "35.818456",
+        "lon": 127.140123,
+        "lat": 35.818456,
     },
     {
         "bizesId": "MA0101202012A0000002",
@@ -61,15 +61,15 @@ SANGGA_RAW = [
         "ldongCd": "5211110100",
         "ldongNm": "고사동",
         "plotSctCd": "1",
-        "lnbrMnnm": "123",
-        "lnbrSlno": "4",
+        "lnoMnno": 123,
+        "lnoSlno": 4,
         "bldMngNo": "5211110100101230004000001",
         "bldNm": "온잇빌딩",
         "rdnmAdr": "전북특별자치도 전주시 완산구 충경로 12",
-        "flrNo": "2",
+        "flrNo": 2,
         "hoNo": "201",
-        "lon": "127.140130",
-        "lat": "35.818460",
+        "lon": 127.140130,
+        "lat": 35.818460,
     },
     {
         "bizesId": "MA0101202012A0000003",
@@ -83,15 +83,15 @@ SANGGA_RAW = [
         "ldongCd": "5211110100",
         "ldongNm": "고사동",
         "plotSctCd": "1",
-        "lnbrMnnm": "123",
-        "lnbrSlno": "4",
+        "lnoMnno": 123,
+        "lnoSlno": 4,
         "bldMngNo": "5211110100101230004000001",
         "bldNm": "온잇빌딩",
         "rdnmAdr": "전북특별자치도 전주시 완산구 충경로 12",
         "flrNo": "B1",
         "hoNo": "B01",
-        "lon": "127.140118",
-        "lat": "35.818450",
+        "lon": 127.140118,
+        "lat": 35.818450,
     },
 ]
 
@@ -102,21 +102,21 @@ TITLE_PAYLOAD = {
         "body": {
             "items": {
                 "item": {
-                    "mgmBldrgstPk": "52111-100123456",
+                    "mgmBldrgstPk": 1186122494,
                     "bldNm": "온잇빌딩",
                     "platPlc": "전북특별자치도 전주시 완산구 고사동 123-4",
                     "newPlatPlc": "전북특별자치도 전주시 완산구 충경로 12",
                     "useAprDay": "19950320",
-                    "totArea": "820.5",
-                    "archArea": "210.3",
-                    "grndFlrCnt": "4",
-                    "ugrndFlrCnt": "1",
-                    "heit": "15.2",
+                    "totArea": 820.5,
+                    "archArea": 210.3,
+                    "grndFlrCnt": 4,
+                    "ugrndFlrCnt": 1,
+                    "heit": 15.2,
                     "strctCdNm": "철근콘크리트구조",
                     "mainPurpsCdNm": "제2종근린생활시설",
                     "etcPurps": "소매점, 일반음식점",
-                    "rideUseElvtCnt": "1",
-                    "emgenUseElvtCnt": "0",
+                    "rideUseElvtCnt": 1,
+                    "emgenUseElvtCnt": 0,
                 }
             },
             "numOfRows": 50,
@@ -135,47 +135,47 @@ FLOOR_PAYLOAD = {
                 "item": [
                     {
                         "flrGbCdNm": "지하",
-                        "flrNo": "1",
+                        "flrNo": 1,
                         "flrNoNm": "지하1층",
                         "mainPurpsCdNm": "제2종근린생활시설",
                         "etcPurps": "일반음식점",
-                        "area": "180.2",
+                        "area": 180.2,
                         "strctCdNm": "철근콘크리트구조",
                     },
                     {
                         "flrGbCdNm": "지상",
-                        "flrNo": "1",
+                        "flrNo": 1,
                         "flrNoNm": "1층",
                         "mainPurpsCdNm": "제1종근린생활시설",
                         "etcPurps": "소매점",
-                        "area": "195.4",
+                        "area": 195.4,
                         "strctCdNm": "철근콘크리트구조",
                     },
                     {
                         "flrGbCdNm": "지상",
-                        "flrNo": "2",
+                        "flrNo": 2,
                         "flrNoNm": "2층",
                         "mainPurpsCdNm": "제2종근린생활시설",
                         "etcPurps": "미용원",
-                        "area": "190.0",
+                        "area": 190.0,
                         "strctCdNm": "철근콘크리트구조",
                     },
                     {
                         "flrGbCdNm": "지상",
-                        "flrNo": "3",
+                        "flrNo": 3,
                         "flrNoNm": "3층",
                         "mainPurpsCdNm": "제2종근린생활시설",
                         "etcPurps": "사무소",
-                        "area": "188.6",
+                        "area": 188.6,
                         "strctCdNm": "철근콘크리트구조",
                     },
                     {
                         "flrGbCdNm": "지상",
-                        "flrNo": "4",
+                        "flrNo": 4,
                         "flrNoNm": "4층",
                         "mainPurpsCdNm": "단독주택",
                         "etcPurps": "주인세대",
-                        "area": "120.0",
+                        "area": 120.0,
                         "strctCdNm": "철근콘크리트구조",
                     },
                 ]
@@ -312,7 +312,7 @@ def test_vacancy_record_carries_basis_and_confidence(building, register):
 
 
 def test_unknown_floor_stores_lower_confidence(building, register):
-    """층 표기가 없는 점포가 있으면 '이 층만 비었다'는 판정을 덜 믿어야 한다."""
+    """층 표기가 없는 점포가 있으면 '이 층만 비었다'는 판정을 믿을 수 없다."""
     noisy = dict(building)
     noisy["stores_by_floor"] = {**building["stores_by_floor"], None: [{"name": "층미상가게"}]}
     noisy["stores"] = building["stores"] + [{"name": "층미상가게"}]
@@ -320,7 +320,8 @@ def test_unknown_floor_stores_lower_confidence(building, register):
     candidate = vacancy_estimator.candidates_for_building(
         noisy, register, today=date(2026, 9, 1)
     )[0]
-    assert candidate["vacancy"]["confidence"] == "medium"
+    # 층 표기 없는 점포가 바로 이 층에 있을 수 있다 — 가장 큰 오판 경로라 낮음이다.
+    assert candidate["vacancy"]["confidence"] == "low"
     assert any("층 표기가 없는" in line for line in candidate["vacancy"]["basis"])
 
 
@@ -569,3 +570,230 @@ def test_match_options_lists_collected_regions(client_with_real_provider):
     assert body["region_options"][0] == "상관없음"
     assert "고사동" in body["region_options"]
     assert body["building_count"] == 1
+
+
+# --- 서비스키 (API별로 각각) ----------------------------------------------------
+
+
+def test_each_api_uses_its_own_service_key(monkeypatch):
+    """
+    두 API는 포털 활용신청이 각각이라 서비스키도 각각이다.
+    상가정보 키를 건축물대장 호출에 쓰면 안 된다.
+    """
+    monkeypatch.delenv(datagokr.SHARED_SERVICE_KEY_ENV, raising=False)
+    monkeypatch.setenv(datagokr.SANGGA_KEY_ENV, "SANGGA-KEY")
+    monkeypatch.setenv(datagokr.BLDRGST_KEY_ENV, "BLDRGST-KEY")
+
+    assert datagokr.service_key(datagokr.SANGGA_KEY_ENV) == "SANGGA-KEY"
+    assert datagokr.service_key(datagokr.BLDRGST_KEY_ENV) == "BLDRGST-KEY"
+    # 각 클라이언트 모듈이 자기 키를 가리킨다
+    assert sangga_api.KEY_ENV == datagokr.SANGGA_KEY_ENV
+    assert building_register_api.KEY_ENV == datagokr.BLDRGST_KEY_ENV
+
+
+def test_shared_key_is_used_only_as_fallback(monkeypatch):
+    """한 키로 두 API가 열리는 계정은 공통 키 하나만 넣어도 동작해야 한다."""
+    monkeypatch.delenv(datagokr.SANGGA_KEY_ENV, raising=False)
+    monkeypatch.delenv(datagokr.BLDRGST_KEY_ENV, raising=False)
+    monkeypatch.setenv(datagokr.SHARED_SERVICE_KEY_ENV, "SHARED-KEY")
+
+    assert datagokr.service_key(datagokr.SANGGA_KEY_ENV) == "SHARED-KEY"
+    assert datagokr.service_key(datagokr.BLDRGST_KEY_ENV) == "SHARED-KEY"
+    assert datagokr.has_service_key(datagokr.BLDRGST_KEY_ENV)
+
+    # 전용 키가 있으면 그쪽이 이긴다
+    monkeypatch.setenv(datagokr.BLDRGST_KEY_ENV, "BLDRGST-KEY")
+    assert datagokr.service_key(datagokr.BLDRGST_KEY_ENV) == "BLDRGST-KEY"
+    assert datagokr.service_key(datagokr.SANGGA_KEY_ENV) == "SHARED-KEY"
+
+
+def test_missing_key_message_names_the_api(monkeypatch):
+    monkeypatch.delenv(datagokr.SANGGA_KEY_ENV, raising=False)
+    monkeypatch.delenv(datagokr.SHARED_SERVICE_KEY_ENV, raising=False)
+
+    assert not datagokr.has_service_key(datagokr.SANGGA_KEY_ENV)
+    message = datagokr.missing_key_message(datagokr.SANGGA_KEY_ENV)
+    assert "소상공인시장진흥공단" in message
+    assert datagokr.SANGGA_KEY_ENV in message
+
+
+def test_get_json_demands_the_right_key(monkeypatch):
+    """건축물대장 키만 있고 상가정보 키가 없으면 상가정보 호출이 막혀야 한다."""
+    monkeypatch.delenv(datagokr.SANGGA_KEY_ENV, raising=False)
+    monkeypatch.delenv(datagokr.SHARED_SERVICE_KEY_ENV, raising=False)
+    monkeypatch.setenv(datagokr.BLDRGST_KEY_ENV, "BLDRGST-KEY")
+
+    with pytest.raises(datagokr.DataGoKrError) as excinfo:
+        datagokr.get_json("http://example.test/x", {}, key_env=datagokr.SANGGA_KEY_ENV)
+    assert datagokr.SANGGA_KEY_ENV in str(excinfo.value)
+
+
+# --- 실응답에서 드러난 케이스 ----------------------------------------------------
+
+
+def test_rooftop_floor_does_not_merge_into_first_floor():
+    """
+    실측 사례: flrGbCdNm="옥탑", flrNo=1 이 지상 1층과 flrNo가 겹친다.
+    층 번호만으로 묶으면 옥탑 계단실 면적이 1층에 더해지고 용도도 섞인다.
+    """
+    rows = [
+        {"flrGbCdNm": "지상", "flrNo": 1, "flrNoNm": "1층",
+         "mainPurpsCdNm": "기타제2종근린생활시설", "etcPurps": "제2종근린생활시설(일반음식점)",
+         "area": 80.91, "strctCdNm": "철근콘크리트구조"},
+        {"flrGbCdNm": "옥탑", "flrNo": 1, "flrNoNm": "옥탑1층",
+         "mainPurpsCdNm": "기타제2종근린생활시설", "etcPurps": "계단실",
+         "area": 6.76, "strctCdNm": "철근콘크리트구조"},
+    ]
+    floors = {entry["floor_label"]: entry for entry in building_register_api.parse_floors(rows)}
+
+    assert set(floors) == {"1층", "옥탑1층"}, "옥탑이 1층과 합쳐지면 안 된다"
+    assert floors["1층"]["area"] == 80.91, "옥탑 면적이 1층에 더해지면 안 된다"
+    assert "계단실" not in floors["1층"]["purpose"]
+    # 옥탑은 용도명이 근린생활시설로 적혀 있어도 임대 가능한 상가 층이 아니다
+    assert floors["옥탑1층"]["is_non_leasable"] is True
+
+
+def test_rooftop_is_never_a_vacancy_candidate():
+    building = {
+        "key": "mng:X", "bld_name": "테스트", "stores": [], "stores_by_floor": {},
+        "signgu_name": "전주시 완산구", "ldong_name": "고사동",
+        "road_address": "전북특별자치도 전주시 완산구 테스트로 1", "lat": 35.8, "lng": 127.1,
+    }
+    register = {
+        "title": {"approval_year": 2002, "elevators": 0, "ground_floors": 1},
+        "floors": building_register_api.parse_floors([
+            {"flrGbCdNm": "옥탑", "flrNo": 1, "flrNoNm": "옥탑1층",
+             "mainPurpsCdNm": "기타제2종근린생활시설", "etcPurps": "계단실", "area": 6.76},
+        ]),
+        "register_params": {},
+    }
+    assert vacancy_estimator.candidates_for_building(building, register) == []
+
+
+def test_integer_jibun_fields_become_register_params():
+    """상가정보는 lnoMnno/lnoSlno를 정수로 내려준다 (문서의 lnbrMnnm/lnbrSlno가 아니다)."""
+    raw = {
+        "ldongCd": "5211112700", "plotSctCd": "1",
+        "lnoMnno": 222, "lnoSlno": 3,
+    }
+    params = sangga_api.building_register_params(sangga_api.normalize_store(raw))
+    assert params == {
+        "sigunguCd": "52111", "bjdongCd": "12700",
+        "platGbCd": "0", "bun": "0222", "ji": "0003",
+    }
+
+
+def test_zero_subnumber_is_kept():
+    """부번이 0(부번 없음)이어도 파라미터가 만들어져야 한다."""
+    raw = {"ldongCd": "5211112700", "plotSctCd": "1", "lnoMnno": 15, "lnoSlno": 0}
+    params = sangga_api.building_register_params(sangga_api.normalize_store(raw))
+    assert params is not None and params["bun"] == "0015" and params["ji"] == "0000"
+
+
+def test_empty_floor_number_is_unknown_not_zero():
+    """flrNo가 빈 문자열인 레코드가 절반이다. 0층으로 오해하면 판정이 망가진다."""
+    assert sangga_api.normalize_store({"flrNo": ""})["floor"] is None
+    assert sangga_api.normalize_store({"flrNo": 1})["floor"] == 1
+    assert sangga_api.normalize_store({"flrNo": "B1"})["floor"] == -1
+
+
+def test_blank_building_name_is_treated_as_empty():
+    """건축물대장 bldNm은 비어 있을 때 ' '(공백)으로 온다."""
+    title = building_register_api.parse_title({"bldNm": " ", "dongNm": " ", "useAprDay": "20021128"})
+    assert title["bld_name"] == ""
+    assert title["approval_year"] == 2002
+
+
+def test_short_floor_label_is_normalized():
+    """실측: flrNoNm이 '지1'처럼 줄여 온다. 화면에 그대로 내보내면 안 된다."""
+    rows = [
+        {"flrGbCdNm": "지하", "flrNo": 1, "flrNoNm": "지1",
+         "mainPurpsCdNm": "소매점", "etcPurps": "점포", "area": 29.0},
+        {"flrGbCdNm": "지상", "flrNo": 1, "flrNoNm": "1층",
+         "mainPurpsCdNm": "소매점", "etcPurps": "점포", "area": 80.0},
+    ]
+    labels = [entry["floor_label"] for entry in building_register_api.parse_floors(rows)]
+    assert labels == ["지하1층", "1층"]
+
+
+def test_non_retail_purposes_are_not_commercial():
+    """
+    골프연습장·사무실 전체 층까지 상가로 보면 카페 창업자에게 무의미한 후보가 올라온다
+    (실수집에서 236평 골프연습장이 공실 후보로 잡혔다).
+    """
+    assert building_register_api.is_commercial_purpose("제2종근린생활시설 소매점")
+    assert building_register_api.is_commercial_purpose("소매점 점포")
+    assert building_register_api.is_commercial_purpose("판매시설")
+    # 근린생활시설로 등재된 소규모 사무소/학원은 계속 포함된다
+    assert building_register_api.is_commercial_purpose("제2종근린생활시설(사무소)")
+
+    assert not building_register_api.is_commercial_purpose("운동시설 골프연습장")
+    assert not building_register_api.is_commercial_purpose("업무시설 사무소")
+    assert not building_register_api.is_commercial_purpose("교육연구시설")
+    assert not building_register_api.is_commercial_purpose("숙박시설")
+    assert not building_register_api.is_commercial_purpose("공동주택 아파트")
+
+
+def test_confidence_reflects_measured_floor_coverage(building, register):
+    """
+    실수집 측정값 기준으로 등급이 갈려야 한다 (flrNo 50% 누락, 건물당 점포 1.8건).
+    '층 찍힌 점포 3건 이상 = 높음' 같은 기준은 아무 매물도 높음이 되지 않는다.
+    """
+    def confidence_with(known: int, unknown: int) -> str:
+        stub = dict(building)
+        stores = [{"name": f"s{i}"} for i in range(known)]
+        by_floor = {1: stores[:1], 2: stores[1:]} if known else {}
+        if unknown:
+            by_floor[None] = [{"name": "층미상"} for _ in range(unknown)]
+        stub["stores"] = stores + by_floor.get(None, [])
+        stub["stores_by_floor"] = by_floor
+        return vacancy_estimator.candidates_for_building(stub, register)[0]["vacancy"]["confidence"]
+
+    assert confidence_with(known=2, unknown=0) == "high"
+    assert confidence_with(known=1, unknown=0) == "medium"
+    assert confidence_with(known=0, unknown=0) == "low"
+    # 층 미상 점포가 있으면 층이 많이 찍혀 있어도 믿을 수 없다
+    assert confidence_with(known=5, unknown=1) == "low"
+
+
+# --- 실패 진단 -------------------------------------------------------------------
+
+
+def test_service_key_never_appears_in_error_text(monkeypatch):
+    """
+    httpx 예외 문구에는 쿼리스트링이 통째로 들어간다. 그대로 로그에 흘리면
+    .env의 서비스키가 콘솔과 파일에 남는다.
+    """
+    monkeypatch.setenv(datagokr.SANGGA_KEY_ENV, "abcdef1234567890SECRETKEY")
+    raw = (
+        "Client error '403 Forbidden' for url "
+        "'http://apis.data.go.kr/x?bun=0222&serviceKey=abcdef1234567890SECRETKEY'"
+    )
+    masked = datagokr.mask_secrets(raw)
+
+    assert "abcdef1234567890SECRETKEY" not in masked
+    assert "<SERVICE_KEY>" in masked
+    assert "403 Forbidden" in masked, "진단에 필요한 정보는 남아야 한다"
+
+
+def test_mask_secrets_handles_unknown_keys():
+    """환경변수에 없는 키도 쿼리스트링 패턴으로 가려야 한다."""
+    masked = datagokr.mask_secrets("url?serviceKey=someKeyNotInEnv123&pageNo=1")
+    assert "someKeyNotInEnv123" not in masked
+    assert "pageNo=1" in masked
+
+
+def test_auth_error_is_detected_so_collection_stops_early():
+    """
+    키가 거부되면 남은 건물도 전부 같은 이유로 실패한다. 조용히 세기만 하면
+    '오류 100'만 남고 원인을 알 수 없다 (실제로 겪은 문제).
+    """
+    assert building_register_api.is_auth_error(
+        "Client error '403 Forbidden' for url 'http://...'"
+    )
+    assert building_register_api.is_auth_error("SERVICE_KEY_IS_NOT_REGISTERED_ERROR")
+    assert building_register_api.is_auth_error("등록되지 않은 서비스키")
+
+    # 정상적인 '그 지번에 대장이 없음'은 키 문제가 아니다 — 멈추면 안 된다
+    assert not building_register_api.is_auth_error("resultCode=03 NODATA_ERROR")
+    assert not building_register_api.is_auth_error("ReadTimeout")

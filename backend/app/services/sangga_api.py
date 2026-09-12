@@ -22,6 +22,10 @@ from app.services import datagokr
 
 logger = logging.getLogger(__name__)
 
+# 이 모듈의 모든 호출은 상가정보 API 전용 키를 쓴다 (포털 개발계정은 활용신청
+# 건별로 키가 따로 나온다). 전용 키가 없으면 datagokr가 공통 키로 폴백한다.
+KEY_ENV = datagokr.SANGGA_KEY_ENV
+
 # 포털 문서 기준 현행 경로는 sdsc2다. 구 버전(sdsc)만 열려 있는 계정도 있어
 # .env에서 덮어쓸 수 있게 둔다.
 DEFAULT_BASE_URL = "http://apis.data.go.kr/B553077/api/open/sdsc2"
@@ -34,6 +38,10 @@ JEONBUK_CTPRVN_CODES = ("52", "45")
 # 대지구분코드(plotSctCd) -> 건축물대장 platGbCd.
 # 상가정보: 1=대지, 2=산. 건축물대장: 0=대지, 1=산, 2=블록.
 PLOT_TO_PLAT_GB = {"1": "0", "2": "1", "0": "0"}
+
+# 사각형 조회가 이만큼 연속 거부되면 격자 크기 문제로 보고 순회를 중단한다.
+# (실측: 0.1도 격자는 전부 INVALID_REQUEST_PARAMETER_ERROR, 0.04도는 정상)
+MAX_INVALID_TILE_STREAK = 3
 
 
 def base_url() -> str:
@@ -49,29 +57,53 @@ def _request_params(extra: dict[str, Any]) -> dict[str, Any]:
     return {"type": "json", **extra}
 
 
-def store_list_in_admi(
-    div_id: str,
-    key: str,
+def store_list_in_rectangle(
+    min_lng: float,
+    min_lat: float,
+    max_lng: float,
+    max_lat: float,
     *,
     rows: int = 1000,
-    max_pages: int = 1000,
-    progress: Optional[Any] = None,
+    max_pages: int = 30,
     base: Optional[str] = None,
 ) -> Iterator[dict[str, Any]]:
     """
-    행정구역 단위 상가 목록.
+    사각형 영역 내 상가 목록. 지역 전체를 훑을 때 쓴다.
 
-    Args:
-        div_id: "ctprvnCd"(시도) | "signguCd"(시군구) | "adongCd"(행정동)
-        key: div_id에 해당하는 행정구역 코드
+    행정구역 단위 조회(storeListInAdmi)가 이 계정에서 폐기(NO_OPENAPI_SERVICE_ERROR)
+    되어 있어, 영역 단위 조회로 전북을 격자 순회한다 (sweep_region 참고).
     """
     yield from datagokr.paged(
-        _endpoint("storeListInAdmi", base),
-        _request_params({"divId": div_id, "key": key}),
+        _endpoint("storeListInRectangle", base),
+        _request_params(
+            {"minx": min_lng, "miny": min_lat, "maxx": max_lng, "maxy": max_lat}
+        ),
+        key_env=KEY_ENV,
         rows=rows,
         max_pages=max_pages,
-        progress=progress,
     )
+
+
+def rectangle_total_count(
+    min_lng: float, min_lat: float, max_lng: float, max_lat: float, base: Optional[str] = None
+) -> int:
+    """사각형 안의 전체 점포 수만 1건 조회로 확인한다 (빈 격자를 싸게 건너뛰기 위함)."""
+    payload = datagokr.get_json(
+        _endpoint("storeListInRectangle", base),
+        _request_params(
+            {
+                "minx": min_lng,
+                "miny": min_lat,
+                "maxx": max_lng,
+                "maxy": max_lat,
+                "pageNo": 1,
+                "numOfRows": 1,
+            }
+        ),
+        key_env=KEY_ENV,
+    )
+    datagokr.check_header(payload)
+    return datagokr.total_count(payload)
 
 
 def store_list_in_radius(
@@ -91,6 +123,7 @@ def store_list_in_radius(
     yield from datagokr.paged(
         _endpoint("storeListInRadius", base),
         _request_params(extra),
+        key_env=KEY_ENV,
         rows=rows,
         max_pages=max_pages,
     )
@@ -102,40 +135,174 @@ def store_list_in_building(bld_mng_no: str, base: Optional[str] = None) -> list[
         datagokr.paged(
             _endpoint("storeListInBuilding", base),
             _request_params({"key": bld_mng_no}),
+            key_env=KEY_ENV,
             rows=1000,
             max_pages=5,
         )
     )
 
 
-def resolve_jeonbuk_ctprvn_code() -> Optional[str]:
+def sweep_centers(
+    centers: list[dict[str, Any]],
+    *,
+    radius_m: int = 2000,
+    ctprvn_codes: tuple[str, ...] = JEONBUK_CTPRVN_CODES,
+    rows: int = 1000,
+    max_pages_per_center: int = 5,
+    progress: Optional[Any] = None,
+) -> Iterator[dict[str, Any]]:
     """
-    전북 시도코드가 52인지 45인지 1페이지만 찔러 확인한다.
-    사전 수집 스크립트가 맨 앞에서 한 번 호출한다.
-    """
-    for code in JEONBUK_CTPRVN_CODES:
-        for base in (base_url(), FALLBACK_BASE_URL):
-            try:
-                payload = datagokr.get_json(
-                    _endpoint("storeListInAdmi", base),
-                    _request_params(
-                        {"divId": "ctprvnCd", "key": code, "pageNo": 1, "numOfRows": 1}
-                    ),
-                )
-                datagokr.check_header(payload)
-            except datagokr.DataGoKrError as exc:
-                logger.info("상가정보 시도코드 %s (%s) 확인 실패: %s", code, base, exc)
-                continue
-            except Exception as exc:  # 네트워크/HTTP 오류
-                logger.info("상가정보 호출 실패 %s (%s): %s", code, base, exc)
-                continue
+    지점 목록을 중심으로 반경 조회를 돌려 점포를 모은다.
 
-            if datagokr.extract_items(payload):
-                if base != base_url():
-                    os.environ["SANGGA_API_BASE_URL"] = base
-                    logger.info("상가정보 base_url을 %s로 고정", base)
-                return code
-    return None
+    전역을 사각형 격자로 훑는 방식(sweep_region)은 개발계정 호출 한도(429)를
+    금방 넘긴다. 시·군 대표 지점을 중심으로 도심 상권만 표본 수집하는 쪽이
+    같은 호출 수로 훨씬 쓸모 있는 후보를 준다.
+
+    Args:
+        centers: [{"id", "region_name", "lat", "lng"}, ...]
+        radius_m: 중심당 반경(미터)
+        max_pages_per_center: 중심당 최대 페이지. 1페이지 1000건.
+
+    중복은 bizesId로 걸러 낸다 — 반경이 겹치는 중심이 있기 때문이다.
+    """
+    seen_ids: set[str] = set()
+    yielded = 0
+
+    for index, center in enumerate(centers, start=1):
+        lat, lng = center.get("lat"), center.get("lng")
+        label = center.get("region_name") or center.get("id") or "?"
+        if lat is None or lng is None:
+            continue
+
+        try:
+            for raw in store_list_in_radius(
+                lng, lat, radius_m, rows=rows, max_pages=max_pages_per_center
+            ):
+                if ctprvn_codes and str(raw.get("ctprvnCd") or "") not in ctprvn_codes:
+                    continue
+                store_id = str(raw.get("bizesId") or "")
+                if store_id and store_id in seen_ids:
+                    continue
+                if store_id:
+                    seen_ids.add(store_id)
+                yielded += 1
+                yield raw
+        except datagokr.RateLimited:
+            raise  # 한도는 호출부가 처리한다 (모은 만큼으로 진행)
+        except datagokr.DataGoKrError as exc:
+            logger.warning("중심 %s 조회 실패: %s", label, exc)
+        except Exception as exc:
+            logger.warning("중심 %s 호출 실패: %s", label, exc)
+
+        if progress is not None:
+            progress(index, len(centers), label, yielded)
+
+
+def sweep_region(
+    bbox: tuple[float, float, float, float],
+    *,
+    ctprvn_codes: tuple[str, ...] = JEONBUK_CTPRVN_CODES,
+    step_deg: float = 0.04,
+    rows: int = 1000,
+    max_pages_per_tile: int = 30,
+    progress: Optional[Any] = None,
+) -> Iterator[dict[str, Any]]:
+    """
+    사각형 격자로 지역 전체를 훑는다.
+
+    Args:
+        bbox: (min_lng, min_lat, max_lng, max_lat)
+        ctprvn_codes: 이 시도코드에 속한 점포만 내보낸다. 격자가 도 경계를 넘으면
+            인접 도 점포가 섞여 들어오기 때문이다. 전북은 2024-01-18 전북특별자치도
+            출범으로 45 -> 52가 되었고 데이터 기준월에 따라 둘 다 나타날 수 있다.
+        step_deg: 격자 한 칸의 크기(도). 0.1도는 대략 9km x 11km다.
+        progress: progress(tile_index, tile_total, tile_label, yielded) 콜백
+
+    빈 격자는 totalCount만 보고 건너뛴다 (호출 1회). 중복은 bizesId로 걸러 낸다 —
+    격자 경계에 걸친 점포가 두 번 나올 수 있다.
+    """
+    min_lng, min_lat, max_lng, max_lat = bbox
+    lngs = _frange(min_lng, max_lng, step_deg)
+    lats = _frange(min_lat, max_lat, step_deg)
+    tiles = [(x, y) for y in lats for x in lngs]
+
+    seen_ids: set[str] = set()
+    yielded = 0
+    invalid_streak = 0
+
+    for index, (tile_lng, tile_lat) in enumerate(tiles, start=1):
+        tile = (tile_lng, tile_lat, tile_lng + step_deg, tile_lat + step_deg)
+        label = "{:.2f},{:.2f}".format(tile_lat, tile_lng)
+
+        try:
+            total = rectangle_total_count(*tile)
+            invalid_streak = 0
+        except datagokr.DataGoKrError as exc:
+            logger.warning("격자 %s totalCount 실패: %s", label, exc)
+            if _is_quota_error(exc):
+                raise
+            # 사각형이 API 허용 범위보다 크면 모든 격자가 똑같이 거부된다.
+            # 수백 번 더 호출해 한도를 태우지 말고 바로 멈추고 원인을 알린다.
+            if "INVALID_REQUEST_PARAMETER" in str(exc).upper():
+                invalid_streak += 1
+                if invalid_streak >= MAX_INVALID_TILE_STREAK:
+                    raise datagokr.DataGoKrError(
+                        "사각형 조회가 연속 {}회 거부되었습니다 (INVALID_REQUEST_PARAMETER). "
+                        "격자 크기 {}도가 API 허용 범위를 넘는 것으로 보입니다 — "
+                        "--step을 {:.2f} 이하로 줄이세요.".format(
+                            invalid_streak, step_deg, max(0.01, step_deg / 2)
+                        )
+                    ) from None
+            continue
+        except Exception as exc:
+            logger.warning("격자 %s 조회 실패: %s", label, exc)
+            continue
+
+        if total <= 0:
+            if progress is not None:
+                progress(index, len(tiles), label, yielded)
+            continue
+
+        try:
+            for raw in store_list_in_rectangle(
+                *tile, rows=rows, max_pages=max_pages_per_tile
+            ):
+                if ctprvn_codes and str(raw.get("ctprvnCd") or "") not in ctprvn_codes:
+                    continue
+                store_id = str(raw.get("bizesId") or "")
+                if store_id and store_id in seen_ids:
+                    continue
+                if store_id:
+                    seen_ids.add(store_id)
+                yielded += 1
+                yield raw
+        except datagokr.DataGoKrError as exc:
+            logger.warning("격자 %s 페이징 중단: %s", label, exc)
+            if _is_quota_error(exc):
+                raise
+        except Exception as exc:
+            logger.warning("격자 %s 페이징 실패: %s", label, exc)
+
+        if progress is not None:
+            progress(index, len(tiles), label, yielded)
+
+
+def _frange(start: float, stop: float, step: float) -> list[float]:
+    values = []
+    current = start
+    # 부동소수 누적 오차로 마지막 칸이 빠지지 않게 step의 절반을 여유로 둔다.
+    while current < stop - step / 2:
+        values.append(round(current, 6))
+        current += step
+    if not values or values[-1] + step < stop:
+        values.append(round(current, 6))
+    return values
+
+
+def _is_quota_error(exc: Exception) -> bool:
+    """일일 한도 초과는 재시도해도 소용없으므로 순회를 즉시 멈춘다."""
+    message = str(exc).upper()
+    return "LIMIT" in message or "초과" in str(exc)
 
 
 # --- 레코드 정규화 -------------------------------------------------------------
@@ -201,8 +368,10 @@ def normalize_store(store: dict[str, Any]) -> dict[str, Any]:
         "road_address": _text(store, "rdnmAdr", "rdnmAdrs"),
         "jibun_address": _text(store, "lnoAdr", "lnoAdrs"),
         "plot_sct_cd": _text(store, "plotSctCd"),
-        "bun": _text(store, "lnbrMnnm"),
-        "ji": _text(store, "lnbrSlno"),
+        # 실응답 필드명은 lnoMnno/lnoSlno이고 값은 정수로 내려온다 (예: 222 / 3).
+        # 포털 문서에 lnbrMnnm/lnbrSlno로 적힌 판본이 있어 둘 다 본다.
+        "bun": _text(store, "lnoMnno", "lnbrMnnm"),
+        "ji": _text(store, "lnoSlno", "lnbrSlno"),
         "floor": floor_number(store),
         "ho": _text(store, "hoNo"),
         "lng": _number(store, "lon", "lng", "x"),

@@ -5,18 +5,28 @@
 매물 후보로 만든다. 판정 논리와 점수 계산은 app/services/vacancy_estimator.py에 있고,
 이 스크립트는 호출/페이징/캐시 저장만 담당한다.
 
+수집 방식 (실제 API 동작에 맞춰 정한 것이다):
+  - 행정구역 단위 조회(storeListInAdmi)는 폐기되어(NO_OPENAPI_SERVICE_ERROR) 쓸 수 없다.
+  - 전역을 사각형 격자로 훑으면 개발계정 호출 한도(429)를 금방 넘는다.
+    0.1도 격자는 API가 아예 거부한다(INVALID_REQUEST_PARAMETER_ERROR).
+  - 그래서 기본은 시·군 대표 지점(region_stats.json 좌표) 반경 조회다.
+    전북 14개 시·군 + 전주 5개 시범 상권 도심을 표본으로 훑는다.
+  - 반경/격자 모두 도 경계를 넘어온 인접 도 점포는 ctprvnCd로 걸러 낸다.
+
 실행:
     cd backend
-    python scripts/fetch_real_vacancies.py                    # 전북 전역
-    python scripts/fetch_real_vacancies.py --max-buildings 300  # 쿼터 절약
-    python scripts/fetch_real_vacancies.py --signgu 52111       # 특정 시군구만
+    python scripts/fetch_real_vacancies.py                      # 전북 시·군 전역(기본)
+    python scripts/fetch_real_vacancies.py --max-buildings 200  # 호출 절약
+    python scripts/fetch_real_vacancies.py --mode grid --bbox 127.08,35.79,127.20,35.86
 
-사전 준비 — backend/.env에 공공데이터포털 일반 인증키(Decoding)를 넣는다:
-    DATA_GO_KR_SERVICE_KEY=...
+사전 준비 — 두 API는 포털 활용신청이 각각이라 서비스키도 각각이다.
+backend/.env에 각 API의 '일반 인증키(Decoding)'를 넣는다:
 
-두 API 모두 같은 키를 쓰지만, 포털에서 각각 활용신청이 승인돼 있어야 한다:
-    소상공인시장진흥공단_상가(상권)정보
-    국토교통부_건축HUB_건축물대장정보 서비스
+    SANGGA_API_SERVICE_KEY=...   소상공인시장진흥공단_상가(상권)정보
+    BLDRGST_API_SERVICE_KEY=...  국토교통부_건축HUB_건축물대장정보 서비스
+
+한 키로 두 API가 다 열리는 계정이면 DATA_GO_KR_SERVICE_KEY 하나만 넣어도 된다
+(전용 키가 없을 때의 폴백).
 
 출력 (app/data/real/):
     buildings.json     매물 후보 (기존 buildings.json과 동일 스키마 + vacancy/register)
@@ -32,6 +42,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import pathlib
 import sys
 import time
@@ -56,6 +67,11 @@ from app.services import building_register_api, datagokr, sangga_api, vacancy_es
 OUT_DIR = BASE_DIR / "app" / "data" / "real"
 
 BUSINESS_TYPES = ["카페", "학원", "병원", "편의점", "스터디카페"]
+
+# 전북특별자치도 대략 경계 (min_lng, min_lat, max_lng, max_lat).
+# 서쪽 군산/부안 해안 ~ 동쪽 무주/장수 산간, 남쪽 남원 ~ 북쪽 익산.
+# 격자가 도 경계를 넘으면 인접 도 점포가 섞이므로 sweep_region이 ctprvnCd로 걸러 낸다.
+JEONBUK_BBOX = (126.40, 35.00, 127.95, 36.15)
 
 # region_stats의 지역 id는 프론트/목업과 맞춘다 (시군명 -> id).
 SIGNGU_TO_REGION_ID = {
@@ -94,25 +110,80 @@ def log(message: str) -> None:
 # --- 1단계: 상가정보 수집 -------------------------------------------------------
 
 
-def collect_stores(ctprvn_cd: str, signgu_filter: Optional[str], max_pages: int) -> list[dict[str, Any]]:
-    """전북 전역(또는 지정 시군구)의 점포를 모두 가져와 정규화한다."""
-    if signgu_filter:
-        div_id, key = "signguCd", signgu_filter
-        log("상가정보 수집 — 시군구 {}".format(signgu_filter))
-    else:
-        div_id, key = "ctprvnCd", ctprvn_cd
-        log("상가정보 수집 — 전북 시도코드 {}".format(ctprvn_cd))
+def load_centers() -> list[dict[str, Any]]:
+    """
+    반경 수집의 중심 지점. region_stats.json의 시·군/상권 대표 좌표를 그대로 쓴다.
+
+    전북 14개 시·군 + 전주 5개 시범 상권이 이미 들어 있어서, 별도 좌표 표를
+    새로 만들지 않아도 시·군별 coverage가 확보된다.
+    """
+    path = BASE_DIR / "app" / "data" / "region_stats.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    return [
+        {"id": item["id"], "region_name": item["region_name"], "lat": item["lat"], "lng": item["lng"]}
+        for item in data["regions"]
+        if item.get("lat") is not None and item.get("lng") is not None
+    ]
+
+
+def collect_stores_by_centers(
+    centers: list[dict[str, Any]], radius_m: int, max_pages: int
+) -> list[dict[str, Any]]:
+    """
+    시·군 대표 지점 반경으로 점포를 모은다 (기본 방식).
+
+    행정구역 단위 조회(storeListInAdmi)는 이 계정에서 폐기되어 쓸 수 없고, 전역을
+    사각형 격자로 훑으면 개발계정 호출 한도(429)를 금방 넘긴다. 그래서 시·군
+    도심 반경만 표본 수집한다 — 같은 호출 수로 훨씬 쓸모 있는 후보가 나온다.
+    """
+    log(
+        "상가정보 수집 — 중심 {}곳 / 반경 {:,}m / 중심당 최대 {}페이지".format(
+            len(centers), radius_m, max_pages
+        )
+    )
 
     stores: list[dict[str, Any]] = []
 
-    def progress(page: int, seen: int, total: int) -> None:
-        if page % 10 == 0 or page == 1:
-            log("  {}페이지 / 누적 {:,}건 (totalCount {:,})".format(page, seen, total))
+    def progress(index: int, total: int, label: str, yielded: int) -> None:
+        log("  [{}/{}] {} — 누적 {:,}건".format(index, total, label, yielded))
 
     try:
-        for raw in sangga_api.store_list_in_admi(
-            div_id, key, rows=1000, max_pages=max_pages, progress=progress
+        for raw in sangga_api.sweep_centers(
+            centers, radius_m=radius_m, max_pages_per_center=max_pages, progress=progress
         ):
+            stores.append(sangga_api.normalize_store(raw))
+    except datagokr.DataGoKrError as exc:
+        if not stores:
+            raise
+        log("  [경고] 수집이 중단되었습니다 ({}). 모은 {:,}건으로 계속합니다.".format(exc, len(stores)))
+
+    log("상가정보 {:,}건 수집 완료".format(len(stores)))
+    return stores
+
+
+def collect_stores_by_grid(
+    bbox: tuple[float, float, float, float], step_deg: float
+) -> list[dict[str, Any]]:
+    """
+    사각형 격자로 지역 전체를 훑는다 (--mode grid).
+
+    호출 수가 많아 개발계정 한도로는 전북 전역을 끝까지 돌기 어렵다. 한도가 넉넉한
+    운영계정이나 좁은 --bbox에서 쓴다. 0.1도 격자는 API가 거부하므로 0.04도가 기본이다.
+    """
+    log(
+        "상가정보 수집(격자) — bbox {} / 격자 {}도 (약 {:.0f}km)".format(
+            bbox, step_deg, step_deg * 111
+        )
+    )
+
+    stores: list[dict[str, Any]] = []
+
+    def progress(index: int, total: int, label: str, yielded: int) -> None:
+        if index % 10 == 0 or index == total:
+            log("  격자 {}/{} ({}) — 누적 {:,}건".format(index, total, label, yielded))
+
+    try:
+        for raw in sangga_api.sweep_region(bbox, step_deg=step_deg, progress=progress):
             stores.append(sangga_api.normalize_store(raw))
     except datagokr.DataGoKrError as exc:
         if not stores:
@@ -131,12 +202,30 @@ def _candidate_priority(building: dict[str, Any]) -> tuple[int, int]:
     """
     건축물대장을 조회할 우선순위. 작은 값이 먼저.
 
-    층이 찍힌 점포가 하나라도 있는 건물을 앞세운다 — 층 단위 공실 판정의
-    신뢰도가 거기서 나온다. 그다음 점포 수가 적은 건물(빈 층이 있을 여지가 큰 건물).
+    공실 판정의 신뢰도(vacancy_estimator.assess_floor_vacancy)가 그대로 등급이
+    되도록, 신뢰도가 높게 나올 수 있는 건물부터 조회한다:
+
+      0순위  층 표기 없는 점포 0건 + 층이 찍힌 점포 2건 이상 -> 신뢰도 높음 가능
+      1순위  층 표기 없는 점포 0건 + 층이 찍힌 점포 1건      -> 보통
+      2순위  층 표기 없는 점포가 있는 건물                   -> 낮음
+
+    점포 수가 적은 건물만 앞세우면(이전 구현) 1개 점포 건물만 뽑혀서 모든 매물이
+    '보통'으로 고정된다 — 실수집에서 125건 전부 보통으로 나와 확인한 문제다.
+    같은 순위 안에서는 점포가 적은 건물(빈 층이 있을 여지가 큰 건물)을 먼저 본다.
     """
-    floors = building.get("stores_by_floor", {})
-    known_floors = sum(1 for floor in floors if floor is not None)
-    return (0 if known_floors else 1, len(building.get("stores", ())))
+    by_floor = building.get("stores_by_floor", {})
+    unknown = len(by_floor.get(None, ()))
+    known = sum(len(stores) for floor, stores in by_floor.items() if floor is not None)
+
+    if unknown:
+        tier = 2
+    elif known >= 2:
+        tier = 0
+    elif known == 1:
+        tier = 1
+    else:
+        tier = 2
+    return (tier, len(building.get("stores", ())))
 
 
 def select_buildings(
@@ -177,6 +266,18 @@ def select_buildings(
 # --- 3단계: 건축물대장 조회 + 공실 판정 ------------------------------------------
 
 
+# 실패가 수백 건이어도 로그가 도배되지 않게 앞의 몇 건만 보여 준다.
+# 0건이면 원인을 전혀 알 수 없으므로 반드시 몇 건은 보여 줘야 한다.
+ERROR_SAMPLE_LIMIT = 5
+
+
+def _log_sample_error(error_count: int, building: dict[str, Any], message: str) -> None:
+    if error_count <= ERROR_SAMPLE_LIMIT:
+        log("  [건너뜀] {} — {}".format(building.get("jibun_address") or building["key"], message))
+    elif error_count == ERROR_SAMPLE_LIMIT + 1:
+        log("  [건너뜀] … 이후 오류는 요약만 표시합니다")
+
+
 def fetch_registers(
     selected: list[dict[str, Any]], today: date, sleep_sec: float
 ) -> tuple[list[dict[str, Any]], dict[str, int]]:
@@ -200,8 +301,22 @@ def fetch_registers(
     vacant_by_signgu: dict[str, int] = defaultdict(int)
 
     if selected:
-        probed = building_register_api.probe_base_url(selected[0]["register_params"])
-        log("건축물대장 base_url: {}".format(probed or "확인 실패 — 기본값으로 진행"))
+        probed, reasons = building_register_api.probe_base_url(selected[0]["register_params"])
+        if probed:
+            log("건축물대장 base_url: {}".format(probed))
+        else:
+            # 여기서 실패하면 이후 모든 건물이 같은 이유로 실패한다. 사유를 바로 보여 준다.
+            log("건축물대장 접속 확인 실패 — 사유:")
+            for reason in reasons:
+                log("  " + reason)
+            if any(building_register_api.is_auth_error(reason) for reason in reasons):
+                log("")
+                log("  건축물대장 서비스키가 거부되었습니다. backend/.env의")
+                log("  {}를 확인하세요 (포털의 '일반 인증키(Decoding)' 전체 문자열).".format(
+                    datagokr.BLDRGST_KEY_ENV
+                ))
+                log("  키가 한 글자라도 잘리면 이 오류가 납니다.")
+                return [], stats
 
     for position, building in enumerate(selected, start=1):
         if position % 25 == 0:
@@ -216,15 +331,24 @@ def fetch_registers(
             register = building_register_api.fetch_building(building["register_params"])
         except datagokr.DataGoKrError as exc:
             stats["errors"] += 1
-            message = str(exc)
-            if "LIMIT" in message.upper() or "초과" in message:
-                log("  [중단] 일일 호출 한도에 걸렸습니다: {}".format(message))
+            message = datagokr.mask_secrets(str(exc))
+            if isinstance(exc, datagokr.RateLimited) or "LIMIT" in message.upper() or "초과" in message:
+                log("  [중단] 호출 한도에 걸렸습니다: {}".format(message))
                 break
+            # 키가 거부되면 남은 건물도 전부 같은 이유로 실패한다. 호출을 더
+            # 태우지 말고 바로 멈추고 원인을 알린다 (이전에는 조용히 세기만 해서
+            # "오류 100"만 남고 이유를 알 수 없었다).
+            if building_register_api.is_auth_error(message):
+                log("  [중단] 건축물대장 서비스키가 거부되었습니다: {}".format(message))
+                log("         backend/.env의 {}를 확인하세요 (Decoding 키 전체 문자열).".format(
+                    datagokr.BLDRGST_KEY_ENV
+                ))
+                break
+            _log_sample_error(stats["errors"], building, message)
             continue
         except Exception as exc:  # 네트워크/타임아웃 — 건물 단위로 건너뛴다
             stats["errors"] += 1
-            if stats["errors"] <= 5:
-                log("  [건너뜀] {} — {}".format(building.get("jibun_address") or building["key"], exc))
+            _log_sample_error(stats["errors"], building, datagokr.mask_secrets(str(exc)))
             continue
 
         if register is None:
@@ -316,7 +440,7 @@ def build_region_stats(
 
         regions.append(
             {
-                "id": SIGNGU_TO_REGION_ID.get(signgu.replace(" ", ""), _slug(signgu)),
+                "id": _region_id(signgu),
                 "scope": "district",
                 "region_name": signgu,
                 "lat": round(lat, 6),
@@ -347,6 +471,28 @@ def build_region_stats(
         ),
         "regions": regions,
     }
+
+
+def _region_id(signgu_name: str) -> str:
+    """
+    시군명 -> region_stats id. 프론트/목업과 id를 맞추기 위한 변환이다.
+
+    상가정보 API의 signguNm은 "전주시 완산구"처럼 구까지 붙어 오거나 띄어쓰기가
+    제각각이라, 공백 제거 후 전체 일치 -> 선행 "OO시/OO군" 토큰 일치 순으로 찾는다.
+    어디에도 없으면 이름 기반 슬러그를 쓴다 (지역이 빠지는 것보다 낫다).
+    """
+    compact = signgu_name.replace(" ", "")
+    if compact in SIGNGU_TO_REGION_ID:
+        return SIGNGU_TO_REGION_ID[compact]
+
+    for suffix in ("시", "군"):
+        index = compact.find(suffix)
+        if index > 0:
+            head = compact[: index + 1]
+            if head in SIGNGU_TO_REGION_ID:
+                return SIGNGU_TO_REGION_ID[head]
+
+    return _slug(signgu_name)
 
 
 def _slug(name: str) -> str:
@@ -380,9 +526,7 @@ def finalize_top_business(
     """
     by_region: dict[str, list[str]] = defaultdict(list)
     for candidate in candidates:
-        region_id = SIGNGU_TO_REGION_ID.get(
-            (candidate.get("signgu_name") or "").replace(" ", ""), _slug(candidate.get("signgu_name") or "미상")
-        )
+        region_id = _region_id(candidate.get("signgu_name") or "미상")
         by_region[region_id].append(candidate["id"])
 
     for region in region_stats["regions"]:
@@ -446,40 +590,82 @@ def parse_args() -> argparse.Namespace:
         default=800,
         help="건축물대장을 조회할 건물 수 상한 (건물당 2회 호출). 기본 800",
     )
-    parser.add_argument("--signgu", default=None, help="특정 시군구코드만 수집 (예: 52111)")
     parser.add_argument(
-        "--max-store-pages", type=int, default=400, help="상가정보 최대 페이지 수 (1000건/페이지)"
+        "--mode",
+        choices=("centers", "grid"),
+        default="centers",
+        help="centers=시·군 대표 지점 반경 수집(기본, 호출 적음) / grid=bbox 격자 순회(호출 많음)",
+    )
+    parser.add_argument(
+        "--radius", type=int, default=2000, help="centers 모드의 중심당 반경(m). 기본 2000"
+    )
+    parser.add_argument(
+        "--center-pages",
+        type=int,
+        default=5,
+        help="centers 모드의 중심당 최대 페이지(1000건/페이지). 기본 5",
+    )
+    parser.add_argument(
+        "--bbox",
+        default=None,
+        help="grid 모드의 수집 영역 'min_lng,min_lat,max_lng,max_lat'. 기본은 전북 전역",
+    )
+    parser.add_argument(
+        "--step",
+        type=float,
+        default=0.04,
+        help="grid 모드 격자 한 칸 크기(도). 0.1도는 API가 거부한다(실측). 기본 0.04",
     )
     parser.add_argument("--sleep", type=float, default=0.12, help="건축물대장 호출 간 대기 초")
     parser.add_argument("--out", default=str(OUT_DIR), help="출력 디렉터리")
     return parser.parse_args()
 
 
+def parse_bbox(raw: Optional[str]) -> tuple[float, float, float, float]:
+    if not raw:
+        return JEONBUK_BBOX
+    parts = [float(piece) for piece in raw.split(",")]
+    if len(parts) != 4:
+        raise SystemExit("--bbox는 'min_lng,min_lat,max_lng,max_lat' 형식이어야 합니다.")
+    return (parts[0], parts[1], parts[2], parts[3])
+
+
 def main() -> int:
     _utf8_stdout()
     args = parse_args()
 
-    if not datagokr.has_service_key():
-        log("{}가 없습니다. backend/.env에 공공데이터포털 일반 인증키(Decoding)를 넣으세요.".format(
-            datagokr.SERVICE_KEY_ENV
-        ))
+    # 두 API는 포털 활용신청이 각각이라 서비스키도 각각이다. 둘 중 하나라도
+    # 없으면 수집이 반쪽이 되므로 시작 전에 같이 확인한다.
+    missing = [
+        key_env
+        for key_env in (datagokr.SANGGA_KEY_ENV, datagokr.BLDRGST_KEY_ENV)
+        if not datagokr.has_service_key(key_env)
+    ]
+    if missing:
+        log("서비스키가 없어 수집을 시작할 수 없습니다.")
+        for key_env in missing:
+            log("  - " + datagokr.missing_key_message(key_env))
+        log("")
+        log("backend/.env 예시:")
+        log("    SANGGA_API_SERVICE_KEY=상가정보_Decoding_키")
+        log("    BLDRGST_API_SERVICE_KEY=건축물대장_Decoding_키")
         return 1
+
+    log(
+        "서비스키 확인 — 상가정보 {} / 건축물대장 {}".format(
+            "전용 키" if os.environ.get(datagokr.SANGGA_KEY_ENV) else "공통 키",
+            "전용 키" if os.environ.get(datagokr.BLDRGST_KEY_ENV) else "공통 키",
+        )
+    )
 
     today = date.today()
     started = datetime.now()
 
-    ctprvn_cd = args.signgu or sangga_api.resolve_jeonbuk_ctprvn_code()
-    if ctprvn_cd is None:
-        log(
-            "상가정보 API에서 전북 데이터를 찾지 못했습니다.\n"
-            "  - 포털에서 '소상공인시장진흥공단_상가(상권)정보' 활용신청이 승인됐는지\n"
-            "  - 인증키가 Decoding 값인지 확인하세요."
-        )
-        return 1
-
-    stores = collect_stores(
-        ctprvn_cd if not args.signgu else ctprvn_cd, args.signgu, args.max_store_pages
-    )
+    bbox = parse_bbox(args.bbox)
+    if args.mode == "grid":
+        stores = collect_stores_by_grid(bbox, args.step)
+    else:
+        stores = collect_stores_by_centers(load_centers(), args.radius, args.center_pages)
     if not stores:
         log("수집된 점포가 없습니다.")
         return 1
@@ -494,11 +680,21 @@ def main() -> int:
     if not candidates:
         log(
             "공실 후보를 찾지 못했습니다.\n"
-            "  대장 확인 {} / 대장 미등재 {} / 오류 {}\n"
-            "  --max-buildings를 늘리거나 --signgu로 도심 시군구를 지정해 보세요.".format(
+            "  대장 확인 {} / 대장 미등재 {} / 오류 {}".format(
                 stats["register_found"], stats["register_missing"], stats["errors"]
             )
         )
+        # 원인에 맞는 안내만 한다. 대장 조회가 통째로 실패했는데 "--max-buildings를
+        # 늘려 보라"고 하면 같은 실패를 더 많이 반복하게 된다.
+        if stats["register_found"] == 0:
+            log("")
+            log("  건축물대장 조회가 한 건도 성공하지 못했습니다 — 수집 범위 문제가 아닙니다.")
+            log("  위의 [건너뜀]/[중단] 사유를 보고 서비스키부터 확인하세요:")
+            log("    backend/.env의 {} (포털 '일반 인증키(Decoding)' 전체 문자열)".format(
+                datagokr.BLDRGST_KEY_ENV
+            ))
+        else:
+            log("  --max-buildings를 늘리거나 --bbox로 도심 영역을 좁혀 보세요.")
         return 1
 
     log("공실 후보 {:,}건 (조사 상업용도 층 {:,}개)".format(len(candidates), stats["commercial_floors"]))
@@ -521,8 +717,11 @@ def main() -> int:
             "collected_at": started.isoformat(timespec="seconds"),
             "finished_at": datetime.now().isoformat(timespec="seconds"),
             "data_reference_month": today.strftime("%Y-%m"),
-            "ctprvn_cd": ctprvn_cd,
-            "signgu_filter": args.signgu,
+            "collection_mode": args.mode,
+            "center_radius_m": args.radius if args.mode == "centers" else None,
+            "bbox": list(bbox) if args.mode == "grid" else None,
+            "grid_step_deg": args.step if args.mode == "grid" else None,
+            "ctprvn_codes": list(sangga_api.JEONBUK_CTPRVN_CODES),
             "store_count": len(stores),
             "building_count": len(buildings),
             "buildings_queried": stats["queried"],
@@ -536,6 +735,14 @@ def main() -> int:
             "sources": {
                 "stores": "소상공인시장진흥공단_상가(상권)정보 API",
                 "register": "국토교통부_건축HUB_건축물대장정보 서비스",
+            },
+            "service_key_mode": {
+                "sangga": datagokr.SANGGA_KEY_ENV
+                if os.environ.get(datagokr.SANGGA_KEY_ENV)
+                else datagokr.SHARED_SERVICE_KEY_ENV,
+                "register": datagokr.BLDRGST_KEY_ENV
+                if os.environ.get(datagokr.BLDRGST_KEY_ENV)
+                else datagokr.SHARED_SERVICE_KEY_ENV,
             },
             "sangga_base_url": sangga_api.base_url(),
             "bldrgst_base_url": building_register_api.base_url(),

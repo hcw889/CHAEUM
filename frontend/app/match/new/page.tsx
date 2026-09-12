@@ -128,6 +128,7 @@ function WizardBody() {
   // /api/match/options가 실패하거나 목업 모드면 정적 목록을 그대로 쓴다.
   const [regionOptions, setRegionOptions] = useState<string[]>(REGION_OPTIONS);
   const [dataMode, setDataMode] = useState<"real" | "mock" | null>(null);
+  const [listingCount, setListingCount] = useState<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -136,6 +137,7 @@ function WizardBody() {
       .then((options) => {
         if (cancelled) return;
         setDataMode(options.data_mode);
+        setListingCount(options.building_count);
         if (!options.region_options?.length) return;
 
         const next = options.region_options;
@@ -165,16 +167,25 @@ function WizardBody() {
   }
 
   function handlePresetClick(preset: (typeof DEMO_PRESETS)[number]) {
+    // 프리셋의 희망 지역은 목업 매물(전주 동 이름) 기준이다. 실데이터로 전환되면
+    // 그 지역에 수집된 매물이 없어 조건을 만족하는 후보가 0건이 되므로,
+    // 선택지에 없는 지역이면 "상관없음"으로 낮춘다. 우선순위·예산 차이는 그대로
+    // 살아 있어 프리셋마다 다른 결과가 나온다.
+    const region = regionOptions.includes(preset.payload.region_pref)
+      ? preset.payload.region_pref
+      : regionOptions[0];
+    const payload = { ...preset.payload, region_pref: region };
+
     // 이후 "이전"으로 돌아가거나 재제출할 때도 값이 맞도록 폼 상태도 함께 채워둔다.
-    setBusinessType(preset.payload.business_type);
-    setAreaPyeong(preset.payload.area_pyeong ?? areaPyeong);
-    setDeposit(preset.payload.budget.deposit);
-    setMonthlyRent(preset.payload.budget.monthly_rent);
-    setRegionPref(preset.payload.region_pref);
-    setStylePref(preset.payload.commercial_style_pref ?? stylePref);
-    setPriority(preset.payload.priority);
+    setBusinessType(payload.business_type);
+    setAreaPyeong(payload.area_pyeong ?? areaPyeong);
+    setDeposit(payload.budget.deposit);
+    setMonthlyRent(payload.budget.monthly_rent);
+    setRegionPref(region);
+    setStylePref(payload.commercial_style_pref ?? stylePref);
+    setPriority(payload.priority);
     setStep(TOTAL_STEPS);
-    handleSubmit(preset.payload);
+    handleSubmit(payload);
   }
 
   async function handleSubmit(overridePayload?: MatchRequest) {
@@ -238,7 +249,11 @@ function WizardBody() {
           <div className="mb-3 flex items-center justify-between">
             <div>
               <p className="text-sm font-semibold text-accent-text">⚡ 예비창업자 빠른 데모</p>
-              <p className="mt-1 text-xs text-muted">15개 목업 매물에서 조건별 추천 결과를 바로 확인하세요.</p>
+              <p className="mt-1 text-xs text-muted">
+                {dataMode === "real"
+                  ? `공공데이터로 수집한 공실 추정 매물 ${listingCount ?? 0}건에서 조건별 추천 결과를 바로 확인하세요.`
+                  : `${listingCount ?? 15}개 목업 매물에서 조건별 추천 결과를 바로 확인하세요.`}
+              </p>
             </div>
             <button onClick={() => setShowPresets(false)} className="text-xs text-muted hover:text-foreground">
               직접 입력하기 ↓
