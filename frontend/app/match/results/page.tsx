@@ -5,22 +5,14 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Wordmark } from "@/components/Logo";
 import { RankMedal } from "@/components/RankMedal";
-<<<<<<< Updated upstream
-import RoadviewPanel from "@/components/RoadviewPanel";
-import { SkeletonCardGrid } from "@/components/Skeleton";
-import { Tag } from "@/components/Tag";
-import VacancyEvidence from "@/components/VacancyEvidence";
-=======
 import MatchDetailDialog from "@/components/match/MatchDetailDialog";
 import MatchMap from "@/components/match/MatchMap";
 import { api } from "@/lib/api";
->>>>>>> Stashed changes
 import { parseStored, useStoredValue } from "@/lib/browserStore";
 import { formatScore } from "@/lib/format";
 import { hasMapLocation, RANK_NUMBERS } from "@/lib/matchMap";
 import { useStoredRole } from "@/lib/role";
 import { getRoleCopy } from "@/lib/roleCopy";
-<<<<<<< Updated upstream
 import type { MatchAgentScores, MatchRequest, MatchResponse } from "@/lib/types";
 
 // matching_agents.PRIORITY_WEIGHTS(backend)와 동일한 값. 결과 화면의 기여도 막대그래프 표시에만 사용.
@@ -42,9 +34,6 @@ const RANK_BORDER: Record<string, string> = {
   silver: "border-silver",
   bronze: "border-bronze",
 };
-=======
-import type { BuildingLocation, MatchCandidate, MatchRequest } from "@/lib/types";
->>>>>>> Stashed changes
 
 export default function MatchResultsPage() {
   const router = useRouter();
@@ -52,14 +41,10 @@ export default function MatchResultsPage() {
   const requestRaw = useStoredValue("session", "chaeum_match_request");
   const resultRaw = useStoredValue("session", "chaeum_match_result");
   const request = useMemo(() => parseStored<MatchRequest>(requestRaw), [requestRaw]);
-<<<<<<< Updated upstream
   const result = useMemo(() => parseStored<MatchResponse>(resultRaw), [resultRaw]);
   const matches = useMemo(() => result?.matches ?? null, [result]);
 
   // 선택된 매물은 사용자가 고르기 전까지 1순위를 가리킨다 (파생값이라 상태로 두지 않는다).
-=======
-  const matches = useMemo(() => parseStored<{ matches: MatchCandidate[] }>(resultRaw)?.matches ?? null, [resultRaw]);
->>>>>>> Stashed changes
   const [picked, setPicked] = useState<string | null>(null);
   const trigger = useRef<HTMLElement | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
@@ -132,7 +117,6 @@ export default function MatchResultsPage() {
         <p className="text-xs text-muted">지도 위 매물을 눌러 추천 이유를 확인해 보세요.</p>
       </div>
 
-<<<<<<< Updated upstream
       <h1 className="mb-1 text-2xl font-bold tracking-tight">{getRoleCopy(role).resultsTitle}</h1>
       <p className="mb-6 text-sm text-muted">
         {request.business_type} · {request.region_pref} · 우선순위 &apos;{request.priority}&apos; 기준 추천 매물입니다.
@@ -190,28 +174,6 @@ export default function MatchResultsPage() {
                   <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-accent-text">
                     팝업 {formatScore(m.space_vision.popup_fit_score)}
                   </span>
-=======
-      {matches.length === 0 ? (
-        <div className="rounded-lg border border-border bg-surface p-12 text-center">
-          <p className="font-semibold">추천할 매물을 찾지 못했습니다.</p>
-          <Link href="/match/new" className="mt-4 inline-block text-sm text-accent-text">조건을 바꿔 다시 찾아보기 →</Link>
-        </div>
-      ) : (
-        <section className="match-results-stage" aria-label="추천 매물 탐색">
-          <MatchMap matches={top3} onSelect={openMatch} loading={loadingLocations} />
-          <div className="match-overview-badge">
-            <span className="rounded-full border border-border bg-surface px-3 py-2 text-[11px] font-bold shadow-card">추천 매물 TOP {top3.length}</span>
-          </div>
-          <div className="match-overview-cards" aria-label="상위 추천 매물">
-            {top3.map((match) => (
-              <button key={match.building_id} type="button" className="match-summary-card" onClick={() => openMatch(match.building_id)} aria-label={`추천 ${RANK_NUMBERS[match.rank!]}위 카드 상세 보기`} aria-haspopup="dialog">
-                <div className="mb-3 flex items-center justify-between gap-3">
-                  <RankMedal rank={match.rank} />
-                  <div className="text-right">
-                    <span className="text-xl font-black tracking-tight text-accent-text">{formatScore(match.final_score)}<span className="ml-1 text-xs font-normal text-muted">점</span></span>
-                    <p className="text-[10px] text-muted">종합 매칭 점수</p>
-                  </div>
->>>>>>> Stashed changes
                 </div>
                 <p className="truncate text-sm font-semibold">{match.address}</p>
                 <p className="mt-2 flex items-center justify-between text-[11px] text-muted">
@@ -236,7 +198,6 @@ export default function MatchResultsPage() {
       </div>
 
       {rest.length > 0 && (
-<<<<<<< Updated upstream
         <div className="mb-8 space-y-2">
           {rest.map((m) => (
             <button
@@ -308,16 +269,6 @@ export default function MatchResultsPage() {
                 <p className="text-xs leading-relaxed text-muted">{selectedMatch.space_vision.visual_summary}</p>
               </Card>
             )}
-=======
-        <details className="mt-4 rounded-md border border-border bg-surface px-5 py-4">
-          <summary className="cursor-pointer text-sm font-semibold">다른 추천 매물 {rest.length}개 보기</summary>
-          <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {rest.map((match) => (
-              <button key={match.building_id} type="button" onClick={() => openMatch(match.building_id)} aria-haspopup="dialog" className="flex items-center justify-between gap-3 rounded-sm border border-border p-3 text-left text-xs hover:bg-accent-soft">
-                <span>{match.address}</span><span className="shrink-0 font-semibold">{formatScore(match.final_score)}점</span>
-              </button>
-            ))}
->>>>>>> Stashed changes
           </div>
         </details>
       )}

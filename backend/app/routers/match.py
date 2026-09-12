@@ -7,12 +7,8 @@ from fastapi import APIRouter, Depends
 
 from app.models.schemas import MatchRequest, MatchResponse
 from app.services import match_orchestrator, matching_agents
-<<<<<<< Updated upstream
-from app.services.data_provider import DataProvider, MockDataProvider, get_data_provider
-=======
 from app.services.building_location import get_building_location
 from app.services.data_provider import DataProvider, get_data_provider
->>>>>>> Stashed changes
 
 logger = logging.getLogger(__name__)
 
