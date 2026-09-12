@@ -101,6 +101,7 @@ class SpaceVision(BaseModel):
     visual_summary: str
 
 
+<<<<<<< Updated upstream
 class VacancyEstimate(BaseModel):
     """
     공실 추정 결과. 상가정보 API와 건축물대장 API 어느 쪽도 공실 여부를 직접
@@ -118,6 +119,12 @@ class VacancyEstimate(BaseModel):
     building_store_count: int = 0
     floor_store_count: int = 0
     unknown_floor_store_count: int = 0
+=======
+class BuildingLocation(BaseModel):
+    lat: float = Field(..., ge=-90, le=90, allow_inf_nan=False)
+    lng: float = Field(..., ge=-180, le=180, allow_inf_nan=False)
+    is_approximate: bool = True
+>>>>>>> Stashed changes
 
 
 class MatchCandidate(BaseModel):
@@ -133,6 +140,7 @@ class MatchCandidate(BaseModel):
     lat: Optional[float] = None
     lng: Optional[float] = None
     space_vision: Optional[SpaceVision] = None
+    location: Optional[BuildingLocation] = None
 
     # --- 실데이터 연동으로 추가된 필드 (목업에서는 대부분 None) ---
     name: Optional[str] = None

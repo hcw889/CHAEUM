@@ -13,7 +13,8 @@ test("유동인구 지도와 요약을 표시하고 타일 실패 시에도 구�
   await expect(page.getByText("도보권(500m)", { exact: true })).toBeVisible();
   const map = page.getByRole("region", { name: "추천 매물 주변 유동인구 지도" });
   await expect(map).toBeVisible();
-  await expect(map.locator("svg path")).toHaveCount(3);
+  // 출처 로고의 SVG는 제외하고 실제 지도 구역 2개와 매물 위치만 센다.
+  await expect(map.locator(".leaflet-pane svg path")).toHaveCount(3);
   await expect(page.getByText("색 기준: 구역 중 최댓값 대비 상대값")).toBeVisible();
   await expect(page.getByText(/배경 지도를 불러오지 못했습니다/)).toBeVisible();
   await page.getByRole("button", { name: /^남쪽 상권/ }).click();

@@ -119,6 +119,7 @@ export interface SpaceVision {
   visual_summary: string;
 }
 
+<<<<<<< Updated upstream
 /**
  * 공실 추정 결과 (backend vacancy_estimator.py).
  *
@@ -147,6 +148,14 @@ export const VACANCY_CONFIDENCE_LABEL: Record<VacancyEstimate["confidence"], str
   low: "낮음",
 };
 
+=======
+export interface BuildingLocation {
+  lat: number;
+  lng: number;
+  is_approximate: boolean;
+}
+
+>>>>>>> Stashed changes
 export interface MatchCandidate {
   building_id: string;
   address: string;
@@ -159,6 +168,7 @@ export interface MatchCandidate {
   lat?: number;
   lng?: number;
   space_vision?: SpaceVision;
+<<<<<<< Updated upstream
 
   // --- 실데이터(상가정보 + 건축물대장) 연동 필드. 목업에서는 대부분 비어 있다 ---
   name?: string;
@@ -176,6 +186,10 @@ export interface MatchCandidate {
   nearby_store_count?: number;
   /** 같은 건물에서 영업 중인 점포 상호 — 공실 판정의 방증 */
   nearby_stores?: string[];
+=======
+  /** 이전에 저장한 매칭 결과에는 없을 수 있다. null은 위치 미확인이다. */
+  location?: BuildingLocation | null;
+>>>>>>> Stashed changes
 }
 
 export interface MatchResponse {
