@@ -43,6 +43,12 @@ CACHE_PATH = CACHE_DIR / "register.sqlite3"
 # 대장은 준공 이후 거의 바뀌지 않는다. 그래도 증축/용도변경이 있으므로 만료는 둔다.
 TTL_DAYS = 90
 
+# 캐시에는 원본 응답이 아니라 building_register_api.fetch_building()이 **파싱한 결과**
+# (층별 is_commercial/is_non_leasable/area 포함)가 들어간다. 그래서 파서·용도 판정
+# 규칙을 바꾸면 옛 항목은 옛 판정을 그대로 돌려준다 — 실수집에서 "보일러실" 층이
+# 계속 공실 후보로 나온 원인이다. parse_floors/용도 키워드를 바꿀 때 이 값을 올린다.
+PARSER_VERSION = 2
+
 # 건물 1개(=표제부+층별개요 2콜)를 시작하기 전 최소 간격(초). 초당 10콜 언저리로,
 # 개발계정에서 429가 나기 시작하는 지점 아래다 — 워커 4개 x 이 간격으로 건물 60개
 # (120콜)를 429 없이 15~20초에 통과하는 것을 실측했다. 제한 없이 던지면 429
@@ -94,8 +100,10 @@ def _connect() -> sqlite3.Connection:
 
 
 def cache_key(params: dict[str, str]) -> str:
-    """대장 조회 파라미터(시군구/법정동/대지구분/번/지)를 그대로 키로 쓴다."""
-    return "|".join("{}={}".format(k, params[k]) for k in sorted(params))
+    """대장 조회 파라미터(시군구/법정동/대지구분/번/지)에 파서 버전을 붙여 키로 쓴다."""
+    return "v{}|".format(PARSER_VERSION) + "|".join(
+        "{}={}".format(k, params[k]) for k in sorted(params)
+    )
 
 
 def get(params: dict[str, str]) -> tuple[bool, Optional[dict[str, Any]]]:

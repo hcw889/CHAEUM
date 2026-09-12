@@ -734,6 +734,106 @@ def test_non_retail_purposes_are_not_commercial():
     assert not building_register_api.is_commercial_purpose("공동주택 아파트")
 
 
+def test_utility_floors_under_commercial_main_purpose_are_excluded():
+    """
+    실수집 사례: 주용도가 "기타제1종근린생활시설"이어도 기타용도가 PIT층·보일러실·
+    주택인 층이 공실 후보로 올라왔다. 세부용도 단어로 걸러야 한다.
+    """
+    rows = [
+        {"flrGbCdNm": "지하", "flrNo": 1, "flrNoNm": "지하1층",
+         "mainPurpsCdNm": "기타제1종근린생활시설", "etcPurps": "PIT층", "area": 17.08},
+        {"flrGbCdNm": "지하", "flrNo": 2, "flrNoNm": "지하2층",
+         "mainPurpsCdNm": "기타제1종근린생활시설", "etcPurps": "보일러실", "area": 30.0},
+        {"flrGbCdNm": "지상", "flrNo": 4, "flrNoNm": "4층",
+         "mainPurpsCdNm": "기타제1종근린생활시설", "etcPurps": "주택", "area": 90.0},
+        {"flrGbCdNm": "지하", "flrNo": 3, "flrNoNm": "지하3층",
+         "mainPurpsCdNm": "병원", "etcPurps": "의료시설(병원)", "area": 300.0},
+        {"flrGbCdNm": "지하", "flrNo": 4, "flrNoNm": "지하4층",
+         "mainPurpsCdNm": "장례식장", "etcPurps": "제2종근린생활시설(일반음식점)", "area": 120.0},
+    ]
+    floors = {entry["floor_label"]: entry for entry in building_register_api.parse_floors(rows)}
+    for label in ("지하1층", "지하2층", "4층", "지하3층", "지하4층"):
+        assert floors[label]["is_non_leasable"] is True, label
+
+
+def test_floor_with_shop_and_utility_rows_keeps_shop_area_only():
+    """
+    같은 층에 "소매점 / 관리실"이 따로 온 경우, 관리실 때문에 층 전체가 제외되면
+    안 되고 면적은 소매점 줄만 합산해야 한다 (남원축협빌딩 1층 실측).
+    """
+    rows = [
+        {"flrGbCdNm": "지상", "flrNo": 1, "flrNoNm": "1층",
+         "mainPurpsCdNm": "소매점", "etcPurps": "소매점", "area": 60.0},
+        {"flrGbCdNm": "지상", "flrNo": 1, "flrNoNm": "1층",
+         "mainPurpsCdNm": "기타사무소", "etcPurps": "관리실", "area": 12.0},
+        {"flrGbCdNm": "지상", "flrNo": 1, "flrNoNm": "1층",
+         "mainPurpsCdNm": "주차장", "etcPurps": "주차장", "area": 200.0},
+    ]
+    (floor,) = building_register_api.parse_floors(rows)
+    assert floor["is_commercial"] is True
+    assert floor["is_non_leasable"] is False
+    assert floor["area"] == 60.0
+    assert floor["purpose"] == "소매점 / 기타사무소 관리실 / 주차장"
+
+
+def test_duplicate_main_and_etc_purpose_is_not_repeated():
+    text = building_register_api._purpose_text({"mainPurpsCdNm": "휴게음식점", "etcPurps": "휴게음식점"})
+    assert text == "휴게음식점"
+    text = building_register_api._purpose_text(
+        {"mainPurpsCdNm": "제2종근린생활시설", "etcPurps": "제2종근린생활시설(일반음식점)"}
+    )
+    assert text == "제2종근린생활시설(일반음식점)"
+
+
+def test_junk_building_name_falls_back_to_dong():
+    building = {"bld_name": "전체", "ldong_name": "모현동1가"}
+    assert vacancy_estimator._display_name(building, "2층") == "모현동1가 상가 2층"
+
+
+def _fake_buildings(counts: dict[str, int]) -> dict[str, dict]:
+    buildings = {}
+    for signgu, count in counts.items():
+        for index in range(count):
+            key = "{}#{}".format(signgu, index)
+            buildings[key] = {
+                "key": key, "signgu_name": signgu, "register_params": {"bun": "0001"},
+                "lat": 35.8, "lng": 127.1, "stores": [], "stores_by_floor": {},
+            }
+    return buildings
+
+
+def test_select_buildings_keeps_every_signgu_under_small_cap():
+    """
+    실수집(상한 100)에서 전주가 0건이었다. 시군마다 최소 10건을 주고 마지막에
+    [:max_buildings]로 자르면 가나다순 뒤쪽 시군(전주·정읍·진안)이 통째로 빠진다.
+    """
+    import importlib.util
+    import pathlib
+
+    path = pathlib.Path(__file__).resolve().parent.parent / "scripts" / "fetch_real_vacancies.py"
+    spec = importlib.util.spec_from_file_location("fetch_real_vacancies", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)  # type: ignore[union-attr]
+
+    counts = {
+        "고창군": 40, "군산시": 300, "김제시": 60, "남원시": 80, "무주군": 20, "부안군": 50,
+        "순창군": 15, "완주군": 70, "익산시": 350, "임실군": 10, "장수군": 8,
+        "전주시 완산구": 900, "전주시 덕진구": 700, "정읍시": 90, "진안군": 12,
+    }
+    selected = module.select_buildings(_fake_buildings(counts), 100)
+    assert len(selected) == 100
+    by_signgu = {}
+    for building in selected:
+        by_signgu[building["signgu_name"]] = by_signgu.get(building["signgu_name"], 0) + 1
+    assert by_signgu["전주시 완산구"] >= 30, by_signgu
+    assert by_signgu["전주시 덕진구"] >= 20, by_signgu
+    assert by_signgu["정읍시"] >= 1, by_signgu
+
+    only_jeonju = module.select_buildings(_fake_buildings(counts), 100, ["전주시"])
+    assert {b["signgu_name"] for b in only_jeonju} == {"전주시 완산구", "전주시 덕진구"}
+    assert len(only_jeonju) == 100
+
+
 def test_confidence_reflects_measured_floor_coverage(building, register):
     """
     실수집 측정값 기준으로 등급이 갈려야 한다 (flrNo 50% 누락, 건물당 점포 1.8건).

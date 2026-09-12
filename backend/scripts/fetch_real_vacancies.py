@@ -17,6 +17,7 @@
     cd backend
     python scripts/fetch_real_vacancies.py                      # 전북 시·군 전역(기본)
     python scripts/fetch_real_vacancies.py --max-buildings 200  # 호출 절약
+    python scripts/fetch_real_vacancies.py --signgu 전주시 --max-buildings 300  # 데모 지역 집중
     python scripts/fetch_real_vacancies.py --mode grid --bbox 127.08,35.79,127.20,35.86
 
 사전 준비 — 두 API는 포털 활용신청이 각각이라 서비스키도 각각이다.
@@ -209,13 +210,24 @@ _candidate_priority = vacancy_estimator.candidate_priority
 
 
 def select_buildings(
-    buildings: dict[str, dict[str, Any]], max_buildings: int
+    buildings: dict[str, dict[str, Any]],
+    max_buildings: int,
+    signgu_filter: Optional[list[str]] = None,
 ) -> list[dict[str, Any]]:
     """
     조회 대상 건물을 시군별로 비례 배분해 고른다.
 
     건축물대장은 건물당 2회(표제부+층별개요) 호출한다. 전북 전체 건물을 다 보면
     개발계정 일일 한도를 넘기므로 상한을 두고, 전주만 쏠리지 않게 시군별로 나눈다.
+
+    배분은 "비례 몫(내림) + 나머지는 후보가 많은 시군부터 1건씩"이다. 예전처럼
+    시군마다 최소 10건을 주고 마지막에 [:max_buildings]로 자르면, 가나다순 뒤쪽
+    시군(장수·전주·정읍·진안)이 통째로 빠진다 — 실수집(상한 100)에서 전주 0건으로
+    확인한 문제다.
+
+    Args:
+        signgu_filter: 시군명 부분 문자열 목록. 주면 이 시군의 건물만 대상으로 한다
+            (예: ["전주시"] -> 완산구/덕진구 모두). 데모 지역만 집중 수집할 때 쓴다.
     """
     usable = [
         b
@@ -224,22 +236,43 @@ def select_buildings(
     ]
     log("건물 {:,}개 중 지번/좌표가 온전한 {:,}개가 조회 가능".format(len(buildings), len(usable)))
 
+    if signgu_filter:
+        wanted = [token.replace(" ", "") for token in signgu_filter if token.strip()]
+        usable = [
+            b
+            for b in usable
+            if any(token in (b.get("signgu_name") or "").replace(" ", "") for token in wanted)
+        ]
+        log("--signgu {} 로 좁힌 조회 가능 건물 {:,}개".format(", ".join(wanted), len(usable)))
+
     by_signgu: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for building in usable:
         by_signgu[building.get("signgu_name") or building.get("signgu_cd") or "미상"].append(building)
+    for group in by_signgu.values():
+        group.sort(key=_candidate_priority)
 
     if len(usable) <= max_buildings:
         selected = usable
     else:
-        selected = []
         total = len(usable)
-        for signgu, group in sorted(by_signgu.items()):
-            group.sort(key=_candidate_priority)
-            quota = max(10, round(max_buildings * len(group) / total))
-            selected.extend(group[:quota])
-        selected = selected[:max_buildings]
+        take = {
+            signgu: min(len(group), max_buildings * len(group) // total)
+            for signgu, group in by_signgu.items()
+        }
+        remaining = max_buildings - sum(take.values())
+        # 내림으로 남은 자리는 후보가 많은 시군부터 한 건씩 (시군 수보다 적으므로 한 바퀴면 끝).
+        for signgu in sorted(by_signgu, key=lambda s: len(by_signgu[s]), reverse=True):
+            if remaining <= 0:
+                break
+            if take[signgu] < len(by_signgu[signgu]):
+                take[signgu] += 1
+                remaining -= 1
+        selected = [b for signgu, group in by_signgu.items() for b in group[: take[signgu]]]
 
     log("건축물대장 조회 대상 {:,}개 건물 (약 {:,}회 호출)".format(len(selected), len(selected) * 2))
+    for signgu in sorted(by_signgu):
+        count = sum(1 for b in selected if (b.get("signgu_name") or b.get("signgu_cd") or "미상") == signgu)
+        log("  {} {:,}개 (후보 {:,}개)".format(signgu, count, len(by_signgu[signgu])))
     return selected
 
 
@@ -410,6 +443,11 @@ def build_region_stats(
         if candidate.get("lat") is not None:
             coords[signgu].append((candidate["lat"], candidate["lng"]))
 
+    # 공실 후보가 0건인 시군은 목업 region_stats의 시군 대표 좌표를 쓴다. 예전에는
+    # 전부 전주시청 좌표로 찍어서 지자체 대시보드 지도에 고창·무주·순창·완주·임실
+    # 마커가 전주 위에 겹쳐 보였다.
+    center_by_region_id = {center["id"]: center for center in load_centers()}
+
     regions = []
     for signgu, total_units in sorted(commercial.items()):
         if total_units <= 0:
@@ -420,7 +458,11 @@ def build_region_stats(
             lat = sum(p[0] for p in points) / len(points)
             lng = sum(p[1] for p in points) / len(points)
         else:
-            lat, lng = 35.8242, 127.1480  # 전주시청 — 좌표를 못 구한 시군의 대표점
+            center = center_by_region_id.get(_region_id(signgu))
+            if center:
+                lat, lng = center["lat"], center["lng"]
+            else:
+                lat, lng = 35.8242, 127.1480  # 전주시청 — 대표 좌표도 없는 시군의 최후 폴백
 
         regions.append(
             {
@@ -600,6 +642,11 @@ def parse_args() -> argparse.Namespace:
         default=0.04,
         help="grid 모드 격자 한 칸 크기(도). 0.1도는 API가 거부한다(실측). 기본 0.04",
     )
+    parser.add_argument(
+        "--signgu",
+        default=None,
+        help="건축물대장 조회를 이 시군으로 한정 (쉼표 구분, 부분 일치). 예: '전주시' 또는 '전주시,익산시'",
+    )
     parser.add_argument("--sleep", type=float, default=0.12, help="건축물대장 호출 간 대기 초")
     parser.add_argument("--out", default=str(OUT_DIR), help="출력 디렉터리")
     return parser.parse_args()
@@ -658,7 +705,8 @@ def main() -> int:
     index = vacancy_estimator.StoreIndex(stores)
     log("좌표가 있는 점포 {:,}건으로 공간 인덱스 구성".format(len(index)))
 
-    selected = select_buildings(buildings, args.max_buildings)
+    signgu_filter = [token for token in (args.signgu or "").split(",") if token.strip()] or None
+    selected = select_buildings(buildings, args.max_buildings, signgu_filter)
     candidates, stats = fetch_registers(selected, today, args.sleep)
 
     if not candidates:
@@ -705,6 +753,7 @@ def main() -> int:
             "center_radius_m": args.radius if args.mode == "centers" else None,
             "bbox": list(bbox) if args.mode == "grid" else None,
             "grid_step_deg": args.step if args.mode == "grid" else None,
+            "signgu_filter": signgu_filter,
             "ctprvn_codes": list(sangga_api.JEONBUK_CTPRVN_CODES),
             "store_count": len(stores),
             "building_count": len(buildings),

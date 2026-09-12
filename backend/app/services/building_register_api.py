@@ -58,6 +58,10 @@ COMMERCIAL_PURPOSE_KEYWORDS = (
 )
 
 # 공실 후보에서 제외할 용도. 주거/주차/기계실은 비어 있어도 "상가 공실"이 아니다.
+#
+# 주용도(mainPurpsCdNm)가 "기타제1종근린생활시설"이어도 기타용도(etcPurps)가
+# "PIT층", "보일러실", "주택", "관리실"인 층이 실수집에서 공실 후보로 올라왔다.
+# 세부용도 쪽 단어까지 여기서 걸러야 한다.
 NON_LEASABLE_PURPOSE_KEYWORDS = (
     "주차장",
     "기계실",
@@ -66,16 +70,23 @@ NON_LEASABLE_PURPOSE_KEYWORDS = (
     "승강기",
     "물탱크",
     "공용",
-    "다가구주택",
-    "다세대주택",
+    "주택",  # 다가구/다세대/단독/연립 + etcPurps에 그냥 "주택"으로 적힌 층
     "아파트",
-    "단독주택",
-    "연립주택",
     "기숙사",
     "창고",
     "발전시설",
     "정화조",
     "피난",
+    "PIT",
+    "피트",
+    "보일러",
+    "관리실",
+    "경비실",
+    "화장실",
+    "장례식장",
+    "의료시설",  # 병원 본동. 근생 "의원"은 이 단어가 없어 그대로 후보가 된다
+    "공공시설",
+    "종교시설",
 )
 
 
@@ -177,12 +188,19 @@ def _int(value: Any) -> Optional[int]:
 
 
 def _purpose_text(item: dict[str, Any]) -> str:
-    """주용도 + 기타용도를 합친 문자열. 용도 판정은 항상 이 합본으로 한다."""
-    parts = [
-        str(item.get("mainPurpsCdNm") or ""),
-        str(item.get("etcPurps") or ""),
-    ]
-    return " ".join(part.strip() for part in parts if part.strip())
+    """
+    주용도 + 기타용도를 합친 문자열. 용도 판정은 항상 이 합본으로 한다.
+
+    두 값이 같거나 한쪽이 다른 쪽을 포함하면("휴게음식점" / "휴게음식점") 긴 쪽만 쓴다 —
+    화면에 "휴게음식점 휴게음식점"으로 나가던 중복을 막는다.
+    """
+    main = str(item.get("mainPurpsCdNm") or "").strip()
+    etc = str(item.get("etcPurps") or "").strip()
+    if not main or main in etc:
+        return etc
+    if not etc or etc in main:
+        return main
+    return main + " " + etc
 
 
 def is_commercial_purpose(purpose: str) -> bool:
@@ -284,8 +302,15 @@ def parse_floors(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
     층별개요를 층 단위로 정리한다.
 
     같은 층에 용도가 여러 줄로 쪼개져 오는 경우(예: 1층 소매점 / 1층 일반음식점)가
-    있어 층 번호로 합치고 면적은 더한다. 용도명은 모두 이어 붙여 판정에 쓴다.
-    지하/지상/옥탑은 flrNo가 겹치므로 floor_sign()이 구분한 값으로 묶는다.
+    있어 층 번호로 합친다. 지하/지상/옥탑은 flrNo가 겹치므로 floor_sign()이 구분한
+    값으로 묶는다.
+
+    임대 가능 여부는 **줄 단위**로 본다. 합본 문자열로 판정하면
+      - "소매점 / 관리실"인 1층이 관리실 때문에 통째로 제외되거나
+      - "제1종근린생활시설 PIT층"이 근린생활시설 때문에 통째로 후보가 되는
+    양쪽 오판이 난다 (둘 다 실수집에서 확인). 그래서 상가로 쓸 수 있는 줄이
+    하나라도 있으면 그 층은 임대 가능이고, area는 그 줄들의 면적만 더한다
+    (소매점 60㎡ + 주차장 200㎡인 층을 260㎡ 매물로 내보내지 않기 위함).
     """
     merged: dict[int, dict[str, Any]] = {}
 
@@ -295,6 +320,7 @@ def parse_floors(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
             continue
         purpose = _purpose_text(item)
         area = _float(item.get("area")) or 0.0
+        leasable = is_commercial_purpose(purpose) and not is_non_leasable_purpose(purpose)
 
         entry = merged.get(floor)
         if entry is None:
@@ -303,6 +329,8 @@ def parse_floors(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "floor_label": str(item.get("flrNoNm") or "").strip(),
                 "purposes": [],
                 "area": 0.0,
+                "leasable_area": 0.0,
+                "has_leasable": False,
                 "structure": str(item.get("strctCdNm") or "").strip(),
             }
             merged[floor] = entry
@@ -310,22 +338,26 @@ def parse_floors(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
         if purpose and purpose not in entry["purposes"]:
             entry["purposes"].append(purpose)
         entry["area"] += area
+        if leasable:
+            entry["has_leasable"] = True
+            entry["leasable_area"] += area
 
     floors = []
     for entry in merged.values():
         purpose_text = " / ".join(entry["purposes"])
         floor = entry["floor"]
+        # 옥탑은 용도명이 근린생활시설로 적혀 있어도 임대 가능한 상가 층이
+        # 아니다 (실측 사례: mainPurpsCdNm=기타제2종근린생활시설 / etcPurps=계단실).
+        leasable = entry["has_leasable"] and not is_rooftop(floor)
         floors.append(
             {
                 "floor": floor,
                 "floor_label": _normalize_floor_label(entry["floor_label"], floor),
                 "purpose": purpose_text,
-                "area": round(entry["area"], 2),
+                "area": round(entry["leasable_area"] if leasable else entry["area"], 2),
                 "structure": entry["structure"],
-                "is_commercial": is_commercial_purpose(purpose_text),
-                # 옥탑은 용도명이 근린생활시설로 적혀 있어도 임대 가능한 상가 층이
-                # 아니다 (실측 사례: mainPurpsCdNm=기타제2종근린생활시설 / etcPurps=계단실).
-                "is_non_leasable": is_non_leasable_purpose(purpose_text) or is_rooftop(floor),
+                "is_commercial": leasable or is_commercial_purpose(purpose_text),
+                "is_non_leasable": not leasable,
             }
         )
     floors.sort(key=lambda entry: entry["floor"])

@@ -10,48 +10,22 @@
       "id": "gochang",
       "scope": "district",
       "region_name": "고창군",
-      "lat": 35.8242,
-      "lng": 127.148,
-      "total_units": 8,
+      "lat": 35.434689,
+      "lng": 126.707867,
+      "total_units": 17,
       "avg_vacancy_period_months": 0.0,
-      "top_recommended_business": "카페",
+      "top_recommended_business": "스터디카페",
       "monthly_vacant_units": [
-        0
+        2
       ]
     },
     {
       "id": "gunsan",
       "scope": "district",
       "region_name": "군산시",
-      "lat": 35.963573,
-      "lng": 126.717888,
-      "total_units": 10,
-      "avg_vacancy_period_months": 0.0,
-      "top_recommended_business": "카페",
-      "monthly_vacant_units": [
-        2
-      ]
-    },
-    {
-      "id": "gimje",
-      "scope": "district",
-      "region_name": "김제시",
-      "lat": 35.805553,
-      "lng": 126.889328,
-      "total_units": 10,
-      "avg_vacancy_period_months": 0.0,
-      "top_recommended_business": "병원",
-      "monthly_vacant_units": [
-        1
-      ]
-    },
-    {
-      "id": "namwon",
-      "scope": "district",
-      "region_name": "남원시",
-      "lat": 35.413083,
-      "lng": 127.385055,
-      "total_units": 12,
+      "lat": 35.969568,
+      "lng": 126.727179,
+      "total_units": 34,
       "avg_vacancy_period_months": 0.0,
       "top_recommended_business": "카페",
       "monthly_vacant_units": [
@@ -59,11 +33,89 @@
       ]
     },
     {
+      "id": "gimje",
+      "scope": "district",
+      "region_name": "김제시",
+      "lat": 35.802468,
+      "lng": 126.889598,
+      "total_units": 23,
+      "avg_vacancy_period_months": 0.0,
+      "top_recommended_business": "카페",
+      "monthly_vacant_units": [
+        3
+      ]
+    },
+    {
+      "id": "namwon",
+      "scope": "district",
+      "region_name": "남원시",
+      "lat": 35.413506,
+      "lng": 127.386149,
+      "total_units": 39,
+      "avg_vacancy_period_months": 0.0,
+      "top_recommended_business": "카페",
+      "monthly_vacant_units": [
+        13
+      ]
+    },
+    {
       "id": "muju",
       "scope": "district",
       "region_name": "무주군",
-      "lat": 35.8242,
-      "lng": 127.148,
+      "lat": 36.00564,
+      "lng": 127.666586,
+      "total_units": 6,
+      "avg_vacancy_period_months": 0.0,
+      "top_recommended_business": "카페",
+      "monthly_vacant_units": [
+        1
+      ]
+    },
+    {
+      "id": "buan",
+      "scope": "district",
+      "region_name": "부안군",
+      "lat": 35.726837,
+      "lng": 126.733791,
+      "total_units": 22,
+      "avg_vacancy_period_months": 0.0,
+      "top_recommended_business": "스터디카페",
+      "monthly_vacant_units": [
+        8
+      ]
+    },
+    {
+      "id": "sunchang",
+      "scope": "district",
+      "region_name": "순창군",
+      "lat": 35.37553,
+      "lng": 127.134171,
+      "total_units": 8,
+      "avg_vacancy_period_months": 0.0,
+      "top_recommended_business": "카페",
+      "monthly_vacant_units": [
+        1
+      ]
+    },
+    {
+      "id": "iksan",
+      "scope": "district",
+      "region_name": "익산시",
+      "lat": 35.951628,
+      "lng": 126.953498,
+      "total_units": 98,
+      "avg_vacancy_period_months": 0.0,
+      "top_recommended_business": "카페",
+      "monthly_vacant_units": [
+        38
+      ]
+    },
+    {
+      "id": "imsil",
+      "scope": "district",
+      "region_name": "임실군",
+      "lat": 35.6178,
+      "lng": 127.2891,
       "total_units": 4,
       "avg_vacancy_period_months": 0.0,
       "top_recommended_business": "카페",
@@ -72,68 +124,55 @@
       ]
     },
     {
-      "id": "buan",
+      "id": "jangsu",
       "scope": "district",
-      "region_name": "부안군",
-      "lat": 35.728141,
-      "lng": 126.73228,
-      "total_units": 13,
+      "region_name": "장수군",
+      "lat": 35.6473,
+      "lng": 127.5212,
+      "total_units": 3,
+      "avg_vacancy_period_months": 0.0,
+      "top_recommended_business": "카페",
+      "monthly_vacant_units": [
+        0
+      ]
+    },
+    {
+      "id": "jeonju",
+      "scope": "district",
+      "region_name": "전주시",
+      "lat": 35.834153,
+      "lng": 127.148887,
+      "total_units": 225,
+      "avg_vacancy_period_months": 0.0,
+      "top_recommended_business": "카페",
+      "monthly_vacant_units": [
+        114
+      ]
+    },
+    {
+      "id": "jeongeup",
+      "scope": "district",
+      "region_name": "정읍시",
+      "lat": 35.564471,
+      "lng": 126.859187,
+      "total_units": 56,
       "avg_vacancy_period_months": 0.0,
       "top_recommended_business": "스터디카페",
-      "monthly_vacant_units": [
-        5
-      ]
-    },
-    {
-      "id": "sunchang",
-      "scope": "district",
-      "region_name": "순창군",
-      "lat": 35.8242,
-      "lng": 127.148,
-      "total_units": 2,
-      "avg_vacancy_period_months": 0.0,
-      "top_recommended_business": "카페",
-      "monthly_vacant_units": [
-        0
-      ]
-    },
-    {
-      "id": "wanju",
-      "scope": "district",
-      "region_name": "완주군",
-      "lat": 35.8242,
-      "lng": 127.148,
-      "total_units": 2,
-      "avg_vacancy_period_months": 0.0,
-      "top_recommended_business": "카페",
-      "monthly_vacant_units": [
-        0
-      ]
-    },
-    {
-      "id": "iksan",
-      "scope": "district",
-      "region_name": "익산시",
-      "lat": 35.947512,
-      "lng": 126.941283,
-      "total_units": 27,
-      "avg_vacancy_period_months": 0.0,
-      "top_recommended_business": "편의점",
       "monthly_vacant_units": [
         13
       ]
     },
     {
-      "id": "imsil",
+      "id": "jinan",
       "scope": "district",
-      "region_name": "임실군",
-      "lat": 35.8242,
-      "lng": 127.148,
-      "total_units": 1,
+      "region_name": "진안군",
+      "lat": 35.787284,
+      "lng": 127.420826,
+      "total_units": 6,
       "avg_vacancy_period_months": 0.0,
-      "top_recommended_business": "카페",
+      "top_recommended_business": "학원",
       "monthly_vacant_units": [
-        0
+        3
       ]
     }
   ]

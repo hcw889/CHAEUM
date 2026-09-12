@@ -369,9 +369,13 @@ def _building_id(building_key: str, floor: int) -> str:
     return "r" + digest[:10]
 
 
+# 상가정보 bldNm에 들어오는 의미 없는 값. 실수집에서 "전체 2층" 같은 이름이 나왔다.
+_JUNK_BUILDING_NAMES = {"전체", "없음", "무", "-", ".", "동"}
+
+
 def _display_name(building: dict[str, Any], floor_label: str) -> str:
     name = (building.get("bld_name") or "").strip()
-    if not name:
+    if len(name) <= 1 or name in _JUNK_BUILDING_NAMES:
         name = (building.get("ldong_name") or building.get("adong_name") or "상가").strip() + " 상가"
     return "{} {}".format(name, floor_label)
 

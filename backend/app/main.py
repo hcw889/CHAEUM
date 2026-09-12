@@ -1,14 +1,28 @@
+import logging
 from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+logger = logging.getLogger(__name__)
+
 # backend/.env 를 읽어 환경변수로 올린다 (SK_OPENAPI_APP_KEY, ANTHROPIC_API_KEY 등).
 # 이미 셸에 설정된 값은 덮어쓰지 않으며, .env가 없으면 그냥 넘어간다.
+#
+# 파일이 없을 때는 경고를 남긴다 — .env를 backend/app/ 에 두는 바람에 키가 하나도
+# 안 읽히고 모든 화면이 조용히 목업으로 돌던 일이 있었다.
+ENV_PATH = Path(__file__).resolve().parent.parent / ".env"
 try:
     from dotenv import load_dotenv
 
-    load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+    if not load_dotenv(ENV_PATH):
+        misplaced = Path(__file__).resolve().parent / ".env"
+        if misplaced.is_file():
+            logger.warning(
+                ".env가 %s 에 있습니다. 로더는 %s 를 읽으므로 파일을 옮기세요.", misplaced, ENV_PATH
+            )
+        else:
+            logger.warning("%s 가 없어 외부 API 키 없이(목업 모드로) 시작합니다.", ENV_PATH)
 except ImportError:  # python-dotenv 미설치 환경 — 셸 환경변수만 사용한다.
     pass
 

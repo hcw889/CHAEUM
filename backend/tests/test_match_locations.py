@@ -3,10 +3,26 @@
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.services import building_location
+from app.services import building_location, data_provider
 from app.services.sk_footfall import load_areas
 
 client = TestClient(app)
+
+
+def setup_module() -> None:
+    # 이 테스트는 데모 매물 15건(mock)을 전제한다. app/data/real/ 캐시가 있으면
+    # RealSanggaProvider가 선택돼 실패하므로 목업을 강제한다.
+    import os
+
+    os.environ["CHAEUM_FORCE_MOCK"] = "1"
+    data_provider.reload_provider()
+
+
+def teardown_module() -> None:
+    import os
+
+    os.environ.pop("CHAEUM_FORCE_MOCK", None)
+    data_provider.reload_provider()
 PAYLOAD = {
     "business_type": "카페",
     "budget": {"deposit": 10000000, "monthly_rent": 1000000},
