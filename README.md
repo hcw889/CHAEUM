@@ -51,18 +51,22 @@ http://localhost:3000 접속 (백엔드가 8000번 포트에서 실행 중이어
 
 ## 화면 구성
 
-<<<<<<< HEAD
-1. 온보딩 (역할 선택) — `/`
-2. 매물 입력 — `/property/new`
-3. 진단 결과 — `/diagnosis/[id]`
-4. 업종 적합도 순위 — `/ranking/[id]`
-5. 리스크 대시보드 — `/dashboard/[id]`
-6. 인허가 체크리스트 — `/permits/[id]`
-7. 전략 그리드 — `/strategy/[id]`
-8. 시각화 (공간 컨셉 이미지 생성 + Before/After 슬라이더) — `/visualize/[id]`
-9. 리포트 (Executive Summary + PDF) — `/report/[id]`
-10. 지자체 공실 현황 대시보드 — `/official`
-11. 주변 유동인구 (매칭 결과 화면 내 색상 지도) — `/match/results`
+총 **12개 화면**이며, 건물별 분석 화면 7개는 `StepNav`로 이동합니다.
+
+| 화면 | 경로 | 기본 진입 역할 |
+| --- | --- | --- |
+| 온보딩 (역할 선택) | `/` | 공통 |
+| 매물 입력 | `/property/new` | 건물주 |
+| 매칭 조건 입력 | `/match/new?role=founder` 또는 `/match/new?role=brand` | 예비 창업자·팝업 브랜드 |
+| 매칭 결과 (주변 유동인구 지도 포함) | `/match/results` | 예비 창업자·팝업 브랜드 |
+| 진단 결과 | `/diagnosis/[id]` | 공통 |
+| 업종 적합도 순위 | `/ranking/[id]` | 공통 |
+| 리스크 대시보드 | `/dashboard/[id]` | 공통 |
+| 인허가 체크리스트 | `/permits/[id]` | 공통 |
+| 전략 그리드 | `/strategy/[id]` | 공통 |
+| 시각화 (컨셉 이미지 생성·전후 비교) | `/visualize/[id]` | 공통 |
+| 리포트 (요약·브라우저 인쇄로 PDF 저장) | `/report/[id]` | 공통 |
+| 지자체 공실 현황 대시보드 | `/official` | 지자체 담당자 |
 
 ## 주변 유동인구 대시보드 (SK open API)
 
@@ -97,24 +101,6 @@ http://localhost:3000 접속 (백엔드가 8000번 포트에서 실행 중이어
 
 > 구역 좌표·반경은 지도 표시용 대표값이고, 연동 전 수치는 모두 시연용 가상 데이터입니다.
 > 실제 응답 예시를 확보하면 `sk_footfall._parse_hourly()`만 엄격한 파서로 바꾸면 됩니다.
-=======
-총 **12개 화면**이며, 건물별 분석 화면 7개는 `StepNav`로 이동합니다.
-
-| 화면 | 경로 | 기본 진입 역할 |
-| --- | --- | --- |
-| 온보딩 (역할 선택) | `/` | 공통 |
-| 매물 입력 | `/property/new` | 건물주 |
-| 매칭 조건 입력 | `/match/new?role=founder` 또는 `/match/new?role=brand` | 예비 창업자·팝업 브랜드 |
-| 매칭 결과 | `/match/results` | 예비 창업자·팝업 브랜드 |
-| 진단 결과 | `/diagnosis/[id]` | 공통 |
-| 업종 적합도 순위 | `/ranking/[id]` | 공통 |
-| 리스크 대시보드 | `/dashboard/[id]` | 공통 |
-| 인허가 체크리스트 | `/permits/[id]` | 공통 |
-| 전략 그리드 | `/strategy/[id]` | 공통 |
-| 시각화 (컨셉 이미지 생성·전후 비교) | `/visualize/[id]` | 공통 |
-| 리포트 (요약·브라우저 인쇄로 PDF 저장) | `/report/[id]` | 공통 |
-| 지자체 공실 현황 대시보드 | `/official` | 지자체 담당자 |
->>>>>>> 600e942c179204aa65f7eb2013706c2f9fa9a0e6
 
 ## 지자체 공실 현황 대시보드
 
