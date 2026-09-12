@@ -15,6 +15,28 @@ const ROLE_INTRO: Record<Role, string> = {
   official: "관리 중인 공실 상가의 주소를 입력하면 활성화 전략 데이터를 받아볼 수 있어요.",
 };
 
+// 라이브 데모에서 진단 전체 흐름을 한 번의 클릭으로 보여줄 수 있는 대표 목업 매물.
+const OWNER_DEMO_SCENARIOS = [
+  {
+    buildingId: "b1",
+    label: "노후 상가 리스크 진단",
+    name: "팔달로 학원가 노후상가",
+    detail: "2층 · 18평 · 주의",
+  },
+  {
+    buildingId: "b2",
+    label: "안정 상권 업종 추천",
+    name: "객사길 코너 상가",
+    detail: "1층 · 14평 · 안전",
+  },
+  {
+    buildingId: "b4",
+    label: "고위험 매물 개선안",
+    name: "경원동 대로변 상가",
+    detail: "1층 · 16평 · 위험",
+  },
+] as const;
+
 export default function PropertyInputPage() {
   const router = useRouter();
   const role = useStoredRole();
@@ -67,6 +89,32 @@ export default function PropertyInputPage() {
         <h1 className="text-2xl font-bold tracking-tight">이 건물, 진단해볼까요?</h1>
         <p className="mt-2 text-sm text-muted">{role ? ROLE_INTRO[role] : "진단할 상가의 정보를 입력해주세요."}</p>
       </div>
+
+      {role === "owner" && (
+        <section className="mb-6" aria-label="건물주 데모 시나리오">
+          <div className="mb-3 flex items-center justify-between">
+            <div>
+              <p className="text-sm font-semibold text-accent">⚡ 건물주 빠른 데모</p>
+              <p className="mt-1 text-xs text-muted">목업 매물로 진단부터 업종 추천까지 바로 확인하세요.</p>
+            </div>
+            <span className="rounded-full bg-accent-soft px-2.5 py-1 text-xs font-medium text-accent">목업 데이터</span>
+          </div>
+          <div className="grid gap-2.5 sm:grid-cols-3">
+            {OWNER_DEMO_SCENARIOS.map((scenario) => (
+              <button
+                key={scenario.buildingId}
+                type="button"
+                onClick={() => router.push(`/diagnosis/${scenario.buildingId}`)}
+                className="rounded-md border border-border bg-surface p-3.5 text-left transition-colors hover:border-accent"
+              >
+                <p className="text-sm font-semibold">{scenario.label}</p>
+                <p className="mt-1 text-xs leading-relaxed text-muted">{scenario.name}</p>
+                <p className="mt-1.5 text-xs font-medium text-foreground">{scenario.detail}</p>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
 
       <Card>
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -130,7 +178,7 @@ export default function PropertyInputPage() {
 
       {demoBuildings.length > 0 && (
         <div className="mt-8">
-          <p className="mb-3 text-sm text-muted">또는 데모 매물로 바로 둘러보기</p>
+          <p className="mb-3 text-sm text-muted">전체 목업 매물 15개 둘러보기</p>
           <div className="flex flex-wrap gap-2">
             {demoBuildings.map((b) => (
               <Link

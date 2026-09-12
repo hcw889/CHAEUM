@@ -206,7 +206,10 @@ function WizardBody() {
       {showPresets && (
         <Card className="mb-6 border-accent/30 bg-accent-soft/40">
           <div className="mb-3 flex items-center justify-between">
-            <p className="text-sm font-semibold text-accent">⚡ 빠른 데모 시나리오</p>
+            <div>
+              <p className="text-sm font-semibold text-accent">⚡ 예비창업자 빠른 데모</p>
+              <p className="mt-1 text-xs text-muted">15개 목업 매물에서 조건별 추천 결과를 바로 확인하세요.</p>
+            </div>
             <button onClick={() => setShowPresets(false)} className="text-xs text-muted hover:text-foreground">
               직접 입력하기 ↓
             </button>
