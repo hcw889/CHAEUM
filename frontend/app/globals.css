@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+:root {
+  --background: #faf8f5;
+  --surface: #ffffff;
+  --foreground: #262220;
+  --muted: #8a8078;
+  --border: #e8e2da;
+  --accent: #b5502e;
+  --accent-foreground: #fdf6f2;
+  --accent-soft: #f4e3da;
+  --safe: #4b7a5c;
+  --safe-soft: #e6efe8;
+  --caution: #b5822e;
+  --caution-soft: #f6ecd9;
+  --danger: #ad4438;
+  --danger-soft: #f6e2df;
+  --gold: #b5892e;
+  --silver: #8a8f99;
+  --bronze: #a3673f;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #17140f;
+    --surface: #201c17;
+    --foreground: #f1ece5;
+    --muted: #a89c8f;
+    --border: #332c24;
+    --accent: #e0784f;
+    --accent-foreground: #1c130d;
+    --accent-soft: #3a271d;
+    --safe: #7fb894;
+    --safe-soft: #23342a;
+    --caution: #e0b45c;
+    --caution-soft: #3a3120;
+    --danger: #e2837a;
+    --danger-soft: #3a2320;
+    --gold: #e0b45c;
+    --silver: #b7bcc4;
+    --bronze: #d19468;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-soft: var(--accent-soft);
+  --color-safe: var(--safe);
+  --color-safe-soft: var(--safe-soft);
+  --color-caution: var(--caution);
+  --color-caution-soft: var(--caution-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-gold: var(--gold);
+  --color-silver: var(--silver);
+  --color-bronze: var(--bronze);
+  --font-sans: var(--font-noto-sans-kr);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white;
+    color: black;
+  }
+}
