@@ -1,36 +1,37 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 채움(Chaeum) 프런트엔드
 
-## Getting Started
+역할 선택, 매물 입력·매칭, 건물 분석과 지자체 대시보드를 제공하는 Next.js·TypeScript·Tailwind CSS 앱입니다. 설치·백엔드 설정과 전체 화면 목록은 [프로젝트 README](../README.md)를 참조합니다.
 
-First, run the development server:
+## 개발 서버 실행
 
-```bash
+이 디렉터리(`ONIT/frontend`)에서 실행합니다. 먼저 별도 터미널에서 **백엔드가 `http://localhost:8000`으로 실행 중이어야 합니다.** 백엔드 실행 방법은 [프로젝트 README](../README.md#백엔드)를 따릅니다.
+
+```powershell
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+브라우저에서 `http://localhost:3000`에 접속합니다. API 기본 주소는 `lib/api.ts`에서 설정하며, 변경이 필요한 경우 프런트엔드 시작 전에 `NEXT_PUBLIC_API_BASE` 환경변수를 지정합니다.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 타입 검사와 빌드
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```powershell
+npx next typegen
+npx tsc --noEmit
+npm run build
+```
 
-## Learn More
+`next typegen`은 `LayoutProps` 등 Next.js의 경로 타입을 생성합니다. 새로 설치한 환경에서도 개발 서버를 먼저 실행하지 않고 타입 검사를 할 수 있도록 포함했습니다. 생성 파일을 수동 편집하지 않습니다.
 
-To learn more about Next.js, take a look at the following resources:
+## Playwright 검사
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+의존성 설치와 백엔드 기동을 마친 후 같은 디렉터리에서 실행합니다.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```powershell
+npx playwright install chromium  # 최초 1회 브라우저 설치
+npx playwright test
+```
 
-## Deploy on Vercel
+`playwright.config.ts`는 `next dev`를 자동 기동하며 `:3000`에 기존 서버가 있으면 재사용합니다. **백엔드 `:8000`은 자동 기동하지 않으므로 별도 터미널에서 계속 실행해야 합니다.** 검사 대상은 팝업 브랜드 매칭 재사용 6건과 공간 시각화 3건, 총 9건입니다.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+외부 생성 키 없이도 기본 미리보기 모드로 시각화 검사를 실행할 수 있습니다. 실제 외부 이미지 생성 API의 성공이나 추천 품질을 검증하는 검사는 아닙니다. 백엔드 pytest 실행은 [프로젝트 README의 테스트 안내](../README.md#테스트)를 참조합니다.
