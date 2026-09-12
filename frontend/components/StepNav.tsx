@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const STEPS = [
+export const STEPS = [
   { path: "diagnosis", label: "진단 결과" },
   { path: "ranking", label: "업종 순위" },
   { path: "dashboard", label: "리스크 대시보드" },

@@ -1,6 +1,6 @@
 import { formatScore } from "@/lib/format";
 
-function levelOf(score: number): { label: string; color: string } {
+export function levelOf(score: number): { label: string; color: string } {
   if (score >= 75) return { label: "양호", color: "var(--safe)" };
   if (score >= 50) return { label: "보통", color: "var(--caution)" };
   return { label: "취약", color: "var(--danger)" };

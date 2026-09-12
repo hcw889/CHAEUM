@@ -6,6 +6,7 @@ import { BuildingPageHeader } from "@/components/BuildingPageHeader";
 import { Card } from "@/components/Card";
 import { DataFreshness } from "@/components/DataFreshness";
 import { RiskBadge } from "@/components/RiskBadge";
+import { ScoreBarBreakdown } from "@/components/ScoreBarBreakdown";
 import { Skeleton, SkeletonCardGrid } from "@/components/Skeleton";
 import { api } from "@/lib/api";
 import { formatCurrency, formatScore } from "@/lib/format";
@@ -82,13 +83,15 @@ export default function ReportPage() {
             </p>
           </Card>
 
-          <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Card>
+              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Top Business</p>
               <p className="mb-1 text-sm text-muted">추천 업종</p>
               <p className="text-xl font-semibold">{report.top_business.type}</p>
               <p className="text-xs text-muted">적합도 {formatScore(report.top_business.fit_score)}점</p>
             </Card>
             <Card>
+              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Condition</p>
               <p className="mb-1 text-sm text-muted">건물 컨디션</p>
               <p className="text-xl font-semibold">
                 {formatScore(
@@ -102,11 +105,24 @@ export default function ReportPage() {
               <p className="text-xs text-muted">노후도·접근성·채광 평균</p>
             </Card>
             <Card>
+              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Rent</p>
               <p className="mb-1 text-sm text-muted">평균 추정 임대료</p>
               <p className="text-xl font-semibold">{formatScore(report.dashboard.avg_estimated_rent / 10_000)}만원</p>
               <p className="text-xs text-muted">인근 업종 평균 (월)</p>
             </Card>
+            <Card>
+              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Foot Traffic</p>
+              <p className="mb-1 text-sm text-muted">평균 추정 유동인구 지수</p>
+              <p className="text-xl font-semibold">{formatScore(report.dashboard.avg_foot_traffic)}점</p>
+              <p className="text-xs text-muted">인근 업종 평균</p>
+            </Card>
           </div>
+
+          <Card className="mb-4">
+            <h2 className="mb-1 font-semibold">{report.top_business.type} 스코어 근거</h2>
+            <p className="mb-5 text-sm text-muted">가중합 방식으로 계산된 세부 항목별 기여도입니다.</p>
+            <ScoreBarBreakdown breakdown={report.top_business.score_breakdown} />
+          </Card>
 
           <Card>
             <h2 className="mb-3 font-semibold">필요 인허가 ({report.top_business.type} 기준)</h2>
