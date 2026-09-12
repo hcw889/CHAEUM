@@ -76,17 +76,24 @@ http://localhost:3000 접속 (백엔드가 8000번 포트에서 실행 중이어
 ### 데이터와 API
 
 `GET /api/buildings/{id}/footfall?day_type=weekday|weekend`
-→ `app/services/sk_footfall.py` → **SK open API 유동인구**(openapi.sk.com) 또는 mock
+구역 값은 아래 순서로 고릅니다 (구역 단위로 폴백).
 
-| 모드 | 조건 | 값 |
+| 출처 (`areas[].source`) | 조건 | 값 |
 | --- | --- | --- |
-| `sk_api` | `SK_OPENAPI_APP_KEY` 설정 + 호출 성공 | SK open API 실측 |
-| `mock` | 키 없음 / 호출·파싱 실패 | 구역 특성 기반 시연용 가상 수치 (결정적) |
+| `measured` | `app/data/footfall_measured.json`에 그 구역이 전사돼 있음 | 상권정보시스템(sg.sbiz.or.kr)에서 사람이 옮겨 적은 실측 |
+| `sk_api` | `SK_OPENAPI_APP_KEY` 설정 + 호출 성공 | SK open API 실측 (현재는 계약 상품이라 사용 안 함) |
+| `mock` | 위 둘 다 없음 | 구역 특성 기반 시연용 가상 수치 (결정적) |
 
-폴백은 **구역 단위**로 동작합니다. 일부 구역만 실패하면 그 구역만 가상 수치가 되고,
-화면 하단 출처 문구가 어느 쪽인지 표시합니다.
+실측 구역이 하나라도 있으면 응답의 `is_mock`은 `false`, `source_label`은 전사 파일의 출처가 되고,
+아직 전사 전인 구역은 `note`와 목록의 "추정" 표시로 구분됩니다.
 
-### 키 연결 방법
+### 실측 전사 (권장 경로)
+
+`backend/app/data/footfall_measured.README.md`의 순서대로 구역별 일평균 유동인구·시간대 비율·요일 비율을
+`footfall_measured.json`에 적습니다. 저장하면 서버 재시작 없이 반영되며,
+`python -m app.services.footfall_measured` 또는 `/api/footfall/status`의 `measured`로 진행 상황과 규격 오류를 확인합니다.
+
+### SK 키 연결 방법 (선택)
 
 1. `backend/.env`에 `SK_OPENAPI_APP_KEY=발급받은_키` 를 넣습니다.
 2. 계약한 상품의 엔드포인트를 `SK_FOOTFALL_AREA_PATH`(지역코드 기반) 또는

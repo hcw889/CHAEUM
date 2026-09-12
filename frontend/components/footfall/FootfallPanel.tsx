@@ -29,7 +29,8 @@ const ALL_DAY = -1; // 시간 슬라이더의 '하루 전체' 위치
 
 /**
  * 추천 매물 주변 유동인구 대시보드.
- * 값은 SK open API 유동인구(키 미설정 시 시연용 가상 수치)에서 오며,
+ * 값은 사람이 전사한 상권정보시스템 실측(backend footfall_measured.json)이 우선이고,
+ * 전사 전 구역은 시연용 가상 수치로 채워진다.
  * 시간대를 옮기면 지도 구역 색이 같이 바뀐다.
  */
 export default function FootfallPanel({ buildingId, address }: Props) {
@@ -224,6 +225,8 @@ export default function FootfallPanel({ buildingId, address }: Props) {
                 <span className="w-28 shrink-0 truncate text-sm font-medium">{area.name}</span>
                 <span className="hidden text-xs text-muted sm:inline">
                   {area.profile_label} · {area.distance_m}m
+                  {/* 실측 구역이 하나라도 있을 때만, 아직 전사 전인 구역을 구분해 준다. */}
+                  {data.measured_count > 0 && area.source !== "measured" && " · 추정"}
                 </span>
                 <span className="ml-auto flex items-center gap-3">
                   <span className="h-1.5 w-16 overflow-hidden rounded-full bg-border sm:w-28">
@@ -249,6 +252,11 @@ export default function FootfallPanel({ buildingId, address }: Props) {
             하루 {formatPeople(detail.daily_total)} · 피크 {formatHour(detail.peak_hour)} · 매물에서{" "}
             {detail.distance_m}m · 주변 구역 합계의 {detail.share_pct}%
           </p>
+          {detail.source === "mock" && detail.admin_dong && detail.resident_population != null && (
+            <p className="mt-1 text-[11px] leading-relaxed text-muted">
+              추정 근거: {detail.admin_dong} 주민등록 인구 약 {formatPeople(detail.resident_population)} × {detail.profile_label} 계수
+            </p>
+          )}
         </div>
       )}
 
@@ -260,7 +268,7 @@ export default function FootfallPanel({ buildingId, address }: Props) {
 
       <p className="mt-4 text-[11px] leading-relaxed text-muted">
         출처: {data.source_label}
-        {data.is_mock && " — SK open API 키가 연결되면 실측치로 대체됩니다"} · 기준월{" "}
+        {data.is_mock && " — 행정동 인구에 구역 성격 계수를 곱한 추정치입니다"} · 기준월{" "}
         {data.data_reference_month.replace("-", ".")}
       </p>
     </div>

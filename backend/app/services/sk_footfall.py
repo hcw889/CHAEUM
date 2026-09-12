@@ -46,10 +46,16 @@ _cache: dict[str, tuple[float, list[int]]] = {}
 
 # 구역 성격별 24시간 분포 가중치와 일 유동인구 기준 규모.
 # mock 모드에서만 쓰이며, 실제 API가 붙으면 사용되지 않는다.
+#
+# per_resident: 구역이 속한 행정동 주민등록 인구 1명당 하루 유동인구 계수.
+# footfall_areas.json에 resident_population이 있으면 base 대신 인구 x 계수로 규모를
+# 잡는다 — 임의 상수보다 "그 동에 사람이 얼마나 사는가"가 반영된 어림값이 된다.
+# 상업/관광지는 외부 유입이 많아 계수가 크고, 주거지는 주민 일부만 거리로 나온다.
 PROFILES: dict[str, dict[str, Any]] = {
     "commercial": {
         "label": "상업지",
         "base": 18000,
+        "per_resident": 3.0,
         "weekend": 1.15,
         "curve": [0.4, 0.2, 0.1, 0.1, 0.2, 0.6, 1.5, 3.0, 4.2, 4.5, 5.0, 6.2,
                   7.0, 6.4, 6.0, 6.2, 6.8, 7.6, 8.2, 7.4, 6.0, 4.2, 2.6, 1.2],
@@ -57,6 +63,7 @@ PROFILES: dict[str, dict[str, Any]] = {
     "market": {
         "label": "전통시장",
         "base": 12000,
+        "per_resident": 2.6,
         "weekend": 1.05,
         "curve": [0.2, 0.1, 0.1, 0.2, 0.8, 2.0, 4.0, 5.5, 6.5, 7.2, 7.6, 7.8,
                   7.4, 7.0, 6.6, 6.0, 5.4, 4.6, 3.6, 2.4, 1.4, 0.8, 0.4, 0.2],
@@ -64,6 +71,7 @@ PROFILES: dict[str, dict[str, Any]] = {
     "tourism": {
         "label": "관광지",
         "base": 15000,
+        "per_resident": 3.2,
         "weekend": 1.6,
         "curve": [0.2, 0.1, 0.1, 0.1, 0.2, 0.4, 0.9, 1.8, 3.0, 4.6, 6.4, 7.8,
                   8.4, 8.6, 8.4, 8.0, 7.4, 6.6, 5.6, 4.2, 3.0, 2.0, 1.2, 0.6],
@@ -71,6 +79,7 @@ PROFILES: dict[str, dict[str, Any]] = {
     "station": {
         "label": "역세권",
         "base": 21000,
+        "per_resident": 1.6,
         "weekend": 0.9,
         "curve": [0.6, 0.3, 0.2, 0.2, 0.6, 2.2, 4.6, 6.4, 6.0, 4.8, 4.4, 4.6,
                   5.0, 4.8, 4.6, 5.0, 5.8, 7.2, 7.8, 6.4, 5.0, 4.0, 2.6, 1.4],
@@ -78,6 +87,7 @@ PROFILES: dict[str, dict[str, Any]] = {
     "office": {
         "label": "업무지구",
         "base": 13000,
+        "per_resident": 1.5,
         "weekend": 0.45,
         "curve": [0.2, 0.1, 0.1, 0.1, 0.3, 1.0, 2.6, 5.6, 8.2, 7.4, 7.0, 7.2,
                   8.0, 7.2, 6.8, 6.6, 6.4, 7.4, 6.0, 4.0, 2.6, 1.6, 0.9, 0.4],
@@ -85,6 +95,7 @@ PROFILES: dict[str, dict[str, Any]] = {
     "academy": {
         "label": "학원가",
         "base": 9000,
+        "per_resident": 0.8,
         "weekend": 0.7,
         "curve": [0.2, 0.1, 0.1, 0.1, 0.2, 0.5, 1.4, 3.4, 4.0, 4.2, 4.6, 5.0,
                   5.2, 5.6, 6.4, 7.0, 7.6, 8.2, 8.6, 8.0, 6.4, 4.2, 2.4, 1.0],
@@ -92,6 +103,7 @@ PROFILES: dict[str, dict[str, Any]] = {
     "youth": {
         "label": "청년상권",
         "base": 11000,
+        "per_resident": 2.4,
         "weekend": 1.35,
         "curve": [1.2, 0.8, 0.4, 0.2, 0.2, 0.3, 0.8, 1.6, 2.4, 3.0, 3.6, 4.6,
                   5.4, 5.2, 5.0, 5.4, 6.2, 7.4, 8.4, 8.8, 8.4, 7.0, 4.8, 2.6],
@@ -99,6 +111,7 @@ PROFILES: dict[str, dict[str, Any]] = {
     "residential": {
         "label": "주거지",
         "base": 7000,
+        "per_resident": 0.45,
         "weekend": 0.95,
         "curve": [0.6, 0.3, 0.2, 0.2, 0.6, 1.8, 3.8, 5.6, 5.0, 4.2, 4.0, 4.4,
                   4.8, 4.4, 4.2, 4.6, 5.4, 7.0, 8.0, 7.4, 6.2, 4.6, 3.0, 1.6],
@@ -259,11 +272,36 @@ def fetch_area_hourly(area: dict, date: str) -> Optional[list[int]]:
 # --- mock 생성 ----------------------------------------------------------------
 
 
+def estimated_daily_total(area: dict) -> Optional[int]:
+    """
+    행정동 주민등록 인구 기반 하루 유동인구 어림값. resident_population이 없으면 None.
+
+    큰 동(2만 명 이상)은 인구가 그대로 거리 유동으로 이어지지 않으므로 8천 명을
+    넘는 부분은 35%만 반영한다 — 아파트 밀집 동이 원도심 상권을 압도하지 않게.
+    """
+    population = area.get("resident_population")
+    if not population:
+        return None
+    profile = PROFILES.get(area.get("profile", DEFAULT_PROFILE), PROFILES[DEFAULT_PROFILE])
+    effective = min(population, 8000) + max(0, population - 8000) * 0.35
+    return int(round(effective * profile["per_resident"]))
+
+
 def mock_area_hourly(area: dict, day_type: str) -> list[int]:
-    """구역 id를 시드로 한 결정적 가상 수치. 같은 입력이면 항상 같은 값이 나온다."""
+    """
+    구역 id를 시드로 한 결정적 추정 수치. 같은 입력이면 항상 같은 값이 나온다.
+
+    규모는 행정동 인구 기반(estimated_daily_total)을 우선 쓰고, 인구가 없는 구역만
+    프로필 기본값(base)에 ±15% 지터를 준다. 인구 기반은 지터를 ±5%로 줄여 "그 동
+    인구 x 계수"에서 크게 벗어나지 않게 한다.
+    """
     profile = PROFILES.get(area.get("profile", DEFAULT_PROFILE), PROFILES[DEFAULT_PROFILE])
     digest = hashlib.sha256(f"{area['id']}:{day_type}".encode("utf-8")).digest()
-    scale = profile["base"] * (0.85 + (digest[0] / 255) * 0.3)
+    population_based = estimated_daily_total(area)
+    if population_based is not None:
+        scale = population_based * (0.95 + (digest[0] / 255) * 0.1)
+    else:
+        scale = profile["base"] * (0.85 + (digest[0] / 255) * 0.3)
     if day_type == "weekend":
         scale *= profile["weekend"]
 

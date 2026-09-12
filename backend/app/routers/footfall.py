@@ -1,8 +1,11 @@
 """
 추천 매물 주변 유동인구 조회 API.
 
-유동인구 시각화 화면(/visualize/[id])의 "주변 유동인구" 대시보드가 쓴다.
-데이터 획득은 app/services/sk_footfall.py가 담당하며(SK open API -> 실패 시 mock),
+유동인구 시각화 화면(/diagnosis/[id]#visualize)의 "주변 유동인구" 대시보드가 쓴다.
+구역 값은 우선순위대로 고른다:
+  1. footfall_measured.json — 사람이 상권정보시스템에서 전사한 실측 (app/services/footfall_measured.py)
+  2. SK open API (app/services/sk_footfall.py, 키 있을 때)
+  3. mock — 구역 특성 기반 가상 수치
 이 라우터는 구역 선별/집계/응답 스키마만 책임진다.
 """
 
@@ -13,7 +16,7 @@ from datetime import date as date_cls, timedelta
 from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app.models.footfall import FootfallResponse
-from app.services import sk_footfall
+from app.services import footfall_measured, sk_footfall
 from app.services.building_location import get_building_location
 from app.services.data_provider import DataProvider, get_data_provider
 
@@ -23,10 +26,13 @@ router = APIRouter(prefix="/api", tags=["footfall"])
 DATA_LAG_DAYS = 7
 SOURCE_LABELS = {
     "sk_api": "SK open API 유동인구",
-    "mock": "시연용 가상 유동인구",
+    # footfall_areas.json의 행정동 인구(resident_population) x 구역 성격 계수 (sk_footfall.estimated_daily_total)
+    "mock": "행정동 주민등록 인구 기반 추정 유동인구",
 }
 # 키는 설정됐는데 값이 전부 mock으로 떨어진 경우 — 엔드포인트/지역코드 설정을 봐야 한다.
-FALLBACK_NOTE = "SK 키는 인식됐지만 응답을 받지 못해 가상 수치로 표시 중입니다 (/api/footfall/status 참고)."
+FALLBACK_NOTE = "SK 키는 인식됐지만 응답을 받지 못해 행정동 인구 기반 추정치로 표시 중입니다 (/api/footfall/status 참고)."
+# 일부 구역만 전사가 끝난 경우 — 어느 구역이 추정치인지 화면에 밝힌다.
+PARTIAL_NOTE = "{names} 구역은 아직 실측 전사 전이라 추정치입니다 (footfall_measured.json)."
 
 
 def _reference_date(day_type: str) -> str:
@@ -86,6 +92,8 @@ def get_footfall_status():
         "areas_with_sk_area_code": len(with_code),
         "sample_request_url": sample,
         "hint": _status_hint(sample),
+        # 사람이 전사한 실측 진행 현황. errors에 뜬 구역은 규격에 안 맞아 무시되고 있다.
+        "measured": footfall_measured.coverage(areas, sk_footfall.PROFILES),
     }
 
 
@@ -116,7 +124,13 @@ def get_building_footfall(
 
     areas = []
     for area in selected:
-        hourly, area_is_mock = sk_footfall.area_hourly(area, day_type, reference_date)
+        profile = sk_footfall.PROFILES.get(area.get("profile"), sk_footfall.PROFILES[sk_footfall.DEFAULT_PROFILE])
+        measured = footfall_measured.area_hourly(area, day_type, profile["curve"])
+        if measured is not None:
+            hourly, source, reference_month = measured["hourly"], "measured", measured["reference_month"]
+        else:
+            hourly, area_is_mock = sk_footfall.area_hourly(area, day_type, reference_date)
+            source, reference_month = ("mock" if area_is_mock else "sk_api"), None
         daily_total = sum(hourly)
         areas.append(
             {
@@ -132,7 +146,11 @@ def get_building_footfall(
                 "daily_total": daily_total,
                 "peak_hour": max(range(24), key=lambda h: hourly[h]),
                 "share_pct": 0.0,  # 아래에서 전체 합계가 나온 뒤 채운다
-                "is_mock": area_is_mock,
+                "is_mock": source == "mock",
+                "source": source,
+                "reference_month": reference_month,
+                "admin_dong": area.get("admin_dong"),
+                "resident_population": area.get("resident_population"),
             }
         )
 
@@ -147,6 +165,19 @@ def get_building_footfall(
 
     building = provider.get_building(building_id)
     all_mock = all(a["is_mock"] for a in areas)
+    measured_areas = [a for a in areas if a["source"] == "measured"]
+    estimated_areas = [a for a in areas if a["source"] != "measured"]
+
+    if measured_areas:
+        source_label = footfall_measured.source_label()
+        note = PARTIAL_NOTE.format(names="·".join(a["name"] for a in estimated_areas)) if estimated_areas else None
+        # 구역마다 기준월이 다를 수 있으니 가장 최근 것을 대표로 쓴다.
+        months = [a["reference_month"] for a in measured_areas if a["reference_month"]]
+        reference_month = max(months) if months else config["data_reference_month"]
+    else:
+        source_label = SOURCE_LABELS["mock"] if all_mock else SOURCE_LABELS["sk_api"]
+        note = FALLBACK_NOTE if all_mock and sk_footfall.resolve_mode() == "sk_api" else None
+        reference_month = config["data_reference_month"]
 
     return {
         "building_id": building_id,
@@ -154,11 +185,12 @@ def get_building_footfall(
         "region": center.get("region"),
         "mode": sk_footfall.resolve_mode(),
         "is_mock": all_mock,
-        "source_label": SOURCE_LABELS["mock"] if all_mock else SOURCE_LABELS["sk_api"],
-        "note": FALLBACK_NOTE if all_mock and sk_footfall.resolve_mode() == "sk_api" else None,
+        "source_label": source_label,
+        "note": note,
+        "measured_count": len(measured_areas),
         "day_type": day_type,
         "date": reference_date,
-        "data_reference_month": config["data_reference_month"],
+        "data_reference_month": reference_month,
         "description": config["description"],
         "center_lat": center["lat"],
         "center_lng": center["lng"],
