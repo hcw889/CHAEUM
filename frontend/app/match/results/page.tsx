@@ -114,6 +114,20 @@ export default function MatchResultsPage() {
               </div>
               <p className="text-3xl font-bold tracking-tight">{formatScore(m.final_score)}</p>
               <p className="text-xs text-muted">종합 매칭 점수</p>
+
+              {m.space_vision && (
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-accent">
+                    노출 {formatScore(m.space_vision.exposure_score)}
+                  </span>
+                  <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-accent">
+                    접근 {formatScore(m.space_vision.accessibility_score)}
+                  </span>
+                  <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-accent">
+                    팝업 {formatScore(m.space_vision.popup_fit_score)}
+                  </span>
+                </div>
+              )}
             </Card>
           </button>
         ))}
@@ -141,6 +155,55 @@ export default function MatchResultsPage() {
           <h2 className="mb-1 font-semibold">{selectedMatch.address}</h2>
           <p className="mb-5 text-sm leading-relaxed text-foreground">{selectedMatch.explanation}</p>
           <ScoreBarBreakdown breakdown={breakdown} factors={AGENT_ORDER} labels={AGENT_LABELS} />
+
+          {selectedMatch.space_vision && (
+            <div className="mt-6 border-t border-border pt-6">
+              <h3 className="mb-4 text-sm font-semibold text-muted">AI Space Vision 분석</h3>
+
+              {selectedMatch.photo_url && (
+                <div className="mb-4 overflow-hidden rounded-lg border border-border">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={selectedMatch.photo_url}
+                    alt={`${selectedMatch.address} 상가 외관 사진`}
+                    className="aspect-[4/3] w-full object-cover"
+                  />
+                  <p className="border-t border-border bg-background px-3 py-1.5 text-xs text-muted">
+                    BEFORE 원본 사진
+                  </p>
+                </div>
+              )}
+
+              <p className="mb-5 text-sm text-foreground">
+                {selectedMatch.space_vision.detected_elements.join(" · ")}
+              </p>
+
+              <div className="mb-5 space-y-3">
+                {(
+                  [
+                    ["노출성", selectedMatch.space_vision.exposure_score],
+                    ["접근성", selectedMatch.space_vision.accessibility_score],
+                    ["팝업 적합도", selectedMatch.space_vision.popup_fit_score],
+                  ] as const
+                ).map(([label, value]) => (
+                  <div key={label}>
+                    <div className="mb-1.5 flex justify-between text-sm">
+                      <span className="font-medium text-foreground">{label}</span>
+                      <span className="text-muted">{formatScore(value)}점</span>
+                    </div>
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-border">
+                      <div
+                        className="h-full rounded-full bg-accent transition-all"
+                        style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <p className="text-sm leading-relaxed text-muted">{selectedMatch.space_vision.visual_summary}</p>
+            </div>
+          )}
 
           <Link
             href={`/diagnosis/${selectedMatch.building_id}`}

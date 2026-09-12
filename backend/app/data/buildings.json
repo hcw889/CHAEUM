@@ -14,7 +14,8 @@
       "accessibility_score": 70,
       "lighting_score": 60
     },
-    "data_reference_month": "2026-06"
+    "data_reference_month": "2026-06",
+    "photo_url": "https://picsum.photos/seed/onit-storefront-b1/800/600"
   },
   "b2": {
     "id": "b2",
@@ -31,7 +32,8 @@
       "accessibility_score": 85,
       "lighting_score": 90
     },
-    "data_reference_month": "2026-07"
+    "data_reference_month": "2026-07",
+    "photo_url": "https://picsum.photos/seed/onit-storefront-b2/800/600"
   },
   "b3": {
     "id": "b3",
@@ -48,7 +50,8 @@
       "accessibility_score": 88,
       "lighting_score": 65
     },
-    "data_reference_month": "2026-05"
+    "data_reference_month": "2026-05",
+    "photo_url": "https://picsum.photos/seed/onit-storefront-b3/800/600"
   },
   "b4": {
     "id": "b4",
@@ -65,7 +68,8 @@
       "accessibility_score": 90,
       "lighting_score": 70
     },
-    "data_reference_month": "2026-08"
+    "data_reference_month": "2026-08",
+    "photo_url": "https://picsum.photos/seed/onit-storefront-b4/800/600"
   },
   "b5": {
     "id": "b5",
@@ -82,7 +86,8 @@
       "accessibility_score": 80,
       "lighting_score": 75
     },
-    "data_reference_month": "2026-07"
+    "data_reference_month": "2026-07",
+    "photo_url": "https://picsum.photos/seed/onit-storefront-b5/800/600"
   },
   "b6": {
     "id": "b6",
@@ -99,7 +104,8 @@
       "accessibility_score": 63.6,
       "lighting_score": 57.4
     },
-    "data_reference_month": "2026-04"
+    "data_reference_month": "2026-04",
+    "photo_url": "https://picsum.photos/seed/onit-storefront-b6/800/600"
   },
   "b7": {
     "id": "b7",
@@ -116,7 +122,8 @@
       "accessibility_score": 84.2,
       "lighting_score": 80.1
     },
-    "data_reference_month": "2026-05"
+    "data_reference_month": "2026-05",
+    "photo_url": "https://picsum.photos/seed/onit-storefront-b7/800/600"
   },
   "b8": {
     "id": "b8",
@@ -133,7 +140,8 @@
       "accessibility_score": 47.8,
       "lighting_score": 42.9
     },
-    "data_reference_month": "2026-06"
+    "data_reference_month": "2026-06",
+    "photo_url": "https://picsum.photos/seed/onit-storefront-b8/800/600"
   },
   "b9": {
     "id": "b9",
@@ -150,7 +158,8 @@
       "accessibility_score": 83.2,
       "lighting_score": 90.0
     },
-    "data_reference_month": "2026-07"
+    "data_reference_month": "2026-07",
+    "photo_url": "https://picsum.photos/seed/onit-storefront-b9/800/600"
   },
   "b10": {
     "id": "b10",
@@ -167,7 +176,8 @@
       "accessibility_score": 70.7,
       "lighting_score": 68.0
     },
-    "data_reference_month": "2026-08"
+    "data_reference_month": "2026-08",
+    "photo_url": "https://picsum.photos/seed/onit-storefront-b10/800/600"
   },
   "b11": {
     "id": "b11",
@@ -184,7 +194,8 @@
       "accessibility_score": 87.4,
       "lighting_score": 90.1
     },
-    "data_reference_month": "2026-04"
+    "data_reference_month": "2026-04",
+    "photo_url": "https://picsum.photos/seed/onit-storefront-b11/800/600"
   },
   "b12": {
     "id": "b12",
@@ -201,7 +212,8 @@
       "accessibility_score": 71.4,
       "lighting_score": 62.4
     },
-    "data_reference_month": "2026-05"
+    "data_reference_month": "2026-05",
+    "photo_url": "https://picsum.photos/seed/onit-storefront-b12/800/600"
   },
   "b13": {
     "id": "b13",
@@ -218,7 +230,8 @@
       "accessibility_score": 51.2,
       "lighting_score": 51.8
     },
-    "data_reference_month": "2026-06"
+    "data_reference_month": "2026-06",
+    "photo_url": "https://picsum.photos/seed/onit-storefront-b13/800/600"
   },
   "b14": {
     "id": "b14",
@@ -235,7 +248,8 @@
       "accessibility_score": 62.7,
       "lighting_score": 59.4
     },
-    "data_reference_month": "2026-07"
+    "data_reference_month": "2026-07",
+    "photo_url": "https://picsum.photos/seed/onit-storefront-b14/800/600"
   },
   "b15": {
     "id": "b15",
@@ -252,6 +266,7 @@
       "accessibility_score": 36.3,
       "lighting_score": 35.4
     },
-    "data_reference_month": "2026-08"
+    "data_reference_month": "2026-08",
+    "photo_url": "https://picsum.photos/seed/onit-storefront-b15/800/600"
   }
 }

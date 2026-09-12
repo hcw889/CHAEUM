@@ -5,7 +5,7 @@ import logging
 from fastapi import APIRouter, Depends
 
 from app.models.schemas import MatchRequest, MatchResponse
-from app.services import matching_agents
+from app.services import matching_agents, space_vision_agent
 from app.services.data_provider import DataProvider, get_data_provider
 
 logger = logging.getLogger(__name__)
@@ -73,6 +73,13 @@ def match_buildings(payload: MatchRequest, provider: DataProvider = Depends(get_
         final_score = matching_agents.orchestrator(scores, priority_weights)
         explanation = matching_agents.explanation_agent(building, scores)
 
+        # space_vision은 4-agent 스코어링(위)과 완전히 독립적으로 계산해 별도 필드로만
+        # 나란히 붙인다 — final_score/agent_scores 결과에는 전혀 영향을 주지 않는다.
+        # TODO: building["photo_url"]은 현재 실제 상가 사진이 아닌 플레이스홀더
+        # 스톡이미지입니다. 실제 상가 외관 사진 확보 후 buildings.json의 photo_url을
+        # 교체해야 합니다.
+        space_vision = space_vision_agent.get_space_vision(building["id"], building.get("photo_url"))
+
         matches.append(
             {
                 "building_id": building["id"],
@@ -84,6 +91,8 @@ def match_buildings(payload: MatchRequest, provider: DataProvider = Depends(get_
                     "condition": scores["condition"],
                 },
                 "explanation": explanation,
+                "photo_url": building.get("photo_url"),
+                "space_vision": space_vision,
             }
         )
 

@@ -26,6 +26,7 @@ const LOADING_STEPS = [
   "상권 적합도 에이전트 분석 중…",
   "건물 컨디션 에이전트 분석 중…",
   "추천 이유 정리 중…",
+  "AI Space Vision 분석 중…",
 ];
 const LOADING_STEP_MS = 600;
 
