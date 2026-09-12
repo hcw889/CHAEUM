@@ -17,7 +17,9 @@ export default function OnboardingPage() {
 
   function handleSelect(role: Role) {
     saveRole(role);
-    router.push("/property/new");
+    // 건물주: 매물 입력 → 업종 추천 (기존 진단 flow)
+    // 예비창업자/팝업브랜드/지자체담당자: 조건 입력 → 매물 추천 (매칭 flow)
+    router.push(role === "owner" ? "/property/new" : "/match/new");
   }
 
   return (

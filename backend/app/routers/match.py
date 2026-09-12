@@ -1,0 +1,85 @@
+from __future__ import annotations
+
+from fastapi import APIRouter, Depends
+
+from app.models.schemas import MatchRequest, MatchResponse
+from app.services import matching_agents
+from app.services.data_provider import DataProvider, get_data_provider
+
+router = APIRouter(prefix="/api", tags=["match"])
+
+RANK_LABELS = ["gold", "silver", "bronze"]
+
+_MARKET_KEYS = ["foot_traffic_index", "competition_saturation_index", "demographic_fit_index", "estimated_rent"]
+_NEUTRAL_MARKET_ENTRY = {"foot_traffic_index": 50, "competition_saturation_index": 50, "demographic_fit_index": 50, "estimated_rent": 0}
+
+
+def _resolve_market_entry(market_data: dict, business_type: str) -> dict:
+    """
+    business_type이 mock 5개 업종(카페/학원/병원/편의점/스터디카페)에 없는
+    커스텀 입력(예: "베이커리")일 경우, 해당 건물의 업종별 평균 신호로 대체한다.
+    """
+    if business_type in market_data:
+        return market_data[business_type]
+    if not market_data:
+        return dict(_NEUTRAL_MARKET_ENTRY)
+    return {
+        key: sum(entry.get(key, 0) for entry in market_data.values()) / len(market_data)
+        for key in _MARKET_KEYS
+    }
+
+
+@router.post("/match", response_model=MatchResponse)
+def match_buildings(payload: MatchRequest, provider: DataProvider = Depends(get_data_provider)):
+    """
+    예비창업자 매칭 flow: 조건 입력 → 4-agent 스코어링 → 매물 추천 순위.
+    기존 진단 flow(/business-fit)와 반대 방향이며, 상권/건물 컨디션 계산 로직은
+    scoring.py를 그대로 재사용한다 (matching_agents.py 참고).
+    """
+    priority_weights = matching_agents.get_priority_weights(payload.priority)
+    user_budget = payload.budget.model_dump()
+
+    matches = []
+    for summary in provider.list_buildings():
+        building = provider.get_building(summary["id"])
+        if building is None:
+            continue
+
+        market_data = provider.get_market_data(building["id"])
+        raw_entry = _resolve_market_entry(market_data, payload.business_type)
+
+        budget_result = matching_agents.budget_agent(user_budget, raw_entry)
+
+        market_entry = {**raw_entry, "region": building.get("region")}
+        market_result = matching_agents.market_fit_agent(payload.business_type, payload.region_pref, market_entry)
+
+        condition_result = matching_agents.building_condition_agent(building.get("diagnosis", {}))
+
+        scores = {
+            "budget": budget_result["score"],
+            "market_fit": market_result["score"],
+            "condition": condition_result["score"],
+            "business_type": payload.business_type,
+        }
+        final_score = matching_agents.orchestrator(scores, priority_weights)
+        explanation = matching_agents.explanation_agent(building, scores)
+
+        matches.append(
+            {
+                "building_id": building["id"],
+                "address": building["address"],
+                "final_score": final_score,
+                "agent_scores": {
+                    "budget": scores["budget"],
+                    "market_fit": scores["market_fit"],
+                    "condition": scores["condition"],
+                },
+                "explanation": explanation,
+            }
+        )
+
+    matches.sort(key=lambda m: m["final_score"], reverse=True)
+    for i, m in enumerate(matches):
+        m["rank"] = RANK_LABELS[i] if i < len(RANK_LABELS) else None
+
+    return MatchResponse(matches=matches)

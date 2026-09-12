@@ -53,14 +53,57 @@ WEIGHTS_BY_TYPE: dict[str, dict[str, float]] = {
 }
 
 
-def _building_condition_score(building: dict) -> float:
-    diagnosis = building.get("diagnosis", {})
+def building_condition_score(diagnosis: dict) -> float:
+    """진단 항목(노후도/접근성/채광) 평균. 매칭 flow의 building_condition_agent도 재사용."""
     scores = [
         diagnosis.get("aging_score", 0),
         diagnosis.get("accessibility_score", 0),
         diagnosis.get("lighting_score", 0),
     ]
     return sum(scores) / len(scores) if scores else 0.0
+
+
+def _building_condition_score(building: dict) -> float:
+    return building_condition_score(building.get("diagnosis", {}))
+
+
+def market_raw_scores(market_data: dict) -> dict:
+    """유동인구/경쟁여유도/인구통계 원점수 (0-100, 높을수록 유리하도록 정규화)."""
+    return {
+        "foot_traffic": market_data.get("foot_traffic_index", 0),
+        # 경쟁포화도는 높을수록 불리하므로 역변환해서 "낮은 경쟁도 점수"로 사용
+        "competition_saturation": 100 - market_data.get("competition_saturation_index", 0),
+        "demographic_fit": market_data.get("demographic_fit_index", 0),
+    }
+
+
+def _market_weights(business_type: str) -> dict:
+    """건물 컨디션을 제외한 상권 3요소 가중치를 1.0 기준으로 재정규화."""
+    weights = WEIGHTS_BY_TYPE.get(business_type, DEFAULT_WEIGHTS)
+    market_weights = {k: v for k, v in weights.items() if k != "building_condition"}
+    total = sum(market_weights.values()) or 1.0
+    return {k: v / total for k, v in market_weights.items()}
+
+
+def market_fit_score(business_type: str, market_data: dict) -> dict:
+    """
+    건물 컨디션을 제외한 상권 적합도만 분리 계산.
+    calculate_fit_score와 동일한 raw score/가중치 테이블을 재사용하며,
+    매칭 flow의 market_fit_agent에서 호출한다.
+    """
+    weights = _market_weights(business_type)
+    raw = market_raw_scores(market_data)
+
+    breakdown = {}
+    score = 0.0
+    for factor, weight in weights.items():
+        contribution = weight * raw.get(factor, 0)
+        score += contribution
+        breakdown[f"{factor}_weight"] = round(weight, 3)
+        breakdown[f"{factor}_raw_score"] = round(raw.get(factor, 0), 1)
+        breakdown[f"{factor}_contribution"] = round(contribution, 1)
+
+    return {"score": round(score, 1), "breakdown": breakdown}
 
 
 def calculate_fit_score(building: dict, business_type: str, market_data: dict) -> dict:
@@ -85,10 +128,7 @@ def calculate_fit_score(building: dict, business_type: str, market_data: dict) -
     weights = WEIGHTS_BY_TYPE.get(business_type, DEFAULT_WEIGHTS)
 
     raw_scores = {
-        "foot_traffic": market_data.get("foot_traffic_index", 0),
-        # 경쟁포화도는 높을수록 불리하므로 역변환해서 "낮은 경쟁도 점수"로 사용
-        "competition_saturation": 100 - market_data.get("competition_saturation_index", 0),
-        "demographic_fit": market_data.get("demographic_fit_index", 0),
+        **market_raw_scores(market_data),
         "building_condition": _building_condition_score(building),
     }
 

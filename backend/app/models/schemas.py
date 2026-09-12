@@ -71,3 +71,30 @@ class ReportSummary(BaseModel):
     top_business: BusinessFitCandidate
     dashboard: DashboardMetrics
     generated_at: str
+
+
+class BudgetInput(BaseModel):
+    deposit: float = Field(..., ge=0)
+    monthly_rent: float = Field(..., ge=0)
+
+
+class MatchRequest(BaseModel):
+    business_type: str = Field(..., min_length=1)
+    area_pyeong: Optional[float] = None
+    budget: BudgetInput
+    region_pref: str = "상관없음"
+    commercial_style_pref: Optional[str] = None
+    priority: str = "매출잠재력"
+
+
+class MatchCandidate(BaseModel):
+    building_id: str
+    address: str
+    final_score: float
+    rank: Optional[str] = None  # gold | silver | bronze | None
+    agent_scores: dict
+    explanation: str
+
+
+class MatchResponse(BaseModel):
+    matches: list[MatchCandidate]

@@ -3,6 +3,8 @@ import type {
   BuildingSummary,
   BusinessFitCandidate,
   DashboardMetrics,
+  MatchRequest,
+  MatchResponse,
   PermitChecklistItem,
   PropertyInput,
   ReportSummary,
@@ -37,4 +39,9 @@ export const api = {
     request<PermitChecklistItem[]>(`/api/buildings/${id}/permits?business_type=${encodeURIComponent(businessType)}`),
   getReport: (id: string) => request<ReportSummary>(`/api/buildings/${id}/report`),
   listBusinessTypes: () => request<string[]>("/api/business-types"),
+  matchBuildings: (payload: MatchRequest) =>
+    request<MatchResponse>("/api/match", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
 };
