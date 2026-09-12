@@ -127,7 +127,7 @@ export default function MatchDetailDialog({ match, priority, onClose }: {
 
             {match.space_vision && <p className="mt-4 text-xs leading-relaxed text-muted">{match.space_vision.detected_elements.join(" · ")}</p>}
             <div className="mt-6">
-              <RoadviewPanel lat={match.lat} lng={match.lng} address={match.address} fallbackSrc={match.photo_url} />
+              <RoadviewPanel lat={match.lat} lng={match.lng} address={match.address} />
             </div>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link href={`/diagnosis/${match.building_id}`} className="match-detail-primary">건물 상세 진단 보기 →</Link>

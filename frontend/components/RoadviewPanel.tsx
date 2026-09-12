@@ -13,6 +13,7 @@ interface KakaoRoadview {
   getPosition(): KakaoLatLng;
   setPanoId(panoId: number, position: KakaoLatLng): void;
   setViewpoint(viewpoint: { pan: number; tilt: number; zoom: number }): void;
+  relayout(): void;
 }
 
 interface KakaoRoadviewClient {
@@ -35,6 +36,7 @@ interface KakaoMaps {
   RoadviewClient: new () => KakaoRoadviewClient;
   event: {
     addListener(target: object, type: string, handler: () => void): void;
+    removeListener(target: object, type: string, handler: () => void): void;
   };
   services: {
     Geocoder: new () => {
@@ -49,7 +51,7 @@ interface KakaoMaps {
 
 declare global {
   interface Window {
-    kakao: { maps: KakaoMaps };
+    kakao?: { maps: KakaoMaps };
   }
 }
 
@@ -57,24 +59,39 @@ declare global {
 // 늘어나는 것을 막는다.
 let sdkPromise: Promise<void> | null = null;
 
+class RoadviewSetupError extends Error {}
+
 function loadKakaoSdk(): Promise<void> {
   if (sdkPromise) return sdkPromise;
-
-  sdkPromise = new Promise((resolve, reject) => {
-    const key = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
-    if (!key) {
-      reject(new Error("NEXT_PUBLIC_KAKAO_MAP_KEY 미설정"));
-      return;
-    }
-    const script = document.createElement("script");
-    // autoload=false + kakao.maps.load()로 초기화 시점을 직접 잡는다.
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${key}&libraries=services&autoload=false`;
+  const key = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY?.trim();
+  if (!key && !window.kakao?.maps) return Promise.reject(new RoadviewSetupError("로드뷰 연결 미설정"));
+  let script: HTMLScriptElement | undefined;
+  sdkPromise = new Promise<void>((resolve, reject) => {
+    const timeout = window.setTimeout(() => fail(), 15000);
+    const fail = () => { window.clearTimeout(timeout); reject(new Error("Kakao SDK 로드 실패")); };
+    const initialize = () => {
+      try {
+        const maps = window.kakao?.maps;
+        if (!maps) { fail(); return; }
+        maps.load(() => {
+          if (!maps.Roadview || !maps.RoadviewClient || !maps.services?.Geocoder) { fail(); return; }
+          window.clearTimeout(timeout);
+          resolve();
+        });
+      } catch { fail(); }
+    };
+    if (window.kakao?.maps) { initialize(); return; }
+    script = document.createElement("script");
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${encodeURIComponent(key!)}&libraries=services&autoload=false`;
     script.async = true;
-    script.onload = () => window.kakao.maps.load(() => resolve());
-    script.onerror = () => reject(new Error("Kakao SDK 로드 실패"));
+    script.onload = initialize;
+    script.onerror = fail;
     document.head.appendChild(script);
+  }).catch((error: unknown) => {
+    script?.remove();
+    sdkPromise = null;
+    throw error;
   });
-
   return sdkPromise;
 }
 
@@ -89,33 +106,46 @@ function bearing(lat1: number, lng1: number, lat2: number, lng2: number): number
   return ((Math.atan2(y, x) * 180) / Math.PI + 360) % 360;
 }
 
-type Status = "loading" | "ready" | "unavailable" | "error";
+type Status = "loading" | "ready" | "unavailable" | "error" | "unconfigured";
+
+interface Props { lat?: number; lng?: number; address: string }
+
+function validCoordinates(lat?: number, lng?: number): boolean {
+  return Number.isFinite(lat) && Math.abs(lat!) <= 90 && Number.isFinite(lng) && Math.abs(lng!) <= 180;
+}
 
 /**
- * 매물 위치의 카카오 로드뷰. 호출하는 쪽에서 매물이 바뀔 때 key로 리마운트해야
- * 상태가 초기화된다 (effect 안에서 setState로 되돌리지 않기 위한 선택).
+ * 매물 위치의 카카오 로드뷰. 좌표·주소 변경과 재시도 시 내부 뷰를 새로 생성한다.
+ * 연결 실패를 임시 사진으로 대체하지 않고 원인 안내와 외부 지도 링크를 제공한다.
  */
-export default function RoadviewPanel({
-  lat,
-  lng,
-  address,
-  fallbackSrc,
-}: {
-  lat?: number;
-  lng?: number;
-  address: string;
-  fallbackSrc?: string;
-}) {
+export default function RoadviewPanel(props: Props) {
+  const [attempt, setAttempt] = useState(0);
+  return <RoadviewSession key={`${props.lat}:${props.lng}:${props.address}:${attempt}`} {...props} onRetry={() => setAttempt((value) => value + 1)} />;
+}
+
+function RoadviewSession({ lat, lng, address, onRetry }: Props & { onRetry: () => void }) {
   const container = useRef<HTMLDivElement>(null);
   const [status, setStatus] = useState<Status>("loading");
 
   useEffect(() => {
     let cancelled = false;
+    let roadview: KakaoRoadview | undefined;
+    let onInit: (() => void) | undefined;
+    let resize: ResizeObserver | undefined;
+    const element = container.current;
+    const timeout = window.setTimeout(() => {
+      if (!cancelled) { cancelled = true; setStatus("error"); }
+    }, 20000);
+    const finish = (next: Status) => {
+      if (cancelled) return;
+      window.clearTimeout(timeout);
+      setStatus(next);
+    };
 
     loadKakaoSdk()
       .then(() => {
         if (cancelled || !container.current) return;
-        const { maps } = window.kakao;
+        const { maps } = window.kakao!;
 
         const start = (position: KakaoLatLng) => {
           const client = new maps.RoadviewClient();
@@ -124,7 +154,7 @@ export default function RoadviewPanel({
           // 50m로는 촬영 지점이 안 걸리는 경우가 있다.
           const tryRadius = (radii: number[]) => {
             if (!radii.length) {
-              setStatus("unavailable");
+              finish("unavailable");
               return;
             }
             const [radius, ...rest] = radii;
@@ -135,11 +165,11 @@ export default function RoadviewPanel({
                 return;
               }
 
-              const roadview = new maps.Roadview(container.current!);
-              maps.event.addListener(roadview, "init", () => {
+              roadview = new maps.Roadview(container.current!);
+              onInit = () => {
                 if (cancelled) return;
-                const from = roadview.getPosition();
-                roadview.setViewpoint({
+                const from = roadview!.getPosition();
+                roadview!.setViewpoint({
                   pan: bearing(
                     from.getLat(),
                     from.getLng(),
@@ -151,8 +181,11 @@ export default function RoadviewPanel({
                   // 한 단계 넓히면 상가 전면과 인접 점포까지 프레임에 들어온다.
                   zoom: -1,
                 });
-                setStatus("ready");
-              });
+                finish("ready");
+              };
+              maps.event.addListener(roadview, "init", onInit);
+              resize = new ResizeObserver(() => { if (!cancelled) roadview?.relayout(); });
+              resize.observe(container.current!);
               roadview.setPanoId(panoId, position);
             });
           };
@@ -160,8 +193,8 @@ export default function RoadviewPanel({
           tryRadius([50, 150, 400]);
         };
 
-        if (lat != null && lng != null) {
-          start(new maps.LatLng(lat, lng));
+        if (validCoordinates(lat, lng)) {
+          start(new maps.LatLng(lat!, lng!));
           return;
         }
 
@@ -169,51 +202,51 @@ export default function RoadviewPanel({
         new maps.services.Geocoder().addressSearch(address, (result, st) => {
           if (cancelled) return;
           if (st !== maps.services.Status.OK || !result.length) {
-            setStatus("unavailable");
+            finish("unavailable");
             return;
           }
-          start(new maps.LatLng(Number(result[0].y), Number(result[0].x)));
+          const geocodedLat = Number(result[0].y);
+          const geocodedLng = Number(result[0].x);
+          if (!validCoordinates(geocodedLat, geocodedLng)) { finish("unavailable"); return; }
+          start(new maps.LatLng(geocodedLat, geocodedLng));
         });
       })
-      .catch(() => {
-        if (!cancelled) setStatus("error");
+      .catch((error: unknown) => {
+        finish(error instanceof RoadviewSetupError ? "unconfigured" : "error");
       });
 
     return () => {
       cancelled = true;
+      window.clearTimeout(timeout);
+      resize?.disconnect();
+      if (roadview && onInit) window.kakao?.maps.event.removeListener(roadview, "init", onInit);
+      element?.replaceChildren();
     };
   }, [lat, lng, address]);
 
-  // 로드뷰가 없거나 SDK가 실패하면 기존 참고 이미지로 폴백한다.
-  if (status === "unavailable" || status === "error") {
-    if (!fallbackSrc) {
-      return (
-        <div className="grid aspect-[4/3] w-full place-items-center rounded-lg border border-border bg-background px-6 text-center text-sm text-muted">
-          이 위치는 로드뷰가 제공되지 않습니다
-        </div>
-      );
-    }
-    return (
-      <div className="overflow-hidden rounded-lg border border-border">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={fallbackSrc}
-          alt={`${address} 상가 외관 참고 이미지`}
-          className="aspect-[4/3] w-full object-cover"
-        />
-        <p className="border-t border-border bg-background px-3 py-1.5 text-xs text-muted">
-          로드뷰 미제공 구간 · 참고 이미지
-        </p>
-      </div>
-    );
-  }
+  const failed = status === "unavailable" || status === "error" || status === "unconfigured";
+  const externalUrl = validCoordinates(lat, lng)
+    ? `https://map.kakao.com/link/roadview/${lat},${lng}`
+    : `https://map.kakao.com/link/search/${encodeURIComponent(address)}`;
+  const message = status === "unconfigured" ? "로드뷰 연결이 아직 설정되지 않았습니다."
+    : status === "unavailable" ? "이 위치 주변에서 제공되는 로드뷰를 찾지 못했습니다."
+    : "로드뷰를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.";
 
   return (
-    <div className="overflow-hidden rounded-lg border border-border">
-      <div ref={container} className="aspect-[4/3] w-full bg-background" />
-      <p className="border-t border-border bg-background px-3 py-1.5 text-xs text-muted">
+    <section aria-label="매물 로드뷰" className="overflow-hidden rounded-lg border border-border">
+      <div ref={container} aria-label={`${address} 로드뷰`} className={`${failed ? "hidden" : "aspect-[4/3]"} w-full bg-background`} />
+      {failed && (
+        <div className="flex min-h-52 flex-col items-center justify-center gap-4 bg-background px-6 py-8 text-center">
+          <p role="status" className="text-sm text-muted">{message}</p>
+          <div className="flex flex-wrap justify-center gap-3 text-sm font-semibold">
+            <button type="button" onClick={onRetry} className="rounded-full border border-border bg-surface px-4 py-2 hover:bg-accent-soft">로드뷰 다시 불러오기</button>
+            <a href={externalUrl} target="_blank" rel="noopener noreferrer" className="rounded-full bg-accent px-4 py-2 text-accent-foreground">{validCoordinates(lat, lng) ? "카카오맵에서 로드뷰 보기 ↗" : "카카오맵에서 주소 검색 ↗"}</a>
+          </div>
+        </div>
+      )}
+      {!failed && <p role="status" className="border-t border-border bg-background px-3 py-1.5 text-xs text-muted">
         {status === "loading" ? "로드뷰 불러오는 중…" : `카카오 로드뷰 · ${address}`}
-      </p>
-    </div>
+      </p>}
+    </section>
   );
 }
