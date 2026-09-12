@@ -1,0 +1,511 @@
+{
+  "_readme": "채우는 방법은 같은 폴더의 footfall_measured.README.md 참고. 값이 비어 있는(null) 구역은 화면에서 추정치(mock)로 남는다.",
+  "source_label": "소상공인시장진흥공단 상권정보시스템 유동인구",
+  "source_url": "https://sg.sbiz.or.kr/",
+  "areas": {
+    "gaeksa": {
+      "name": "객사길",
+      "sbiz_area": null,
+      "collected_at": null,
+      "reference_month": null,
+      "daily_average": null,
+      "time_bands_pct": {
+        "00-06": null,
+        "06-11": null,
+        "11-14": null,
+        "14-17": null,
+        "17-21": null,
+        "21-24": null
+      },
+      "weekday_pct": {
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
+      }
+    },
+    "wedding": {
+      "name": "웨딩거리",
+      "sbiz_area": null,
+      "collected_at": null,
+      "reference_month": null,
+      "daily_average": null,
+      "time_bands_pct": {
+        "00-06": null,
+        "06-11": null,
+        "11-14": null,
+        "14-17": null,
+        "17-21": null,
+        "21-24": null
+      },
+      "weekday_pct": {
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
+      }
+    },
+    "cinema": {
+      "name": "영화의거리",
+      "sbiz_area": null,
+      "collected_at": null,
+      "reference_month": null,
+      "daily_average": null,
+      "time_bands_pct": {
+        "00-06": null,
+        "06-11": null,
+        "11-14": null,
+        "14-17": null,
+        "17-21": null,
+        "21-24": null
+      },
+      "weekday_pct": {
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
+      }
+    },
+    "paldal": {
+      "name": "팔달로 중앙",
+      "sbiz_area": null,
+      "collected_at": null,
+      "reference_month": null,
+      "daily_average": null,
+      "time_bands_pct": {
+        "00-06": null,
+        "06-11": null,
+        "11-14": null,
+        "14-17": null,
+        "17-21": null,
+        "21-24": null
+      },
+      "weekday_pct": {
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
+      }
+    },
+    "market": {
+      "name": "중앙시장",
+      "sbiz_area": null,
+      "collected_at": null,
+      "reference_month": null,
+      "daily_average": null,
+      "time_bands_pct": {
+        "00-06": null,
+        "06-11": null,
+        "11-14": null,
+        "14-17": null,
+        "17-21": null,
+        "21-24": null
+      },
+      "weekday_pct": {
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
+      }
+    },
+    "gyeongwon": {
+      "name": "경원동 로터리",
+      "sbiz_area": null,
+      "collected_at": null,
+      "reference_month": null,
+      "daily_average": null,
+      "time_bands_pct": {
+        "00-06": null,
+        "06-11": null,
+        "11-14": null,
+        "14-17": null,
+        "17-21": null,
+        "21-24": null
+      },
+      "weekday_pct": {
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
+      }
+    },
+    "pungnammun": {
+      "name": "풍남문광장",
+      "sbiz_area": null,
+      "collected_at": null,
+      "reference_month": null,
+      "daily_average": null,
+      "time_bands_pct": {
+        "00-06": null,
+        "06-11": null,
+        "11-14": null,
+        "14-17": null,
+        "17-21": null,
+        "21-24": null
+      },
+      "weekday_pct": {
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
+      }
+    },
+    "hanok": {
+      "name": "한옥마을 입구",
+      "sbiz_area": null,
+      "collected_at": null,
+      "reference_month": null,
+      "daily_average": null,
+      "time_bands_pct": {
+        "00-06": null,
+        "06-11": null,
+        "11-14": null,
+        "14-17": null,
+        "17-21": null,
+        "21-24": null
+      },
+      "weekday_pct": {
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
+      }
+    },
+    "taepyeong": {
+      "name": "태평동 주민센터",
+      "sbiz_area": null,
+      "collected_at": null,
+      "reference_month": null,
+      "daily_average": null,
+      "time_bands_pct": {
+        "00-06": null,
+        "06-11": null,
+        "11-14": null,
+        "14-17": null,
+        "17-21": null,
+        "21-24": null
+      },
+      "weekday_pct": {
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
+      }
+    },
+    "seonosong": {
+      "name": "서노송예술촌",
+      "sbiz_area": null,
+      "collected_at": null,
+      "reference_month": null,
+      "daily_average": null,
+      "time_bands_pct": {
+        "00-06": null,
+        "06-11": null,
+        "11-14": null,
+        "14-17": null,
+        "17-21": null,
+        "21-24": null
+      },
+      "weekday_pct": {
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
+      }
+    },
+    "jinbuk": {
+      "name": "진북동 학원가",
+      "sbiz_area": null,
+      "collected_at": null,
+      "reference_month": null,
+      "daily_average": null,
+      "time_bands_pct": {
+        "00-06": null,
+        "06-11": null,
+        "11-14": null,
+        "14-17": null,
+        "17-21": null,
+        "21-24": null
+      },
+      "weekday_pct": {
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
+      }
+    },
+    "station": {
+      "name": "전주역 광장",
+      "sbiz_area": null,
+      "collected_at": null,
+      "reference_month": null,
+      "daily_average": null,
+      "time_bands_pct": {
+        "00-06": null,
+        "06-11": null,
+        "11-14": null,
+        "14-17": null,
+        "17-21": null,
+        "21-24": null
+      },
+      "weekday_pct": {
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
+      }
+    },
+    "firstmeet": {
+      "name": "첫마중길",
+      "sbiz_area": null,
+      "collected_at": null,
+      "reference_month": null,
+      "daily_average": null,
+      "time_bands_pct": {
+        "00-06": null,
+        "06-11": null,
+        "11-14": null,
+        "14-17": null,
+        "17-21": null,
+        "21-24": null
+      },
+      "weekday_pct": {
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
+      }
+    },
+    "station_food": {
+      "name": "전주역 먹자골목",
+      "sbiz_area": null,
+      "collected_at": null,
+      "reference_month": null,
+      "daily_average": null,
+      "time_bands_pct": {
+        "00-06": null,
+        "06-11": null,
+        "11-14": null,
+        "14-17": null,
+        "17-21": null,
+        "21-24": null
+      },
+      "weekday_pct": {
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
+      }
+    },
+    "ua": {
+      "name": "우아동 아파트단지",
+      "sbiz_area": null,
+      "collected_at": null,
+      "reference_month": null,
+      "daily_average": null,
+      "time_bands_pct": {
+        "00-06": null,
+        "06-11": null,
+        "11-14": null,
+        "14-17": null,
+        "17-21": null,
+        "21-24": null
+      },
+      "weekday_pct": {
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
+      }
+    },
+    "geumam": {
+      "name": "금암광장",
+      "sbiz_area": null,
+      "collected_at": null,
+      "reference_month": null,
+      "daily_average": null,
+      "time_bands_pct": {
+        "00-06": null,
+        "06-11": null,
+        "11-14": null,
+        "14-17": null,
+        "17-21": null,
+        "21-24": null
+      },
+      "weekday_pct": {
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
+      }
+    },
+    "angol": {
+      "name": "안골사거리",
+      "sbiz_area": null,
+      "collected_at": null,
+      "reference_month": null,
+      "daily_average": null,
+      "time_bands_pct": {
+        "00-06": null,
+        "06-11": null,
+        "11-14": null,
+        "14-17": null,
+        "17-21": null,
+        "21-24": null
+      },
+      "weekday_pct": {
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
+      }
+    },
+    "inhu": {
+      "name": "인후동 아중리 상가",
+      "sbiz_area": null,
+      "collected_at": null,
+      "reference_month": null,
+      "daily_average": null,
+      "time_bands_pct": {
+        "00-06": null,
+        "06-11": null,
+        "11-14": null,
+        "14-17": null,
+        "17-21": null,
+        "21-24": null
+      },
+      "weekday_pct": {
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
+      }
+    },
+    "edu": {
+      "name": "전주교대 앞",
+      "sbiz_area": null,
+      "collected_at": null,
+      "reference_month": null,
+      "daily_average": null,
+      "time_bands_pct": {
+        "00-06": null,
+        "06-11": null,
+        "11-14": null,
+        "14-17": null,
+        "17-21": null,
+        "21-24": null
+      },
+      "weekday_pct": {
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
+      }
+    },
+    "wansan": {
+      "name": "완산칠봉 입구",
+      "sbiz_area": null,
+      "collected_at": null,
+      "reference_month": null,
+      "daily_average": null,
+      "time_bands_pct": {
+        "00-06": null,
+        "06-11": null,
+        "11-14": null,
+        "14-17": null,
+        "17-21": null,
+        "21-24": null
+      },
+      "weekday_pct": {
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
+      }
+    },
+    "jeondong": {
+      "name": "전동성당 앞",
+      "sbiz_area": null,
+      "collected_at": null,
+      "reference_month": null,
+      "daily_average": null,
+      "time_bands_pct": {
+        "00-06": null,
+        "06-11": null,
+        "11-14": null,
+        "14-17": null,
+        "17-21": null,
+        "21-24": null
+      },
+      "weekday_pct": {
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
+      }
+    }
+  }
+}

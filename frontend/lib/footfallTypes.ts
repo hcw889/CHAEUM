@@ -14,6 +14,12 @@ export interface FootfallArea {
   peak_hour: number;
   share_pct: number;
   is_mock: boolean;
+  /** measured = 사람이 전사한 상권정보시스템 실측, sk_api = SK 응답, mock = 행정동 인구 기반 추정 */
+  source: "measured" | "sk_api" | "mock";
+  reference_month: string | null; // 실측 기준월 (YYYY-MM)
+  /** mock(추정) 구역의 규모 근거 — 속한 행정동과 주민등록 인구 어림값 */
+  admin_dong?: string | null;
+  resident_population?: number | null;
 }
 
 export interface FootfallSummary {
@@ -32,7 +38,8 @@ export interface FootfallResponse {
   mode: "sk_api" | "mock";
   is_mock: boolean;
   source_label: string;
-  note: string | null; // 키는 붙었지만 실데이터를 못 받은 경우의 진단 문구
+  note: string | null; // 일부 구역만 실측이거나 폴백일 때의 안내 문구
+  measured_count: number; // 이번 응답 구역 중 실측(전사) 구역 수
   day_type: DayType;
   date: string;
   data_reference_month: string;

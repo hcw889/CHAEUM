@@ -10,14 +10,14 @@ export const buildings: BuildingSummary[] = [
 export function footfallResponse(buildingId = "b1", dayType: DayType = "weekday"): FootfallResponse {
   const scale = (buildingId === "b2" ? 3 : 1) * (dayType === "weekend" ? 2 : 1);
   const building = buildings.find((item) => item.id === buildingId)!;
-  const areas = [
-    { id: "north", name: "북쪽 상권", lat: 35.8205, lng: 127.1435, radius_m: 200, profile: "shopping", profile_label: "쇼핑", distance_m: 200, hourly: Array<number>(24).fill(100 * scale), daily_total: 2400 * scale, peak_hour: 0, share_pct: 60.8, is_mock: true },
-    { id: "south", name: "남쪽 상권", lat: 35.814, lng: 127.143, radius_m: 250, profile: "office", profile_label: "업무", distance_m: 650, hourly: Array.from({ length: 24 }, (_, h) => (h === 12 ? 400 : 50) * scale), daily_total: 1550 * scale, peak_hour: 12, share_pct: 39.2, is_mock: true },
+  const areas: FootfallResponse["areas"] = [
+    { id: "north", name: "북쪽 상권", lat: 35.8205, lng: 127.1435, radius_m: 200, profile: "shopping", profile_label: "쇼핑", distance_m: 200, hourly: Array<number>(24).fill(100 * scale), daily_total: 2400 * scale, peak_hour: 0, share_pct: 60.8, is_mock: true, source: "mock", reference_month: null },
+    { id: "south", name: "남쪽 상권", lat: 35.814, lng: 127.143, radius_m: 250, profile: "office", profile_label: "업무", distance_m: 650, hourly: Array.from({ length: 24 }, (_, h) => (h === 12 ? 400 : 50) * scale), daily_total: 1550 * scale, peak_hour: 12, share_pct: 39.2, is_mock: true, source: "mock", reference_month: null },
   ];
 
   return {
     building_id: buildingId, address: building.address, region: "전주시",
-    mode: "mock", is_mock: true, source_label: "시연용 가상 유동인구", note: null,
+    mode: "mock", is_mock: true, source_label: "시연용 가상 유동인구", note: null, measured_count: 0,
     day_type: dayType, date: dayType === "weekday" ? "20260904" : "20260905",
     data_reference_month: "2026-09", description: "테스트용 유동인구",
     center_lat: 35.819, center_lng: 127.143, search_radius_m: 1500, areas,
