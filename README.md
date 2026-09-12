@@ -1,15 +1,15 @@
 # 채움 (Chaeum)
 
-전북 원도심 공실 상가 AI 진단 및 업종 적합도 스코어링 서비스 — 해커톤 MVP
+전북 원도심 공실 상가의 건물 진단·업종 적합도, 조건 기반 매물 매칭과 공간 컨셉 이미지 생성을 시연하는 해커톤 MVP입니다.
 
 ## 구조
 
 ```
-backend/   FastAPI (Python) — 진단/스코어링 API, mock JSON 데이터
+backend/   FastAPI (Python) — 진단/스코어링·매칭·시각화·지역 집계 API, mock JSON 데이터
 frontend/  Next.js + TypeScript + Tailwind CSS
 ```
 
-데이터는 현재 전부 `backend/app/data/*.json` mock으로 대체되어 있으며,
+건물·시장 지표·인허가·지역 집계 데이터는 현재 `backend/app/data/*.json` mock으로 제공하며,
 `DataProvider` 인터페이스(`backend/app/services/data_provider.py`)로 감싸져 있어
 추후 실제 데이터 연동 시 `MockDataProvider`를 대체하는 새 구현체만 추가하면 됩니다.
 
@@ -44,12 +44,14 @@ http://localhost:3000 접속 (백엔드가 8000번 포트에서 실행 중이어
 
 ## 데모 시나리오
 
-`backend/app/data/buildings.json`에 전주 원도심 가상 매물 5개가 준비되어 있으며,
-각 매물마다 1위 추천 업종이 다르게 나오도록 구성되어 있습니다 (학원 / 카페 / 병원 / 편의점 / 스터디카페).
-`/property/new` 화면 하단의 "데모 매물로 바로 둘러보기"에서 바로 확인할 수 있습니다.
+`backend/app/data/buildings.json`에 전주 가상 매물 **15개**가 준비되어 있습니다.
+그중 `b1`~`b5`는 학원 / 카페 / 병원 / 편의점 / 스터디카페가 각각 1위 추천 업종이 되도록 구성되어 있습니다.
+건물주 경로인 `/property/new` 하단의 "데모 매물로 바로 둘러보기"에서 확인할 수 있습니다.
+매칭 입력 화면 상단에는 빠른 데모 시나리오 3개가 준비되어 있습니다.
 
 ## 화면 구성
 
+<<<<<<< HEAD
 1. 온보딩 (역할 선택) — `/`
 2. 매물 입력 — `/property/new`
 3. 진단 결과 — `/diagnosis/[id]`
@@ -95,13 +97,30 @@ http://localhost:3000 접속 (백엔드가 8000번 포트에서 실행 중이어
 
 > 구역 좌표·반경은 지도 표시용 대표값이고, 연동 전 수치는 모두 시연용 가상 데이터입니다.
 > 실제 응답 예시를 확보하면 `sk_footfall._parse_hourly()`만 엄격한 파서로 바꾸면 됩니다.
+=======
+총 **12개 화면**이며, 건물별 분석 화면 7개는 `StepNav`로 이동합니다.
+
+| 화면 | 경로 | 기본 진입 역할 |
+| --- | --- | --- |
+| 온보딩 (역할 선택) | `/` | 공통 |
+| 매물 입력 | `/property/new` | 건물주 |
+| 매칭 조건 입력 | `/match/new?role=founder` 또는 `/match/new?role=brand` | 예비 창업자·팝업 브랜드 |
+| 매칭 결과 | `/match/results` | 예비 창업자·팝업 브랜드 |
+| 진단 결과 | `/diagnosis/[id]` | 공통 |
+| 업종 적합도 순위 | `/ranking/[id]` | 공통 |
+| 리스크 대시보드 | `/dashboard/[id]` | 공통 |
+| 인허가 체크리스트 | `/permits/[id]` | 공통 |
+| 전략 그리드 | `/strategy/[id]` | 공통 |
+| 시각화 (컨셉 이미지 생성·전후 비교) | `/visualize/[id]` | 공통 |
+| 리포트 (요약·브라우저 인쇄로 PDF 저장) | `/report/[id]` | 공통 |
+| 지자체 공실 현황 대시보드 | `/official` | 지자체 담당자 |
+>>>>>>> 600e942c179204aa65f7eb2013706c2f9fa9a0e6
 
 ## 지자체 공실 현황 대시보드
 
 역할 선택 화면에서 **지자체 담당자**를 선택하면 입력 단계 없이 `/official`로 이동합니다.
-역할별 기획 흐름은 [FLOW.md](../FLOW.md), 전체 기획은 [AGENT.md](../AGENT.md)를 함께 확인합니다.
 
-- 전북 14개 시·군 / 전주 5개 시범 상권 전환
+- 총 19개 지역 항목: 전북 14개 시·군 / 전주 5개 시범 상권 전환
 - 공실 수·공실률에 따른 색상과 크기의 지도 원, 확대·축소·전체 보기
 - 전체 공실 수, 전체 공실률, 공실률 최상위 지역, 평균 공실 기간
 - 지도·지역별 비교 막대 선택과 상세 패널 연동, 6개월 공실률 추이
@@ -112,7 +131,7 @@ http://localhost:3000 접속 (백엔드가 8000번 포트에서 실행 중이어
 
 `GET /api/regions/stats` → `DataProvider.get_region_stats()` → `backend/app/data/region_stats.json`
 
-집계는 **2026년 8월 기준으로 만든 시연용 가상 수치**입니다. 기존 매물 5개만으로 공실률을 산출할 수 없어 별도의 조사 모집단을 가정했습니다.
+집계는 **2026년 8월 기준으로 만든 시연용 가상 수치**입니다. 데모 매물 15개만으로 공실률을 산출할 수 없어 별도의 조사 모집단을 가정했습니다.
 추천 업종도 시나리오 값이며 실제 상권 분석 결과가 아닙니다.
 시·군과 상권은 `scope`로 구분하며 전주 시범 상권을 시·군 합계에 중복 합산하지 않습니다.
 
@@ -140,47 +159,48 @@ http://localhost:3000 접속 (백엔드가 8000번 포트에서 실행 중이어
 
 ```powershell
 cd backend
-.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+.\.venv\Scripts\python.exe -m pytest tests -q
 cd ../frontend
 npx eslint app/official/page.tsx components/official/VacancyMap.tsx lib/regionTypes.ts lib/roleRoutes.ts lib/api.ts
+npx next typegen
 npx tsc --noEmit
 npm run build
 ```
 
-## 팝업 브랜드 flow
+## 매칭과 팝업 브랜드 구현
 
-팝업 브랜드는 예비창업자와 **동일한 화면·동일한 `/api/match` 엔드포인트**를 그대로
-재사용한다. "짧은 기간, 확실한 노출"이라는 사용 맥락 차이는 로직이 아니라 문구로만
-표현하며, 같은 인프라로 다른 사용자층을 흡수하는 것이 이 설계의 핵심이다.
+팝업 브랜드는 예비 창업자와 **동일한 화면·동일한 `POST /api/match` 엔드포인트**를
+재사용합니다. 역할 차이는 문구와 선택 입력으로 반영하며 계산 로직은 공유합니다.
 
-| 구분 | 예비창업자 | 팝업 브랜드 |
+희망 지역은 전주시 데모 지역 15개(동·거리·역 일대)와 “상관없음” 중 선택합니다.
+매물 15개를 순위화해 상위 3개에만 gold·silver·bronze 배지를 붙이고 나머지는 목록으로 표시합니다.
+상세 패널은 예산·상권 적합도·건물 컨디션의 **3개 점수 기여도**와 별도의 추천 이유 문장을 제공합니다.
+
+| 구분 | 예비 창업자 | 팝업 브랜드 |
 |---|---|---|
 | 진입 경로 | `/match/new?role=founder` | `/match/new?role=brand` |
-| 화면·컴포넌트 | 동일 (6단계 → 분석 중 → TOP3~5 → drill-down) | 동일 |
+| 화면·컴포넌트 | 공통 6단계 마법사와 결과·상세 화면 | 동일 |
 | 백엔드 | `POST /api/match` | 동일 |
 | 스코어링 | `matching_agents.py` | 동일 (분기 없음) |
 | Step 1 문구 | 어떤 업종을 계획 중이신가요? | 어떤 브랜드/컨셉을 운영하시나요? |
 | 추가 입력 | — | 입점 희망 기간(단기/장기) |
 
-- role은 온보딩이 `?role=`로 붙여 보내고, 없으면 localStorage로 폴백한다
-  (`lib/roleContext.tsx`). 첫 렌더부터 확정되어 문구가 깜빡이지 않는다.
-- role별 문구는 전부 `lib/roleCopy.ts` 한 곳에 모여 있다. role이 늘어도
-  컴포넌트를 고칠 필요가 없다.
-- 입점 희망 기간은 팝업 브랜드에만 노출되며 별도 스텝이 아니라 Step 1 안에 있다
-  (6단계 구조를 role에 따라 갈라지지 않게 하기 위함).
-  **현재 스코어링 가중치에는 반영하지 않고** 전달·저장·로깅과 공간 시각화
-  프롬프트 연출에만 쓴다.
-  단기 임대 가능 매물 우선 필터링은 실제 데이터 연동 단계의 로드맵 항목이다.
+- 역할 해석은 `lib/roleContext.tsx`에서 처리합니다.
+- 매칭 화면의 역할별 문구는 `lib/roleCopy.ts`에 모여 있습니다.
+- 입점 희망 기간은 팝업 브랜드에만 노출하며 Step 1 안에 있습니다. 일반 제출 시 전달·세션 저장·로깅하고 공간 시각화 프롬프트 연출에 사용하지만 **현재 스코어링 가중치에는 반영하지 않습니다**.
+- 빠른 데모 프리셋에는 입점 희망 기간이 포함되지 않습니다. 기간 전달을 시연할 때는 6단계 입력을 직접 제출합니다.
+- 단기 임대 가능 매물 우선 필터링은 실제 데이터 연동 단계의 로드맵 항목입니다.
 
 ## 공간 시각화 (HuggingFace 연동)
 
 `/visualize/[id]` 화면에서 공실 사진과 컨셉(업종 또는 팝업 브랜드)을 입력하면
 적용 후 이미지를 생성합니다. 팝업 브랜드 담당자가 입지를 고르는 단계에서
 "이 공간이 내가 기획한 팝업을 구현하기에 적당한가"를 눈으로 확인하기 위한 기능이며,
-매칭 flow(`/api/match`)와는 서로 호출하지 않는 독립 경로입니다.
+매칭 API와는 서로 호출하지 않는 독립 경로입니다.
 
 구현은 `backend/app/services/space_render.py`, 엔드포인트는
-`POST /api/buildings/{id}/visualize` 입니다.
+`POST /api/buildings/{id}/visualize`입니다. 화면은 `GET /api/visualize/mode`로
+실행 모드를 먼저 조회해 실제 생성과 보정 미리보기를 구분해 안내합니다.
 
 ### 매물 사진은 어디서 오는가
 
@@ -200,27 +220,31 @@ npm run build
 
 ### 실행 모드
 
-환경에 따라 3단계로 자동 폴백하며, 어떤 실패에서도 화면이 죽지 않습니다.
+환경에 따라 아래 모드를 선택하며 생성에 실패하면 보정 미리보기로 폴백합니다.
+API 요청 자체가 실패하면 입력 화면에 오류를 표시하고 다시 생성할 수 있습니다.
 
 | 모드 | 조건 | 동작 |
 |---|---|---|
-| `hf_api` | `HF_TOKEN` 설정됨 | HuggingFace Inference Providers의 image-to-image로 생성 |
+| `hf_api` | 강제 모드 지정 없이 `HF_TOKEN` 설정됨 | HuggingFace Inference Providers의 image-to-image로 생성 |
 | `local` | `CHAEUM_RENDER_MODE=local` | 로컬 `diffusers` 마스크 인페인팅 (GPU 필요) |
 | `demo` | 해당 매물에 `{id}.after.*` 촬영본 있음 + 생성 미연결 | 실제 시공 전/후 사진 (AI 생성 아님을 화면에 명시) |
 | `mock` | 그 외 / 모든 예외 | Pillow 색보정 기반 미리보기 |
 
-필요한 환경변수는 `backend/.env.example`에 정리해 두었다. 복사해서 값을 채운다
-(`.env`는 git에 올라가지 않는다).
+`CHAEUM_RENDER_MODE`로 유효한 모드를 지정하면 토큰 유무보다 우선 적용합니다.
 
-```bash
+필요한 환경변수는 `backend/.env.example`에 정리되어 있습니다. 아래 값은 백엔드를 시작할
+PowerShell 터미널에 설정합니다. `.env` 파일을 사용하면 Uvicorn 실행 시 `--env-file .env`를
+추가해 명시적으로 읽습니다(`.env`는 Git 추적에서 제외됩니다).
+
+```powershell
 # 실제 생성을 쓰려면 (권장)
-export HF_TOKEN=hf_xxx          # Inference Providers 권한이 있는 fine-grained 토큰
-export CHAEUM_HF_MODEL=black-forest-labs/FLUX.1-Kontext-dev   # 선택
+$env:HF_TOKEN = "hf_xxx"  # Inference Providers 권한이 있는 fine-grained 토큰
+$env:CHAEUM_HF_MODEL = "black-forest-labs/FLUX.1-Kontext-dev"  # 선택
 
 # GPU가 있어 마스크 인페인팅을 쓰려면
 pip install torch diffusers accelerate transformers
-export CHAEUM_RENDER_MODE=local
-export CHAEUM_LOCAL_MODEL=diffusers/stable-diffusion-xl-1.0-inpainting-0.1   # 선택
+$env:CHAEUM_RENDER_MODE = "local"
+$env:CHAEUM_LOCAL_MODEL = "diffusers/stable-diffusion-xl-1.0-inpainting-0.1"  # 선택
 ```
 
 주의: HuggingFace **호스팅** image-to-image 스펙에는 `mask_image` 파라미터가 없습니다.
@@ -232,10 +256,18 @@ export CHAEUM_LOCAL_MODEL=diffusers/stable-diffusion-xl-1.0-inpainting-0.1   # �
 
 ## 테스트
 
-```bash
-# 프론트 E2E — 백엔드가 :8000에서 실행 중이어야 합니다 (next dev는 자동 기동)
-cd frontend && npx playwright test
+아래 명령은 프로젝트 루트 `ONIT`에서 시작하며, 먼저 위 설치·실행 안내를 따릅니다.
+`pytest`·`httpx`는 `requirements.txt`에 포함되어 별도 설치가 필요하지 않습니다.
 
-# 백엔드 재사용 원칙 가드 (스코어링에 role 분기가 들어오면 실패한다)
-cd backend && python -m pytest tests/ -q
+```powershell
+# 백엔드 — 매칭 재사용 원칙과 지역 집계를 함께 검사합니다.
+cd backend
+.\.venv\Scripts\python.exe -m pytest tests -q
+
+# 프런트엔드 — 백엔드가 :8000에서 실행 중이어야 합니다.
+cd ../frontend
+npx playwright install chromium  # 최초 1회
+npx playwright test              # next dev는 자동 기동하거나 기존 :3000 서버를 재사용합니다.
 ```
+
+타입 검사·빌드와 Playwright 준비는 [프런트엔드 README](frontend/README.md)를 참조합니다.

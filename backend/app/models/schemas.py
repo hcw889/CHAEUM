@@ -90,6 +90,17 @@ class MatchRequest(BaseModel):
     occupancy_term: Optional[str] = None
 
 
+class SpaceVision(BaseModel):
+    """space_vision_agent.calculate_space_score()의 반환 스키마. 4-agent 스코어링과
+    완전히 독립적인 필드로, final_score/agent_scores 계산에는 관여하지 않는다."""
+
+    exposure_score: float
+    accessibility_score: float
+    popup_fit_score: float
+    detected_elements: list[str]
+    visual_summary: str
+
+
 class MatchCandidate(BaseModel):
     building_id: str
     address: str
@@ -97,6 +108,8 @@ class MatchCandidate(BaseModel):
     rank: Optional[str] = None  # gold | silver | bronze | None
     agent_scores: dict
     explanation: str
+    photo_url: Optional[str] = None
+    space_vision: Optional[SpaceVision] = None
 
 
 class MatchResponse(BaseModel):

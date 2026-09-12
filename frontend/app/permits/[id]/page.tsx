@@ -71,7 +71,7 @@ export default function PermitsPage() {
                 key={c.type}
                 onClick={() => setBusinessType(c.type)}
                 className={`rounded-full border px-3.5 py-1.5 text-sm transition-colors ${
-                  businessType === c.type ? "border-accent bg-accent-soft text-accent" : "border-border bg-surface text-muted"
+                  businessType === c.type ? "border-accent bg-accent-soft text-accent-text" : "border-border bg-surface text-muted"
                 }`}
               >
                 {c.type}
@@ -105,7 +105,7 @@ export default function PermitsPage() {
 
           <Link
             href={`/strategy/${id}`}
-            className="mt-8 inline-flex w-full items-center justify-center rounded-md bg-accent py-3 font-medium text-accent-foreground transition-opacity hover:opacity-90 sm:w-auto sm:px-8"
+            className="mt-8 inline-flex w-full items-center justify-center rounded-2xl bg-brand-gradient py-3 font-semibold uppercase tracking-[0.16em] text-accent-foreground shadow-card transition-all hover:shadow-glow-brand sm:w-auto sm:px-8"
           >
             전략 그리드 보기 →
           </Link>

@@ -5,8 +5,16 @@ anthropic==0.69.0
 # backend/.env 자동 로드 (app/main.py). uvicorn[standard]에 딸려오지만 의존을 명시해 둔다.
 python-dotenv==1.2.3
 
+# 매칭 flow orchestrator (StateGraph). langchain 풀 프레임워크는 넣지 않음 —
+# langgraph 설치 시 필요한 langchain-core만 함께 따라온다(직접 의존은 아님).
+langgraph==1.2.11
+
 # 공간 시각화 (space_render.py)
 huggingface_hub==0.35.3
 pillow==11.3.0
 # 로컬 GPU 인페인팅(local 모드)을 쓸 때만 추가 설치:
 #   pip install torch diffusers accelerate transformers
+
+# 테스트 (pytest tests/)
+pytest==8.3.3
+httpx==0.27.2

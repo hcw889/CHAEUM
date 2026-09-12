@@ -42,7 +42,7 @@ export default function StrategyPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {grid.map((q) => (
             <Card key={q.title}>
-              <h2 className="mb-3 font-semibold text-accent">{q.title}</h2>
+              <h2 className="mb-3 font-semibold text-accent-text">{q.title}</h2>
               <ul className="space-y-2 text-sm leading-relaxed text-foreground">
                 {q.points.map((p, i) => (
                   <li key={i} className="flex gap-2">
@@ -69,7 +69,7 @@ export default function StrategyPage() {
 
       <Link
         href={`/visualize/${id}`}
-        className="mt-8 inline-flex w-full items-center justify-center rounded-md bg-accent py-3 font-medium text-accent-foreground transition-opacity hover:opacity-90 sm:w-auto sm:px-8"
+        className="mt-8 inline-flex w-full items-center justify-center rounded-2xl bg-brand-gradient py-3 font-semibold uppercase tracking-[0.16em] text-accent-foreground shadow-card transition-all hover:shadow-glow-brand sm:w-auto sm:px-8"
       >
         시각화 보기 →
       </Link>

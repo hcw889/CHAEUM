@@ -109,6 +109,16 @@ export interface MatchAgentScores {
   condition: number;
 }
 
+// space_vision_agent(backend) 결과. YOLO 없이 Vision-LLM 단일 호출로 산출되며,
+// 4-agent 스코어링(final_score/agent_scores)과는 완전히 독립적인 별도 필드다.
+export interface SpaceVision {
+  exposure_score: number;
+  accessibility_score: number;
+  popup_fit_score: number;
+  detected_elements: string[];
+  visual_summary: string;
+}
+
 export interface MatchCandidate {
   building_id: string;
   address: string;
@@ -116,6 +126,8 @@ export interface MatchCandidate {
   rank: RankLabel;
   agent_scores: MatchAgentScores;
   explanation: string;
+  photo_url?: string;
+  space_vision?: SpaceVision;
 }
 
 export interface MatchResponse {

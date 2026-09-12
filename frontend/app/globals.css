@@ -1,14 +1,26 @@
+@import "https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css";
 @import "tailwindcss";
 
+/*
+ * 디자인 시스템 — EAAI 프로젝트 구조를 그대로 따르되 포인트 컬러만 그린으로 교체했다.
+ * radius/shadow/spacing/타이포/컴포넌트 패턴은 EAAI와 동일한 규칙.
+ * safe/caution/danger/gold/silver/bronze는 "포인트 컬러"가 아닌 별도 상태 의미 색이라
+ * 이번 교체 대상에서 제외했다(리스크 등급·순위 배지 등 기존 의미 유지).
+ */
 :root {
-  --background: #faf8f5;
+  --background: #f7f8fa;
   --surface: #ffffff;
-  --foreground: #262220;
-  --muted: #8a8078;
-  --border: #e8e2da;
-  --accent: #b5502e;
-  --accent-foreground: #fdf6f2;
-  --accent-soft: #f4e3da;
+  --foreground: #101828;
+  --muted: #64748b; /* slate-500 */
+  --border: #e2e8f0; /* slate-200 */
+  --accent: #22b573; /* brand-500 — 배경/보더용(버튼, 탭, 활성 표시) */
+  /* brand-500/brand-gradient은 중간 명도라 흰 글자와 대비가 ~2.7:1로 WCAG AA(4.5:1) 미달.
+     짙은 그린-블랙 텍스트로 두 테마 모두 ~7:1 이상 확보(다크모드와 동일 값). */
+  --accent-foreground: #0b1f16;
+  --accent-soft: #dcfce9; /* brand-100 */
+  /* 흰/연한 surface 위에 "글자"로 쓰는 그린. brand-500을 그대로 텍스트에 쓰면 대비가
+     ~2.6:1이라 더 짙은 톤을 쓴다(라이트 ~5:1, 다크는 표면이 어두워 accent값 그대로 재사용). */
+  --accent-text: #0f7a4c;
   --safe: #4b7a5c;
   --safe-soft: #e6efe8;
   --caution: #b5822e;
@@ -22,14 +34,15 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #17140f;
-    --surface: #201c17;
-    --foreground: #f1ece5;
-    --muted: #a89c8f;
-    --border: #332c24;
-    --accent: #e0784f;
-    --accent-foreground: #1c130d;
-    --accent-soft: #3a271d;
+    --background: #0f172a; /* slate-900 */
+    --surface: #1e293b; /* slate-800 */
+    --foreground: #f8fafc; /* slate-50 */
+    --muted: #94a3b8; /* slate-400 */
+    --border: #334155; /* slate-700 */
+    --accent: #3dd68c; /* brand-400 (다크 배경 대비용) */
+    --accent-foreground: #0b1f16;
+    --accent-soft: #123524;
+    --accent-text: #3dd68c; /* 다크 표면 위에서는 accent(brand-400) 자체가 이미 ~7:1로 충분 */
     --safe: #7fb894;
     --safe-soft: #23342a;
     --caution: #e0b45c;
@@ -51,6 +64,7 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent-soft: var(--accent-soft);
+  --color-accent-text: var(--accent-text);
   --color-safe: var(--safe);
   --color-safe-soft: var(--safe-soft);
   --color-caution: var(--caution);
@@ -60,18 +74,35 @@
   --color-gold: var(--gold);
   --color-silver: var(--silver);
   --color-bronze: var(--bronze);
-  --font-sans: var(--font-noto-sans-kr);
+  /* Pretendard는 next/font가 아닌 CDN @import(@font-face)라 CSS 변수가 아닌 폰트명을 직접 참조한다. */
+  --font-sans: "Pretendard Variable", var(--font-inter), -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
 
-  /* 3단계 border-radius 스케일. rounded-sm/md/lg로 전 화면 통일 (rounded-full 제외) */
+  /* brand 컬러 스케일 (포인트 컬러만 그린 — 나머지 neutral은 Tailwind slate 그대로) */
+  --color-brand-50: #f0fdf6;
+  --color-brand-100: #dcfce9;
+  --color-brand-200: #b8f5d0;
+  --color-brand-300: #7ee8ac;
+  --color-brand-400: #3dd68c;
+  --color-brand-500: #22b573;
+  --color-brand-600: #16935b;
+
+  --background-image-brand-gradient: linear-gradient(135deg, #3dd68c 0%, #22b573 100%);
+
+  --shadow-card: 0 4px 24px rgba(16, 24, 40, 0.07);
+  --shadow-card-hover: 0 16px 56px rgba(16, 24, 40, 0.16);
+  --shadow-glow-brand: 0 0 0 1px rgba(61, 214, 140, 0.35), 0 0 40px rgba(61, 214, 140, 0.2);
+
+  /* 3단계 border-radius 스케일. rounded-sm/md/lg로 전 화면 통일 (rounded-full 제외).
+     카드 radius를 28px로 올려 rounded-lg를 쓰는 모든 카드형 컴포넌트에 그대로 반영된다. */
   --radius-sm: 8px;
   --radius-md: 16px;
-  --radius-lg: 24px;
+  --radius-lg: 28px;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  font-family: var(--font-sans);
 }
 
 @keyframes step-fade-slide {

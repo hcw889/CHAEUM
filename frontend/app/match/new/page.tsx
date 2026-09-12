@@ -26,6 +26,7 @@ const LOADING_STEPS = [
   "상권 적합도 에이전트 분석 중…",
   "건물 컨디션 에이전트 분석 중…",
   "추천 이유 정리 중…",
+  "AI Space Vision 분석 중…",
 ];
 const LOADING_STEP_MS = 600;
 
@@ -196,7 +197,7 @@ function WizardBody() {
   return (
     <main className="mx-auto w-full max-w-xl flex-1 px-6 py-12">
       <div className="mb-6">
-        <span className="mb-3 inline-block rounded-full bg-accent-soft px-3 py-1 text-xs font-medium text-accent">
+        <span className="mb-3 inline-block rounded-full bg-accent-soft px-3 py-1 text-xs font-medium text-accent-text">
           {ROLE_LABELS[role]}
         </span>
         <h1 className="text-2xl font-bold tracking-tight">{copy.wizardTitle}</h1>
@@ -206,7 +207,10 @@ function WizardBody() {
       {showPresets && (
         <Card className="mb-6 border-accent/30 bg-accent-soft/40">
           <div className="mb-3 flex items-center justify-between">
-            <p className="text-sm font-semibold text-accent">⚡ 빠른 데모 시나리오</p>
+            <div>
+              <p className="text-sm font-semibold text-accent-text">⚡ 예비창업자 빠른 데모</p>
+              <p className="mt-1 text-xs text-muted">15개 목업 매물에서 조건별 추천 결과를 바로 확인하세요.</p>
+            </div>
             <button onClick={() => setShowPresets(false)} className="text-xs text-muted hover:text-foreground">
               직접 입력하기 ↓
             </button>
@@ -227,7 +231,7 @@ function WizardBody() {
       )}
 
       <div className="mb-6">
-        <div className="mb-1.5 flex justify-between text-xs text-muted">
+        <div className="mb-1.5 flex justify-between text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">
           <span>Step {step} / {TOTAL_STEPS}</span>
           <span>{formatPercent((step / TOTAL_STEPS) * 100, 0)}</span>
         </div>
@@ -247,7 +251,7 @@ function WizardBody() {
               value={businessType}
               onChange={(e) => setBusinessType(e.target.value)}
               aria-label={copy.step1Title}
-              className="w-full rounded-md border border-border bg-background px-4 py-2.5 outline-none focus:border-accent"
+              className="w-full rounded-xl border border-border bg-background px-4 py-2.5 outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-400/30"
             >
               {BUSINESS_TYPE_OPTIONS.map((t) => (
                 <option key={t} value={t}>
@@ -261,7 +265,7 @@ function WizardBody() {
                 value={customBusinessType}
                 onChange={(e) => setCustomBusinessType(e.target.value)}
                 placeholder={copy.step1Placeholder}
-                className="mt-3 w-full rounded-md border border-border bg-background px-4 py-2.5 outline-none focus:border-accent"
+                className="mt-3 w-full rounded-xl border border-border bg-background px-4 py-2.5 outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-400/30"
               />
             )}
 
@@ -330,7 +334,7 @@ function WizardBody() {
               value={regionPref}
               onChange={(e) => setRegionPref(e.target.value)}
               aria-label="희망하는 지역이 있나요?"
-              className="w-full rounded-md border border-border bg-background px-4 py-2.5 outline-none focus:border-accent"
+              className="w-full rounded-xl border border-border bg-background px-4 py-2.5 outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-400/30"
             >
               {REGION_OPTIONS.map((r) => (
                 <option key={r} value={r}>
@@ -368,7 +372,7 @@ function WizardBody() {
           <button
             onClick={goNext}
             disabled={!canProceed}
-            className="flex-1 rounded-md bg-accent py-2.5 font-medium text-accent-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
+            className="flex-1 rounded-2xl bg-brand-gradient py-2.5 font-semibold uppercase tracking-[0.16em] text-accent-foreground shadow-card transition-all hover:shadow-glow-brand disabled:opacity-50 disabled:shadow-none"
           >
             {step < TOTAL_STEPS ? "다음" : copy.submitLabel}
           </button>

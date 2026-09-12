@@ -158,7 +158,7 @@ export default function VisualizePage() {
                   value={concept}
                   onChange={(e) => setConcept(e.target.value)}
                   placeholder={isBrand ? "예: 북유럽 감성 플라워 팝업" : "예: 원목 인테리어 로스터리 카페"}
-                  className="w-full rounded-xl border border-border bg-background px-4 py-2.5 outline-none focus:border-accent"
+                  className="w-full rounded-xl border border-border bg-background px-4 py-2.5 outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-400/30"
                 />
               </div>
 
@@ -227,7 +227,7 @@ export default function VisualizePage() {
                 <button
                   onClick={handleRender}
                   disabled={rendering}
-                  className="rounded-xl bg-accent px-6 py-2.5 font-medium text-accent-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
+                  className="rounded-2xl bg-brand-gradient px-6 py-2.5 font-semibold uppercase tracking-[0.16em] text-accent-foreground shadow-card transition-all hover:shadow-glow-brand disabled:opacity-50 disabled:shadow-none"
                 >
                   {rendering ? "생성 중…" : result ? "다시 생성" : "컨셉 이미지 생성"}
                 </button>
@@ -305,7 +305,7 @@ export default function VisualizePage() {
 
           <Link
             href={`/report/${id}`}
-            className="mt-8 inline-flex w-full items-center justify-center rounded-md bg-accent py-3 font-medium text-accent-foreground transition-opacity hover:opacity-90 sm:w-auto sm:px-8"
+            className="mt-8 inline-flex w-full items-center justify-center rounded-2xl bg-brand-gradient py-3 font-semibold uppercase tracking-[0.16em] text-accent-foreground shadow-card transition-all hover:shadow-glow-brand sm:w-auto sm:px-8"
           >
             리포트 보기 →
           </Link>
