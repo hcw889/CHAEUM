@@ -10,6 +10,13 @@ export interface BuildingSummary {
   thumbnail_color: string;
 }
 
+/** 매칭 지도에 표시할 좌표와 대략적인 위치 여부. */
+export interface BuildingLocation {
+  lat: number;
+  lng: number;
+  is_approximate: boolean;
+}
+
 export interface Diagnosis {
   aging_score: number;
   accessibility_score: number;
@@ -159,6 +166,7 @@ export interface MatchCandidate {
   lat?: number;
   lng?: number;
   space_vision?: SpaceVision;
+  location?: BuildingLocation | null;
 
   // --- 실데이터(상가정보 + 건축물대장) 연동 필드. 목업에서는 대부분 비어 있다 ---
   name?: string;

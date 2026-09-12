@@ -86,13 +86,15 @@ test("팝업 브랜드도 기존 /api/match 하나만 호출하고 결과가 정
   );
   expect(payloads[0].occupancy_term).toBe("장기");
 
-  // 결과 화면은 예비창업자와 동일한 컴포넌트 — TOP3 카드 + 4-agent 근거 분해
+  // 결과 화면은 예비창업자와 동일한 지도·추천 카드·상세 팝업을 쓴다.
   await expect(page.getByRole("heading", { name: "팝업 공간 추천 결과" })).toBeVisible();
   await expect(page.getByText("종합 매칭 점수")).toHaveCount(3);
-  // exact: true — 추천 사유 문장에도 같은 단어가 들어가므로 라벨만 집어낸다
-  await expect(page.getByText("예산 적합도", { exact: true })).toBeVisible();
-  await expect(page.getByText("상권 적합도", { exact: true })).toBeVisible();
-  await expect(page.getByText("건물 컨디션", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "추천 1위 카드 상세 보기" }).click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+  // 추천 사유와 아이콘을 제외하고 점수 카드의 접근 가능한 제목을 확인한다.
+  await expect(page.getByRole("dialog").getByRole("heading", { name: "예산 적합도", exact: true })).toBeVisible();
+  await expect(page.getByRole("dialog").getByRole("heading", { name: "상권 적합도", exact: true })).toBeVisible();
+  await expect(page.getByRole("dialog").getByRole("heading", { name: "건물 컨디션", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: /건물 상세 진단 보기/ })).toBeVisible();
 });
 

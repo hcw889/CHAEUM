@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.models.schemas import Building, BuildingSummary, PropertyInput
+from app.models.schemas import Building, BuildingLocation, BuildingSummary, PropertyInput
+from app.services.building_location import get_building_location
 from app.services.data_provider import DataProvider, get_data_provider
 
 router = APIRouter(prefix="/api/buildings", tags=["buildings"])
@@ -24,6 +25,19 @@ def diagnose_building(payload: PropertyInput, provider: DataProvider = Depends(g
         has_photo=payload.has_photo,
     )
     return building
+
+
+@router.get("/locations", response_model=dict[str, BuildingLocation])
+def list_building_locations(provider: DataProvider = Depends(get_data_provider)):
+    """좌표가 없는 이전 매칭 세션에서도 지도를 표시하기 위한 별도 조회."""
+    locations = {}
+    for summary in provider.list_buildings():
+        building = provider.get_building(summary["id"])
+        if building is not None:
+            location = get_building_location(building)
+            if location is not None:
+                locations[building["id"]] = location
+    return locations
 
 
 @router.get("/{building_id}", response_model=Building)

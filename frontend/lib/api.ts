@@ -1,5 +1,6 @@
 import type {
   Building,
+  BuildingLocation,
   BuildingSummary,
   BusinessFitCandidate,
   DashboardMetrics,
@@ -32,6 +33,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 export const api = {
   getRegionStats: () => request<RegionStatsResponse>("/api/regions/stats"),
   listBuildings: () => request<BuildingSummary[]>("/api/buildings"),
+  listBuildingLocations: () => request<Record<string, BuildingLocation>>("/api/buildings/locations"),
   getBuilding: (id: string) => request<Building>(`/api/buildings/${id}`),
   diagnoseBuilding: (payload: PropertyInput) =>
     request<Building>("/api/buildings/diagnose", {

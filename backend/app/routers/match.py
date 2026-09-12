@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends
 
 from app.models.schemas import MatchRequest, MatchResponse
 from app.services import match_orchestrator, matching_agents
+from app.services.building_location import get_building_location
 from app.services.data_provider import DataProvider, MockDataProvider, get_data_provider
 
 logger = logging.getLogger(__name__)
@@ -245,6 +246,7 @@ def match_buildings(payload: MatchRequest, provider: DataProvider = Depends(get_
                 "competitor_count": raw_entry.get("competitor_count"),
                 "nearby_store_count": raw_entry.get("nearby_store_count"),
                 "nearby_stores": building.get("nearby_store_names") or [],
+                "location": get_building_location(building),
             }
         )
 

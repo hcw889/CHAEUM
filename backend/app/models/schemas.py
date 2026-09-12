@@ -13,6 +13,14 @@ class BuildingSummary(BaseModel):
     thumbnail_color: str
 
 
+class BuildingLocation(BaseModel):
+    """매칭 지도에 표시할 좌표와 대략적인 위치 여부."""
+
+    lat: float = Field(..., ge=-90, le=90)
+    lng: float = Field(..., ge=-180, le=180)
+    is_approximate: bool = True
+
+
 class Diagnosis(BaseModel):
     aging_score: float
     accessibility_score: float
@@ -133,6 +141,7 @@ class MatchCandidate(BaseModel):
     lat: Optional[float] = None
     lng: Optional[float] = None
     space_vision: Optional[SpaceVision] = None
+    location: Optional[BuildingLocation] = None
 
     # --- 실데이터 연동으로 추가된 필드 (목업에서는 대부분 None) ---
     name: Optional[str] = None

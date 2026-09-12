@@ -1,25 +1,13 @@
 import { expect, test } from "@playwright/test";
-import { buildings, mockFootfallApi } from "./fixtures/footfall";
+import { mockFootfallApi } from "./fixtures/footfall";
+import { mapMatches, seedMatchResults } from "./fixtures/match";
 
 test.beforeEach(async ({ page }) => {
   await mockFootfallApi(page);
 });
 
-test("매칭 결과에는 지도 없이 선택한 매물의 유동인구 링크를 제공한다", async ({ page }) => {
-  await page.addInitScript(({ buildings }) => {
-    sessionStorage.setItem("chaeum_match_request", JSON.stringify({
-      business_type: "카페", budget: { deposit: 10000000, monthly_rent: 1000000 },
-      region_pref: "상관없음", priority: "매출잠재력",
-    }));
-    sessionStorage.setItem("chaeum_match_result", JSON.stringify({
-      matches: buildings.map((building, index) => ({
-        building_id: building.id, address: building.address, final_score: 90 - index,
-        rank: index === 0 ? "gold" : "silver",
-        agent_scores: { budget: 80, market_fit: 90, condition: 85 },
-        explanation: "입력한 조건에 맞는 매물입니다.",
-      })),
-    }));
-  }, { buildings });
+test("매물 상세 팝업에서 선택한 매물의 유동인구 화면으로 이동한다", async ({ page }) => {
+  await seedMatchResults(page, mapMatches.slice(0, 2));
   const footfallCalls: string[] = [];
   page.on("request", (request) => {
     if (request.url().includes("/footfall?")) footfallCalls.push(request.url());
@@ -27,12 +15,13 @@ test("매칭 결과에는 지도 없이 선택한 매물의 유동인구 링크�
 
   await page.goto("/match/results");
   await expect(page.getByText("종합 매칭 점수")).toHaveCount(2);
-  await expect(page.getByRole("heading", { name: "주변 유동인구", exact: true })).toHaveCount(0);
   await expect(page.getByRole("region", { name: "추천 매물 주변 유동인구 지도" })).toHaveCount(0);
-  const link = page.getByRole("link", { name: "주변 유동인구 보기 →" });
+  await page.getByRole("button", { name: "추천 1위 카드 상세 보기" }).click();
+  const link = page.getByRole("dialog").getByRole("link", { name: "주변 유동인구 보기 →" });
   await expect(link).toHaveAttribute("href", "/visualize/b1");
+  await page.getByRole("button", { name: "매물 상세 닫기" }).click();
 
-  await page.locator("button", { has: page.getByText("종합 매칭 점수") }).nth(1).click();
+  await page.getByRole("button", { name: "추천 2위 카드 상세 보기" }).click();
   await expect(link).toHaveAttribute("href", "/visualize/b2");
   expect(footfallCalls).toEqual([]);
   await link.click();
