@@ -17,7 +17,7 @@ export function BeforeAfterSlider({
 
   return (
     <div>
-      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-border select-none">
+      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg border border-border select-none">
         <div className="absolute inset-0">{before}</div>
         <div className="absolute inset-0" style={{ clipPath: `inset(0 0 0 ${split}%)` }}>
           {after}

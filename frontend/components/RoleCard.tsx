@@ -12,7 +12,7 @@ export function RoleCard({ emoji, title, hook, description, onClick }: RoleCardP
   return (
     <button
       onClick={onClick}
-      className="group flex flex-col items-start gap-3 rounded-2xl border border-border bg-surface p-6 text-left transition-all hover:-translate-y-0.5 hover:border-accent hover:shadow-md"
+      className="group flex flex-col items-start gap-3 rounded-lg border border-border bg-surface p-6 text-left transition-all hover:-translate-y-0.5 hover:border-accent"
     >
       <span className="text-3xl">{emoji}</span>
       <div>

@@ -65,6 +65,15 @@ class DataProvider(ABC):
     def get_permits(self, business_type: str) -> list[str]:
         ...
 
+    def get_data_sources(self, building_id: str) -> dict[str, str]:
+        """
+        진단결과/업종순위/매칭결과 화면에 "데이터 출처" 배지를 표시하기 위한 필드별 출처 정보.
+        {field_name: "실데이터 · <기관명>" | "추정값"} 형태. 실데이터 연동이 없는
+        MockDataProvider는 항상 빈 dict를 반환하며, 프론트는 이 경우 배지를 표시하지 않는다.
+        RealSanggaProvider만 이 메서드를 의미 있게 오버라이드한다.
+        """
+        return {}
+
 
 class MockDataProvider(DataProvider):
     def __init__(self, data_dir: Path = DATA_DIR):

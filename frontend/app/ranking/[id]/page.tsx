@@ -7,7 +7,9 @@ import { BuildingPageHeader } from "@/components/BuildingPageHeader";
 import { Card } from "@/components/Card";
 import { RankMedal } from "@/components/RankMedal";
 import { ScoreBarBreakdown } from "@/components/ScoreBarBreakdown";
+import { SkeletonCardGrid } from "@/components/Skeleton";
 import { api } from "@/lib/api";
+import { formatCurrency, formatScore } from "@/lib/format";
 import type { BusinessFitCandidate } from "@/lib/types";
 
 const RANK_BORDER: Record<string, string> = {
@@ -46,7 +48,7 @@ export default function RankingPage() {
       <p className="mb-6 text-sm text-muted">유동인구·경쟁포화도·인구통계·건물 컨디션을 종합한 적합도 점수입니다.</p>
 
       {!candidates ? (
-        <p className="text-muted">순위를 계산하는 중...</p>
+        <SkeletonCardGrid count={3} />
       ) : (
         <>
           <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -61,9 +63,9 @@ export default function RankingPage() {
                     <RankMedal rank={c.rank} />
                     <span className="text-lg font-semibold">{c.type}</span>
                   </div>
-                  <p className="text-3xl font-bold tracking-tight">{c.fit_score}</p>
+                  <p className="text-3xl font-bold tracking-tight">{formatScore(c.fit_score)}</p>
                   <p className="mb-3 text-xs text-muted">적합도 점수</p>
-                  <p className="text-sm text-muted">예상 임대료 월 {c.estimated_rent.toLocaleString()}원</p>
+                  <p className="text-sm text-muted">예상 임대료 월 {formatCurrency(c.estimated_rent)}</p>
                 </Card>
               </button>
             ))}
@@ -75,12 +77,12 @@ export default function RankingPage() {
                 <button
                   key={c.type}
                   onClick={() => setSelected(c.type)}
-                  className={`flex w-full items-center justify-between rounded-xl border px-4 py-3 text-left transition-colors ${
+                  className={`flex w-full items-center justify-between rounded-md border px-4 py-3 text-left transition-colors ${
                     selected === c.type ? "border-accent bg-accent-soft" : "border-border bg-surface"
                   }`}
                 >
                   <span className="font-medium">{c.type}</span>
-                  <span className="text-sm text-muted">{c.fit_score}점</span>
+                  <span className="text-sm text-muted">{formatScore(c.fit_score)}점</span>
                 </button>
               ))}
             </div>
@@ -96,7 +98,7 @@ export default function RankingPage() {
 
           <Link
             href={`/dashboard/${id}`}
-            className="mt-8 inline-flex w-full items-center justify-center rounded-xl bg-accent py-3 font-medium text-accent-foreground transition-opacity hover:opacity-90 sm:w-auto sm:px-8"
+            className="mt-8 inline-flex w-full items-center justify-center rounded-md bg-accent py-3 font-medium text-accent-foreground transition-opacity hover:opacity-90 sm:w-auto sm:px-8"
           >
             리스크 대시보드 보기 →
           </Link>

@@ -61,12 +61,32 @@
   --color-silver: var(--silver);
   --color-bronze: var(--bronze);
   --font-sans: var(--font-noto-sans-kr);
+
+  /* 3단계 border-radius 스케일. rounded-sm/md/lg로 전 화면 통일 (rounded-full 제외) */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+}
+
+@keyframes step-fade-slide {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.step-transition {
+  animation: step-fade-slide 180ms ease-out;
 }
 
 @media print {

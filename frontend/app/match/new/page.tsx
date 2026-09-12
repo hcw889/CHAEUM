@@ -3,7 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Card } from "@/components/Card";
+import { Skeleton } from "@/components/Skeleton";
 import { api } from "@/lib/api";
+import { formatPercent, formatScore } from "@/lib/format";
 import { loadRole } from "@/lib/role";
 import {
   BUSINESS_TYPE_OPTIONS,
@@ -26,6 +28,50 @@ const LOADING_STEPS = [
 ];
 const LOADING_STEP_MS = 600;
 
+// 라이브 발표용 데모 프리셋. 사전 검증한 서로 다른 조건 조합으로, 각각 다른 1위 매물을
+// 즉시 보여준다 (예산절약→b5 전주역, 매출잠재력→b2 객사길, 건물안정성→b7 노송동).
+const DEMO_PRESETS: { key: string; label: string; description: string; payload: MatchRequest }[] = [
+  {
+    key: "budget",
+    label: "예산 최우선 창업자",
+    description: "빠듯한 예산으로 시작하는 예비 창업자 시나리오",
+    payload: {
+      business_type: "카페",
+      area_pyeong: 15,
+      budget: { deposit: 10_000_000, monthly_rent: 1_000_000 },
+      region_pref: "전주역",
+      commercial_style_pref: "조용한골목상권",
+      priority: "예산절약",
+    },
+  },
+  {
+    key: "revenue",
+    label: "매출 잠재력 우선 브랜드",
+    description: "화제성과 매출 잠재력이 중요한 팝업 브랜드 시나리오",
+    payload: {
+      business_type: "카페",
+      area_pyeong: 15,
+      budget: { deposit: 13_000_000, monthly_rent: 1_300_000 },
+      region_pref: "객사길",
+      commercial_style_pref: "유동인구중심",
+      priority: "매출잠재력",
+    },
+  },
+  {
+    key: "stability",
+    label: "건물 안정성 우선 지자체",
+    description: "안정적인 건물 컨디션을 우선하는 지자체 담당자 시나리오",
+    payload: {
+      business_type: "카페",
+      area_pyeong: 15,
+      budget: { deposit: 17_000_000, monthly_rent: 1_700_000 },
+      region_pref: "노송동",
+      commercial_style_pref: "유동인구중심",
+      priority: "건물안정성",
+    },
+  },
+];
+
 export default function MatchWizardPage() {
   const router = useRouter();
   const [role, setRole] = useState<Role | null>(null);
@@ -43,9 +89,13 @@ export default function MatchWizardPage() {
   const [phase, setPhase] = useState<"wizard" | "loading">("wizard");
   const [loadingStepIndex, setLoadingStepIndex] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [showPresets, setShowPresets] = useState(true);
 
   useEffect(() => {
-    setRole(loadRole());
+    // Delay the browser-only storage read until after hydration. This also keeps
+    // the server and first client render identical.
+    const timer = window.setTimeout(() => setRole(loadRole()), 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   const isCustomType = businessType === CUSTOM_BUSINESS_TYPE;
@@ -60,12 +110,25 @@ export default function MatchWizardPage() {
     if (step > 1) setStep(step - 1);
   }
 
-  async function handleSubmit() {
+  function handlePresetClick(preset: (typeof DEMO_PRESETS)[number]) {
+    // 이후 "이전"으로 돌아가거나 재제출할 때도 값이 맞도록 폼 상태도 함께 채워둔다.
+    setBusinessType(preset.payload.business_type);
+    setAreaPyeong(preset.payload.area_pyeong ?? areaPyeong);
+    setDeposit(preset.payload.budget.deposit);
+    setMonthlyRent(preset.payload.budget.monthly_rent);
+    setRegionPref(preset.payload.region_pref);
+    setStylePref(preset.payload.commercial_style_pref ?? stylePref);
+    setPriority(preset.payload.priority);
+    setStep(TOTAL_STEPS);
+    handleSubmit(preset.payload);
+  }
+
+  async function handleSubmit(overridePayload?: MatchRequest) {
     setPhase("loading");
     setLoadingStepIndex(0);
     setError(null);
 
-    const payload: MatchRequest = {
+    const payload: MatchRequest = overridePayload ?? {
       business_type: isCustomType ? customBusinessType.trim() : businessType,
       area_pyeong: areaPyeong,
       budget: { deposit, monthly_rent: monthlyRent },
@@ -110,10 +173,33 @@ export default function MatchWizardPage() {
         <p className="mt-2 text-sm text-muted">6가지 조건을 바탕으로 딱 맞는 매물을 찾아드려요.</p>
       </div>
 
+      {showPresets && (
+        <Card className="mb-6 border-accent/30 bg-accent-soft/40">
+          <div className="mb-3 flex items-center justify-between">
+            <p className="text-sm font-semibold text-accent">⚡ 빠른 데모 시나리오</p>
+            <button onClick={() => setShowPresets(false)} className="text-xs text-muted hover:text-foreground">
+              직접 입력하기 ↓
+            </button>
+          </div>
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+            {DEMO_PRESETS.map((preset) => (
+              <button
+                key={preset.key}
+                onClick={() => handlePresetClick(preset)}
+                className="rounded-md border border-border bg-surface p-3.5 text-left transition-colors hover:border-accent"
+              >
+                <p className="text-sm font-semibold">{preset.label}</p>
+                <p className="mt-1 text-xs leading-relaxed text-muted">{preset.description}</p>
+              </button>
+            ))}
+          </div>
+        </Card>
+      )}
+
       <div className="mb-6">
         <div className="mb-1.5 flex justify-between text-xs text-muted">
           <span>Step {step} / {TOTAL_STEPS}</span>
-          <span>{Math.round((step / TOTAL_STEPS) * 100)}%</span>
+          <span>{formatPercent((step / TOTAL_STEPS) * 100, 0)}</span>
         </div>
         <div className="h-1.5 w-full overflow-hidden rounded-full bg-border">
           <div
@@ -124,12 +210,13 @@ export default function MatchWizardPage() {
       </div>
 
       <Card>
+        <div key={step} className="step-transition">
         {step === 1 && (
           <Step title="희망 업종이 무엇인가요?">
             <select
               value={businessType}
               onChange={(e) => setBusinessType(e.target.value)}
-              className="w-full rounded-xl border border-border bg-background px-4 py-2.5 outline-none focus:border-accent"
+              className="w-full rounded-md border border-border bg-background px-4 py-2.5 outline-none focus:border-accent"
             >
               {BUSINESS_TYPE_OPTIONS.map((t) => (
                 <option key={t} value={t}>
@@ -143,7 +230,7 @@ export default function MatchWizardPage() {
                 value={customBusinessType}
                 onChange={(e) => setCustomBusinessType(e.target.value)}
                 placeholder="예: 베이커리, 반려동물용품점"
-                className="mt-3 w-full rounded-xl border border-border bg-background px-4 py-2.5 outline-none focus:border-accent"
+                className="mt-3 w-full rounded-md border border-border bg-background px-4 py-2.5 outline-none focus:border-accent"
               />
             )}
           </Step>
@@ -173,7 +260,7 @@ export default function MatchWizardPage() {
                   max={30_000_000}
                   step={500_000}
                   onChange={setDeposit}
-                  format={(v) => `${(v / 10_000).toLocaleString()}만원`}
+                  format={(v) => `${formatScore(v / 10_000)}만원`}
                 />
               </div>
               <div>
@@ -184,7 +271,7 @@ export default function MatchWizardPage() {
                   max={3_000_000}
                   step={100_000}
                   onChange={setMonthlyRent}
-                  format={(v) => `${(v / 10_000).toLocaleString()}만원`}
+                  format={(v) => `${formatScore(v / 10_000)}만원`}
                 />
               </div>
             </div>
@@ -196,7 +283,7 @@ export default function MatchWizardPage() {
             <select
               value={regionPref}
               onChange={(e) => setRegionPref(e.target.value)}
-              className="w-full rounded-xl border border-border bg-background px-4 py-2.5 outline-none focus:border-accent"
+              className="w-full rounded-md border border-border bg-background px-4 py-2.5 outline-none focus:border-accent"
             >
               {REGION_OPTIONS.map((r) => (
                 <option key={r} value={r}>
@@ -226,6 +313,7 @@ export default function MatchWizardPage() {
             />
           </Step>
         )}
+        </div>
 
         {error && <p className="mt-4 text-sm text-danger">{error}</p>}
 
@@ -233,7 +321,7 @@ export default function MatchWizardPage() {
           {step > 1 && (
             <button
               onClick={goBack}
-              className="rounded-xl border border-border px-5 py-2.5 text-sm font-medium text-muted hover:text-foreground"
+              className="rounded-md border border-border px-5 py-2.5 text-sm font-medium text-muted hover:text-foreground"
             >
               이전
             </button>
@@ -241,7 +329,7 @@ export default function MatchWizardPage() {
           <button
             onClick={goNext}
             disabled={!canProceed}
-            className="flex-1 rounded-xl bg-accent py-2.5 font-medium text-accent-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
+            className="flex-1 rounded-md bg-accent py-2.5 font-medium text-accent-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
           >
             {step < TOTAL_STEPS ? "다음" : "매물 추천받기"}
           </button>
@@ -309,7 +397,7 @@ function RadioGroup({
       {options.map((opt) => (
         <label
           key={opt.value}
-          className={`flex cursor-pointer items-start gap-3 rounded-xl border px-4 py-3 transition-colors ${
+          className={`flex cursor-pointer items-start gap-3 rounded-md border px-4 py-3 transition-colors ${
             value === opt.value ? "border-accent bg-accent-soft" : "border-border hover:border-accent/50"
           }`}
         >
@@ -332,18 +420,21 @@ function RadioGroup({
 function LoadingScreen({ stepIndex }: { stepIndex: number }) {
   return (
     <main className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center px-6 py-12 text-center">
-      <div className="mb-6 h-10 w-10 animate-spin rounded-full border-2 border-border border-t-accent" />
-      <p className="text-lg font-semibold">{LOADING_STEPS[stepIndex]}</p>
-      <div className="mt-6 flex gap-2">
-        {LOADING_STEPS.map((_, i) => (
-          <span
-            key={i}
-            className="h-1.5 w-8 rounded-full transition-colors"
-            style={{ backgroundColor: i <= stepIndex ? "var(--accent)" : "var(--border)" }}
-          />
-        ))}
-      </div>
-      <p className="mt-8 text-sm text-muted">4개의 AI 에이전트가 원도심 매물 데이터를 분석하고 있어요.</p>
+      <Card className="w-full text-left">
+        <Skeleton className="mb-5 h-5 w-48" />
+        <Skeleton className="mb-3 h-3 w-full" />
+        <Skeleton className="mb-6 h-3 w-4/5" />
+        <div className="flex gap-2">
+          {LOADING_STEPS.map((_, i) => (
+            <span
+              key={i}
+              className="h-1.5 flex-1 rounded-full transition-colors"
+              style={{ backgroundColor: i <= stepIndex ? "var(--accent)" : "var(--border)" }}
+            />
+          ))}
+        </div>
+        <p className="mt-6 text-center text-sm text-muted">{LOADING_STEPS[stepIndex]}</p>
+      </Card>
     </main>
   );
 }

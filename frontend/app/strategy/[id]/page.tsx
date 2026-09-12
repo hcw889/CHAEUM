@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BuildingPageHeader } from "@/components/BuildingPageHeader";
 import { Card } from "@/components/Card";
+import { Skeleton } from "@/components/Skeleton";
 import { api } from "@/lib/api";
 import { buildStrategyGrid, type StrategyQuadrant } from "@/lib/strategyTemplates";
 import type { Building, BusinessFitCandidate } from "@/lib/types";
@@ -37,7 +38,7 @@ export default function StrategyPage() {
         {top ? `추천 업종 "${top.type}" 기준으로 생성된 실행 전략입니다.` : "불러오는 중..."}
       </p>
 
-      {grid.length > 0 && (
+      {grid.length > 0 ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {grid.map((q) => (
             <Card key={q.title}>
@@ -53,11 +54,22 @@ export default function StrategyPage() {
             </Card>
           ))}
         </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i}>
+              <Skeleton className="mb-3 h-4 w-20" />
+              <Skeleton className="mb-2 h-3 w-full" />
+              <Skeleton className="mb-2 h-3 w-5/6" />
+              <Skeleton className="h-3 w-3/4" />
+            </Card>
+          ))}
+        </div>
       )}
 
       <Link
         href={`/visualize/${id}`}
-        className="mt-8 inline-flex w-full items-center justify-center rounded-xl bg-accent py-3 font-medium text-accent-foreground transition-opacity hover:opacity-90 sm:w-auto sm:px-8"
+        className="mt-8 inline-flex w-full items-center justify-center rounded-md bg-accent py-3 font-medium text-accent-foreground transition-opacity hover:opacity-90 sm:w-auto sm:px-8"
       >
         시각화 보기 →
       </Link>

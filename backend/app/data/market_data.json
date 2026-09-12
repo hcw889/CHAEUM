@@ -1,37 +1,482 @@
 {
   "b1": {
-    "카페": { "foot_traffic_index": 65, "competition_saturation_index": 70, "demographic_fit_index": 55, "estimated_rent": 1200000 },
-    "학원": { "foot_traffic_index": 60, "competition_saturation_index": 40, "demographic_fit_index": 90, "estimated_rent": 900000 },
-    "병원": { "foot_traffic_index": 40, "competition_saturation_index": 50, "demographic_fit_index": 35, "estimated_rent": 1100000 },
-    "편의점": { "foot_traffic_index": 68, "competition_saturation_index": 60, "demographic_fit_index": 50, "estimated_rent": 950000 },
-    "스터디카페": { "foot_traffic_index": 55, "competition_saturation_index": 45, "demographic_fit_index": 75, "estimated_rent": 850000 }
+    "카페": {
+      "foot_traffic_index": 65,
+      "competition_saturation_index": 70,
+      "demographic_fit_index": 55,
+      "estimated_rent": 1200000
+    },
+    "학원": {
+      "foot_traffic_index": 60,
+      "competition_saturation_index": 40,
+      "demographic_fit_index": 90,
+      "estimated_rent": 900000
+    },
+    "병원": {
+      "foot_traffic_index": 40,
+      "competition_saturation_index": 50,
+      "demographic_fit_index": 35,
+      "estimated_rent": 1100000
+    },
+    "편의점": {
+      "foot_traffic_index": 68,
+      "competition_saturation_index": 60,
+      "demographic_fit_index": 50,
+      "estimated_rent": 950000
+    },
+    "스터디카페": {
+      "foot_traffic_index": 55,
+      "competition_saturation_index": 45,
+      "demographic_fit_index": 75,
+      "estimated_rent": 850000
+    }
   },
   "b2": {
-    "카페": { "foot_traffic_index": 92, "competition_saturation_index": 65, "demographic_fit_index": 80, "estimated_rent": 2300000 },
-    "학원": { "foot_traffic_index": 50, "competition_saturation_index": 55, "demographic_fit_index": 40, "estimated_rent": 1800000 },
-    "병원": { "foot_traffic_index": 45, "competition_saturation_index": 40, "demographic_fit_index": 30, "estimated_rent": 2000000 },
-    "편의점": { "foot_traffic_index": 88, "competition_saturation_index": 70, "demographic_fit_index": 60, "estimated_rent": 1900000 },
-    "스터디카페": { "foot_traffic_index": 60, "competition_saturation_index": 50, "demographic_fit_index": 45, "estimated_rent": 1700000 }
+    "카페": {
+      "foot_traffic_index": 92,
+      "competition_saturation_index": 65,
+      "demographic_fit_index": 80,
+      "estimated_rent": 2300000
+    },
+    "학원": {
+      "foot_traffic_index": 50,
+      "competition_saturation_index": 55,
+      "demographic_fit_index": 40,
+      "estimated_rent": 1800000
+    },
+    "병원": {
+      "foot_traffic_index": 45,
+      "competition_saturation_index": 40,
+      "demographic_fit_index": 30,
+      "estimated_rent": 2000000
+    },
+    "편의점": {
+      "foot_traffic_index": 88,
+      "competition_saturation_index": 70,
+      "demographic_fit_index": 60,
+      "estimated_rent": 1900000
+    },
+    "스터디카페": {
+      "foot_traffic_index": 60,
+      "competition_saturation_index": 50,
+      "demographic_fit_index": 45,
+      "estimated_rent": 1700000
+    }
   },
   "b3": {
-    "카페": { "foot_traffic_index": 40, "competition_saturation_index": 30, "demographic_fit_index": 35, "estimated_rent": 900000 },
-    "학원": { "foot_traffic_index": 35, "competition_saturation_index": 25, "demographic_fit_index": 30, "estimated_rent": 850000 },
-    "병원": { "foot_traffic_index": 45, "competition_saturation_index": 20, "demographic_fit_index": 92, "estimated_rent": 1300000 },
-    "편의점": { "foot_traffic_index": 55, "competition_saturation_index": 45, "demographic_fit_index": 60, "estimated_rent": 800000 },
-    "스터디카페": { "foot_traffic_index": 30, "competition_saturation_index": 20, "demographic_fit_index": 25, "estimated_rent": 750000 }
+    "카페": {
+      "foot_traffic_index": 40,
+      "competition_saturation_index": 30,
+      "demographic_fit_index": 35,
+      "estimated_rent": 900000
+    },
+    "학원": {
+      "foot_traffic_index": 35,
+      "competition_saturation_index": 25,
+      "demographic_fit_index": 30,
+      "estimated_rent": 850000
+    },
+    "병원": {
+      "foot_traffic_index": 45,
+      "competition_saturation_index": 20,
+      "demographic_fit_index": 92,
+      "estimated_rent": 1300000
+    },
+    "편의점": {
+      "foot_traffic_index": 55,
+      "competition_saturation_index": 45,
+      "demographic_fit_index": 60,
+      "estimated_rent": 800000
+    },
+    "스터디카페": {
+      "foot_traffic_index": 30,
+      "competition_saturation_index": 20,
+      "demographic_fit_index": 25,
+      "estimated_rent": 750000
+    }
   },
   "b4": {
-    "카페": { "foot_traffic_index": 60, "competition_saturation_index": 60, "demographic_fit_index": 50, "estimated_rent": 1100000 },
-    "학원": { "foot_traffic_index": 40, "competition_saturation_index": 50, "demographic_fit_index": 35, "estimated_rent": 1000000 },
-    "병원": { "foot_traffic_index": 35, "competition_saturation_index": 40, "demographic_fit_index": 30, "estimated_rent": 1150000 },
-    "편의점": { "foot_traffic_index": 85, "competition_saturation_index": 25, "demographic_fit_index": 65, "estimated_rent": 900000 },
-    "스터디카페": { "foot_traffic_index": 45, "competition_saturation_index": 35, "demographic_fit_index": 40, "estimated_rent": 850000 }
+    "카페": {
+      "foot_traffic_index": 60,
+      "competition_saturation_index": 60,
+      "demographic_fit_index": 50,
+      "estimated_rent": 1100000
+    },
+    "학원": {
+      "foot_traffic_index": 40,
+      "competition_saturation_index": 50,
+      "demographic_fit_index": 35,
+      "estimated_rent": 1000000
+    },
+    "병원": {
+      "foot_traffic_index": 35,
+      "competition_saturation_index": 40,
+      "demographic_fit_index": 30,
+      "estimated_rent": 1150000
+    },
+    "편의점": {
+      "foot_traffic_index": 85,
+      "competition_saturation_index": 25,
+      "demographic_fit_index": 65,
+      "estimated_rent": 900000
+    },
+    "스터디카페": {
+      "foot_traffic_index": 45,
+      "competition_saturation_index": 35,
+      "demographic_fit_index": 40,
+      "estimated_rent": 850000
+    }
   },
   "b5": {
-    "카페": { "foot_traffic_index": 58, "competition_saturation_index": 55, "demographic_fit_index": 55, "estimated_rent": 1050000 },
-    "학원": { "foot_traffic_index": 50, "competition_saturation_index": 60, "demographic_fit_index": 85, "estimated_rent": 1150000 },
-    "병원": { "foot_traffic_index": 30, "competition_saturation_index": 35, "demographic_fit_index": 25, "estimated_rent": 1000000 },
-    "편의점": { "foot_traffic_index": 62, "competition_saturation_index": 50, "demographic_fit_index": 55, "estimated_rent": 900000 },
-    "스터디카페": { "foot_traffic_index": 55, "competition_saturation_index": 20, "demographic_fit_index": 88, "estimated_rent": 800000 }
+    "카페": {
+      "foot_traffic_index": 58,
+      "competition_saturation_index": 55,
+      "demographic_fit_index": 55,
+      "estimated_rent": 1050000
+    },
+    "학원": {
+      "foot_traffic_index": 50,
+      "competition_saturation_index": 60,
+      "demographic_fit_index": 85,
+      "estimated_rent": 1150000
+    },
+    "병원": {
+      "foot_traffic_index": 30,
+      "competition_saturation_index": 35,
+      "demographic_fit_index": 25,
+      "estimated_rent": 1000000
+    },
+    "편의점": {
+      "foot_traffic_index": 62,
+      "competition_saturation_index": 50,
+      "demographic_fit_index": 55,
+      "estimated_rent": 900000
+    },
+    "스터디카페": {
+      "foot_traffic_index": 55,
+      "competition_saturation_index": 20,
+      "demographic_fit_index": 88,
+      "estimated_rent": 800000
+    }
+  },
+  "b6": {
+    "카페": {
+      "foot_traffic_index": 84.2,
+      "competition_saturation_index": 29.6,
+      "demographic_fit_index": 93.8,
+      "estimated_rent": 1550000
+    },
+    "학원": {
+      "foot_traffic_index": 51.2,
+      "competition_saturation_index": 57.5,
+      "demographic_fit_index": 58.7,
+      "estimated_rent": 1050000
+    },
+    "병원": {
+      "foot_traffic_index": 37.2,
+      "competition_saturation_index": 53.8,
+      "demographic_fit_index": 48.2,
+      "estimated_rent": 1540000
+    },
+    "편의점": {
+      "foot_traffic_index": 50.1,
+      "competition_saturation_index": 50.2,
+      "demographic_fit_index": 52.8,
+      "estimated_rent": 1380000
+    },
+    "스터디카페": {
+      "foot_traffic_index": 36.7,
+      "competition_saturation_index": 56.9,
+      "demographic_fit_index": 61.7,
+      "estimated_rent": 1080000
+    }
+  },
+  "b7": {
+    "카페": {
+      "foot_traffic_index": 38.4,
+      "competition_saturation_index": 37.9,
+      "demographic_fit_index": 41.7,
+      "estimated_rent": 1480000
+    },
+    "학원": {
+      "foot_traffic_index": 39.4,
+      "competition_saturation_index": 43.6,
+      "demographic_fit_index": 38.6,
+      "estimated_rent": 1140000
+    },
+    "병원": {
+      "foot_traffic_index": 70.8,
+      "competition_saturation_index": 14.6,
+      "demographic_fit_index": 73.8,
+      "estimated_rent": 1330000
+    },
+    "편의점": {
+      "foot_traffic_index": 59.9,
+      "competition_saturation_index": 47.2,
+      "demographic_fit_index": 42.4,
+      "estimated_rent": 1380000
+    },
+    "스터디카페": {
+      "foot_traffic_index": 36.4,
+      "competition_saturation_index": 43.8,
+      "demographic_fit_index": 53.6,
+      "estimated_rent": 1130000
+    }
+  },
+  "b8": {
+    "카페": {
+      "foot_traffic_index": 37.3,
+      "competition_saturation_index": 40.2,
+      "demographic_fit_index": 44.8,
+      "estimated_rent": 1750000
+    },
+    "학원": {
+      "foot_traffic_index": 37.4,
+      "competition_saturation_index": 40.7,
+      "demographic_fit_index": 46.3,
+      "estimated_rent": 1270000
+    },
+    "병원": {
+      "foot_traffic_index": 36.2,
+      "competition_saturation_index": 55.2,
+      "demographic_fit_index": 61.5,
+      "estimated_rent": 1490000
+    },
+    "편의점": {
+      "foot_traffic_index": 82.7,
+      "competition_saturation_index": 31.9,
+      "demographic_fit_index": 84.2,
+      "estimated_rent": 1410000
+    },
+    "스터디카페": {
+      "foot_traffic_index": 40.8,
+      "competition_saturation_index": 48.6,
+      "demographic_fit_index": 41.8,
+      "estimated_rent": 1170000
+    }
+  },
+  "b9": {
+    "카페": {
+      "foot_traffic_index": 46.9,
+      "competition_saturation_index": 61.9,
+      "demographic_fit_index": 52.8,
+      "estimated_rent": 1630000
+    },
+    "학원": {
+      "foot_traffic_index": 83.2,
+      "competition_saturation_index": 13.9,
+      "demographic_fit_index": 69.7,
+      "estimated_rent": 1240000
+    },
+    "병원": {
+      "foot_traffic_index": 41.6,
+      "competition_saturation_index": 60.3,
+      "demographic_fit_index": 48.1,
+      "estimated_rent": 1650000
+    },
+    "편의점": {
+      "foot_traffic_index": 47.1,
+      "competition_saturation_index": 51.2,
+      "demographic_fit_index": 45.4,
+      "estimated_rent": 1490000
+    },
+    "스터디카페": {
+      "foot_traffic_index": 57.6,
+      "competition_saturation_index": 38.7,
+      "demographic_fit_index": 58.2,
+      "estimated_rent": 1090000
+    }
+  },
+  "b10": {
+    "카페": {
+      "foot_traffic_index": 40.3,
+      "competition_saturation_index": 51.9,
+      "demographic_fit_index": 47.4,
+      "estimated_rent": 1690000
+    },
+    "학원": {
+      "foot_traffic_index": 40.8,
+      "competition_saturation_index": 39.3,
+      "demographic_fit_index": 37.2,
+      "estimated_rent": 1310000
+    },
+    "병원": {
+      "foot_traffic_index": 57.6,
+      "competition_saturation_index": 54.0,
+      "demographic_fit_index": 36.4,
+      "estimated_rent": 1500000
+    },
+    "편의점": {
+      "foot_traffic_index": 48.5,
+      "competition_saturation_index": 41.3,
+      "demographic_fit_index": 54.4,
+      "estimated_rent": 1390000
+    },
+    "스터디카페": {
+      "foot_traffic_index": 93.0,
+      "competition_saturation_index": 33.4,
+      "demographic_fit_index": 93.9,
+      "estimated_rent": 1190000
+    }
+  },
+  "b11": {
+    "카페": {
+      "foot_traffic_index": 52.0,
+      "competition_saturation_index": 43.0,
+      "demographic_fit_index": 39.7,
+      "estimated_rent": 1280000
+    },
+    "학원": {
+      "foot_traffic_index": 51.6,
+      "competition_saturation_index": 42.6,
+      "demographic_fit_index": 39.1,
+      "estimated_rent": 1020000
+    },
+    "병원": {
+      "foot_traffic_index": 46.1,
+      "competition_saturation_index": 50.8,
+      "demographic_fit_index": 55.0,
+      "estimated_rent": 1270000
+    },
+    "편의점": {
+      "foot_traffic_index": 41.1,
+      "competition_saturation_index": 58.9,
+      "demographic_fit_index": 50.9,
+      "estimated_rent": 1150000
+    },
+    "스터디카페": {
+      "foot_traffic_index": 70.1,
+      "competition_saturation_index": 30.7,
+      "demographic_fit_index": 84.8,
+      "estimated_rent": 840000
+    }
+  },
+  "b12": {
+    "카페": {
+      "foot_traffic_index": 52.5,
+      "competition_saturation_index": 43.3,
+      "demographic_fit_index": 36.9,
+      "estimated_rent": 1960000
+    },
+    "학원": {
+      "foot_traffic_index": 45.5,
+      "competition_saturation_index": 54.7,
+      "demographic_fit_index": 47.0,
+      "estimated_rent": 1380000
+    },
+    "병원": {
+      "foot_traffic_index": 40.8,
+      "competition_saturation_index": 49.4,
+      "demographic_fit_index": 43.4,
+      "estimated_rent": 1890000
+    },
+    "편의점": {
+      "foot_traffic_index": 79.0,
+      "competition_saturation_index": 18.1,
+      "demographic_fit_index": 68.7,
+      "estimated_rent": 1510000
+    },
+    "스터디카페": {
+      "foot_traffic_index": 45.3,
+      "competition_saturation_index": 45.9,
+      "demographic_fit_index": 61.5,
+      "estimated_rent": 1280000
+    }
+  },
+  "b13": {
+    "카페": {
+      "foot_traffic_index": 60.9,
+      "competition_saturation_index": 35.8,
+      "demographic_fit_index": 58.6,
+      "estimated_rent": 1570000
+    },
+    "학원": {
+      "foot_traffic_index": 81.8,
+      "competition_saturation_index": 16.7,
+      "demographic_fit_index": 84.3,
+      "estimated_rent": 1110000
+    },
+    "병원": {
+      "foot_traffic_index": 45.8,
+      "competition_saturation_index": 57.7,
+      "demographic_fit_index": 55.1,
+      "estimated_rent": 1240000
+    },
+    "편의점": {
+      "foot_traffic_index": 45.6,
+      "competition_saturation_index": 58.5,
+      "demographic_fit_index": 45.8,
+      "estimated_rent": 1270000
+    },
+    "스터디카페": {
+      "foot_traffic_index": 45.6,
+      "competition_saturation_index": 49.4,
+      "demographic_fit_index": 52.0,
+      "estimated_rent": 1110000
+    }
+  },
+  "b14": {
+    "카페": {
+      "foot_traffic_index": 62.0,
+      "competition_saturation_index": 40.0,
+      "demographic_fit_index": 52.5,
+      "estimated_rent": 1670000
+    },
+    "학원": {
+      "foot_traffic_index": 36.2,
+      "competition_saturation_index": 55.2,
+      "demographic_fit_index": 50.1,
+      "estimated_rent": 1120000
+    },
+    "병원": {
+      "foot_traffic_index": 83.0,
+      "competition_saturation_index": 35.6,
+      "demographic_fit_index": 93.1,
+      "estimated_rent": 1500000
+    },
+    "편의점": {
+      "foot_traffic_index": 36.1,
+      "competition_saturation_index": 59.6,
+      "demographic_fit_index": 37.5,
+      "estimated_rent": 1380000
+    },
+    "스터디카페": {
+      "foot_traffic_index": 57.0,
+      "competition_saturation_index": 48.4,
+      "demographic_fit_index": 44.9,
+      "estimated_rent": 1140000
+    }
+  },
+  "b15": {
+    "카페": {
+      "foot_traffic_index": 75.5,
+      "competition_saturation_index": 37.9,
+      "demographic_fit_index": 89.5,
+      "estimated_rent": 1520000
+    },
+    "학원": {
+      "foot_traffic_index": 55.5,
+      "competition_saturation_index": 60.1,
+      "demographic_fit_index": 39.5,
+      "estimated_rent": 1150000
+    },
+    "병원": {
+      "foot_traffic_index": 46.9,
+      "competition_saturation_index": 52.4,
+      "demographic_fit_index": 43.4,
+      "estimated_rent": 1300000
+    },
+    "편의점": {
+      "foot_traffic_index": 41.8,
+      "competition_saturation_index": 57.7,
+      "demographic_fit_index": 58.1,
+      "estimated_rent": 1250000
+    },
+    "스터디카페": {
+      "foot_traffic_index": 60.4,
+      "competition_saturation_index": 55.5,
+      "demographic_fit_index": 40.8,
+      "estimated_rent": 960000
+    }
   }
 }

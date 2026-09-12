@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BuildingPageHeader } from "@/components/BuildingPageHeader";
 import { Card } from "@/components/Card";
+import { Skeleton } from "@/components/Skeleton";
 import { api } from "@/lib/api";
 import type { BusinessFitCandidate, PermitChecklistItem } from "@/lib/types";
 
@@ -49,7 +50,19 @@ export default function PermitsPage() {
       <p className="mb-6 text-sm text-muted">선택한 업종을 창업할 때 필요한 인허가 항목입니다.</p>
 
       {!candidates ? (
-        <p className="text-muted">불러오는 중...</p>
+        <>
+          <div className="mb-5 flex flex-wrap gap-2">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton key={i} className="h-8 w-20 rounded-full" />
+            ))}
+          </div>
+          <Card>
+            <Skeleton className="mb-4 h-5 w-32" />
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} className="mb-3 h-11 w-full" />
+            ))}
+          </Card>
+        </>
       ) : (
         <>
           <div className="mb-5 flex flex-wrap gap-2">
@@ -76,7 +89,7 @@ export default function PermitsPage() {
             <ul className="space-y-3">
               {permits.map((p) => (
                 <li key={p.label}>
-                  <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-border px-4 py-3 hover:border-accent">
+                  <label className="flex cursor-pointer items-center gap-3 rounded-md border border-border px-4 py-3 hover:border-accent">
                     <input
                       type="checkbox"
                       checked={!!checked[p.label]}
@@ -92,7 +105,7 @@ export default function PermitsPage() {
 
           <Link
             href={`/strategy/${id}`}
-            className="mt-8 inline-flex w-full items-center justify-center rounded-xl bg-accent py-3 font-medium text-accent-foreground transition-opacity hover:opacity-90 sm:w-auto sm:px-8"
+            className="mt-8 inline-flex w-full items-center justify-center rounded-md bg-accent py-3 font-medium text-accent-foreground transition-opacity hover:opacity-90 sm:w-auto sm:px-8"
           >
             전략 그리드 보기 →
           </Link>

@@ -8,6 +8,7 @@ import { Card } from "@/components/Card";
 import { DataFreshness } from "@/components/DataFreshness";
 import { RiskBadge } from "@/components/RiskBadge";
 import { ScoreMeter } from "@/components/ScoreMeter";
+import { Skeleton, SkeletonCardGrid } from "@/components/Skeleton";
 import { api } from "@/lib/api";
 import type { Building } from "@/lib/types";
 
@@ -59,7 +60,7 @@ export default function DiagnosisPage() {
 
       <Link
         href={`/ranking/${id}`}
-        className="mt-8 inline-flex w-full items-center justify-center rounded-xl bg-accent py-3 font-medium text-accent-foreground transition-opacity hover:opacity-90 sm:w-auto sm:px-8"
+        className="mt-8 inline-flex w-full items-center justify-center rounded-md bg-accent py-3 font-medium text-accent-foreground transition-opacity hover:opacity-90 sm:w-auto sm:px-8"
       >
         업종 적합도 순위 보기 →
       </Link>
@@ -71,7 +72,19 @@ function LoadingState({ id }: { id: string }) {
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-10">
       <BuildingPageHeader buildingId={id} />
-      <p className="text-muted">진단 결과를 불러오는 중...</p>
+      <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <Skeleton className="mb-2 h-7 w-48" />
+          <Skeleton className="mb-1.5 h-4 w-64" />
+          <Skeleton className="h-4 w-40" />
+        </div>
+        <div className="flex flex-col items-end gap-2">
+          <Skeleton className="h-6 w-16" />
+          <Skeleton className="h-6 w-32" />
+        </div>
+      </div>
+      <Skeleton className="mb-3 h-4 w-24" />
+      <SkeletonCardGrid count={3} />
     </main>
   );
 }

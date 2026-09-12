@@ -24,7 +24,7 @@ export function BuildingSwitcher({ currentId }: { currentId: string }) {
       <select
         value={currentId}
         onChange={(e) => router.push(`/${step}/${e.target.value}`)}
-        className="rounded-lg border border-border bg-surface px-2.5 py-1.5 text-foreground"
+        className="rounded-sm border border-border bg-surface px-2.5 py-1.5 text-foreground"
       >
         {buildings.map((b) => (
           <option key={b.id} value={b.id}>
