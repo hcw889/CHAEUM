@@ -13,6 +13,12 @@ npm run dev
 
 브라우저에서 `http://localhost:3000`에 접속합니다. API 기본 주소는 `lib/api.ts`에서 설정하며, 변경이 필요한 경우 프런트엔드 시작 전에 `NEXT_PUBLIC_API_BASE` 환경변수를 지정합니다.
 
+## 카카오 로드뷰 설정
+
+`frontend/.env.example`을 `frontend/.env.local`로 복사한 뒤 `NEXT_PUBLIC_KAKAO_MAP_KEY`에 카카오 **JavaScript 키**를 설정합니다. 백엔드의 `KAKAO_REST_API_KEY`와는 다른 키입니다. 카카오 개발자 콘솔에서 사용하는 주소(`http://localhost:3000`, 필요하면 `http://127.0.0.1:3000`)를 JavaScript SDK 도메인에 등록하고 프런트엔드 개발 서버를 다시 시작합니다. 프로덕션에서는 키를 설정한 환경에서 다시 빌드합니다.
+
+로드뷰 설정 누락·로딩 실패·촬영 지점 미확인을 구분해서 안내합니다. 이때 임시 사진으로 대체하지 않으며, 재시도와 카카오맵 바로가기를 제공합니다. 키와 도메인 설정은 [카카오 지도 공식 가이드](https://apis.map.kakao.com/web/guide/)를 참조합니다.
+
 ## 타입 검사와 빌드
 
 ```powershell

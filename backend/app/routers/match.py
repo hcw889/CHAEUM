@@ -269,7 +269,7 @@ def match_buildings(payload: MatchRequest, provider: DataProvider = Depends(get_
         # (match_orchestrator.py는 실행 순서만 담당).
         # building["photo_url"]은 실제 상가 사진이 아닌 플레이스홀더 스톡이미지다.
         # 결과 화면은 카카오 로드뷰(lat/lng 기준)로 실물을 보여주므로, photo_url은
-        # space_vision_agent의 Vision-LLM 입력과 로드뷰 미제공 구간의 폴백으로만 쓴다.
+        # space_vision_agent의 Vision-LLM 입력으로만 쓴다. 로드뷰 실패를 임시 사진으로 대체하지 않는다.
         # 실데이터 매물에는 photo_url이 아예 없고 로드뷰만 쓴다.
         result = match_orchestrator.run_match_for_building(
             building_id=building["id"],
