@@ -50,6 +50,40 @@ def test_unknown_building_returns_404():
     assert client.get("/api/buildings/없는매물/footfall").status_code == 404
 
 
+def test_real_building_uses_its_own_coordinates(monkeypatch):
+    """
+    실데이터 매물(vacancy 필드, region 비어 있음, 데모 표에 없는 id)은 상가정보 API 좌표를
+    중심으로 쓴다. 예전에는 데모 표/지역명만 봐서 404가 났고 유동인구 지도가 비어 있었다.
+    """
+    from app.services.data_provider import get_data_provider
+
+    real = {
+        "id": "rtest000001",
+        "address": "전북특별자치도 군산시 중앙로 1",
+        "region": "",
+        "lat": 35.9676,
+        "lng": 126.7369,
+        "vacancy": {"status": "likely_vacant"},
+    }
+
+    class Provider:
+        def get_building(self, building_id):
+            return real if building_id == real["id"] else None
+
+    app.dependency_overrides[get_data_provider] = lambda: Provider()
+    try:
+        response = client.get(f"/api/buildings/{real['id']}/footfall")
+    finally:
+        app.dependency_overrides.pop(get_data_provider, None)
+
+    assert response.status_code == 200
+    body = response.json()
+    assert (body["center_lat"], body["center_lng"]) == (real["lat"], real["lng"])
+    assert body["address"] == real["address"]
+    # 반경 밖이어도 가장 가까운 구역을 min_areas개까지 채워 지도가 비지 않는다.
+    assert len(body["areas"]) >= sk_footfall.load_areas()["min_areas"]
+
+
 def test_weekend_differs_from_weekday():
     weekday = client.get("/api/buildings/b1/footfall?day_type=weekday").json()
     weekend = client.get("/api/buildings/b1/footfall?day_type=weekend").json()

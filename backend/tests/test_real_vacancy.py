@@ -785,6 +785,21 @@ def test_duplicate_main_and_etc_purpose_is_not_repeated():
     assert text == "제2종근린생활시설(일반음식점)"
 
 
+def test_real_building_location_uses_its_own_coordinates():
+    """
+    실데이터 매물 id는 데모 좌표표(footfall_areas.json b1~b15)에 없다. 표만 보면
+    location이 전부 null이 되어 /match/results 지도가 비어 버린다 (실제로 났던 문제).
+    """
+    from app.services.building_location import get_building_location
+
+    real = {"id": "r017754f2ac", "lat": 35.9628, "lng": 126.7167, "vacancy": {"estimated": True}}
+    location = get_building_location(real)
+    assert location is not None
+    assert (location.lat, location.lng, location.is_approximate) == (35.9628, 126.7167, False)
+
+    assert get_building_location({"id": "r_no_coords", "vacancy": {}}) is None
+
+
 def test_junk_building_name_falls_back_to_dong():
     building = {"bld_name": "전체", "ldong_name": "모현동1가"}
     assert vacancy_estimator._display_name(building, "2층") == "모현동1가 상가 2층"

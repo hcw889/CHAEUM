@@ -14,6 +14,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app.models.footfall import FootfallResponse
 from app.services import sk_footfall
+from app.services.building_location import get_building_location
 from app.services.data_provider import DataProvider, get_data_provider
 
 router = APIRouter(prefix="/api", tags=["footfall"])
@@ -42,7 +43,9 @@ def _reference_date(day_type: str) -> str:
 def _resolve_center(building_id: str, config: dict, provider: DataProvider) -> dict:
     """
     building_id -> 지도 중심 좌표.
-    직접 입력으로 만들어진 매물이면 지역명 또는 매핑된 데모 시나리오로 되짚는다.
+    데모 매물(b1~b15)은 footfall_areas.json의 대표 좌표를, 실데이터 매물은 매물 레코드의
+    lat/lng(상가정보 API 좌표)를 쓴다 — 매칭 지도(building_location)와 같은 점을 가리켜야 한다.
+    직접 입력으로 만들어진 매물이면 매핑된 데모 시나리오 또는 지역명으로 되짚는다.
     """
     centers = config["buildings"]
     if building_id in centers:
@@ -53,6 +56,11 @@ def _resolve_center(building_id: str, config: dict, provider: DataProvider) -> d
         scenario = building.get("matched_scenario_id")
         if scenario in centers:
             return centers[scenario]
+        # 예전에는 데모 표와 지역명만 봐서 실데이터 모드(region이 비어 있고 id가 r…)에서
+        # 전부 404가 나고 /diagnosis/[id]#visualize 지도가 비어 있었다.
+        location = get_building_location(building)
+        if location is not None:
+            return {"lat": location.lat, "lng": location.lng, "region": building.get("region") or None}
         region = building.get("region")
         for center in centers.values():
             if center.get("region") == region:

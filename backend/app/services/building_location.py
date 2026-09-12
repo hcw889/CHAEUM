@@ -1,4 +1,11 @@
-"""매칭 지도용 위치. 유동인구 API 호출 없이 기존 데모 좌표만 읽는다."""
+"""
+매칭 지도용 위치.
+
+매물 레코드에 lat/lng가 있으면 그 값을 쓴다 — 실데이터(상가정보 API 좌표)와
+지오코딩된 목업 모두 해당한다. 없으면 footfall_areas.json의 데모 대표 좌표(b1~b15)로
+내려간다. 예전에는 데모 표만 봐서 실데이터 모드에서 모든 매물의 location이 null이
+되고 /match/results 지도가 비어 있었다.
+"""
 
 from __future__ import annotations
 
@@ -23,6 +30,18 @@ def _demo_locations() -> dict:
 
 
 def get_building_location(building: dict) -> BuildingLocation | None:
+    # 실데이터 매물(vacancy 필드가 있다)은 상가정보 API가 준 건물 좌표를 그대로 쓴다.
+    if "vacancy" in building:
+        lat, lng = building.get("lat"), building.get("lng")
+        if lat is None or lng is None:
+            return None
+        try:
+            return BuildingLocation(lat=lat, lng=lng, is_approximate=False)
+        except (ValueError, TypeError):
+            return None
+
+    # 목업은 유동인구 화면과 같은 데모 대표 좌표를 쓴다 (매칭 지도·유동인구 지도가
+    # 같은 점을 가리켜야 한다).
     centers = _demo_locations()
     center = centers.get(building["id"]) or centers.get(building.get("matched_scenario_id"))
     if center is None:
