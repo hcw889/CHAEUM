@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import business_fit, buildings, dashboard, match, permits, report
+from app.routers import business_fit, buildings, dashboard, match, permits, regions, report
 
 app = FastAPI(
     title="채움(Chaeum) API",
@@ -23,6 +23,7 @@ app.include_router(dashboard.router)
 app.include_router(permits.router)
 app.include_router(report.router)
 app.include_router(match.router)
+app.include_router(regions.router)
 
 
 @app.get("/api/health")

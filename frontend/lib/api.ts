@@ -10,6 +10,8 @@ import type {
   ReportSummary,
 } from "./types";
 
+import type { RegionStatsResponse } from "./regionTypes";
+
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8000";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
@@ -26,6 +28,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export const api = {
+  getRegionStats: () => request<RegionStatsResponse>("/api/regions/stats"),
   listBuildings: () => request<BuildingSummary[]>("/api/buildings"),
   getBuilding: (id: string) => request<Building>(`/api/buildings/${id}`),
   diagnoseBuilding: (payload: PropertyInput) =>

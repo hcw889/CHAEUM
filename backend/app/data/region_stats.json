@@ -1,0 +1,367 @@
+{
+  "is_mock": true,
+  "data_reference_month": "2026-08",
+  "months": [
+    "2026-03",
+    "2026-04",
+    "2026-05",
+    "2026-06",
+    "2026-07",
+    "2026-08"
+  ],
+  "description": "해커톤 시연용 가상 집계입니다. 실제 공실 통계가 아니며, 좌표는 시·군/상권을 표시하기 위한 대략적인 대표 지점입니다. 시·군의 전체 상가 수는 6개월 동안 고정한 시나리오입니다. 전주 5개 시범 상권은 전주 전체를 대표하지 않습니다.",
+  "regions": [
+    {
+      "id": "jeonju",
+      "scope": "district",
+      "region_name": "전주시",
+      "lat": 35.8242,
+      "lng": 127.148,
+      "total_units": 4200,
+      "avg_vacancy_period_months": 10.8,
+      "top_recommended_business": "카페",
+      "monthly_vacant_units": [
+        772,
+        760,
+        747,
+        735,
+        722,
+        714
+      ]
+    },
+    {
+      "id": "gunsan",
+      "scope": "district",
+      "region_name": "군산시",
+      "lat": 35.9676,
+      "lng": 126.7369,
+      "total_units": 2400,
+      "avg_vacancy_period_months": 14.2,
+      "top_recommended_business": "카페",
+      "monthly_vacant_units": [
+        492,
+        504,
+        516,
+        528,
+        540,
+        552
+      ]
+    },
+    {
+      "id": "iksan",
+      "scope": "district",
+      "region_name": "익산시",
+      "lat": 35.9483,
+      "lng": 126.9576,
+      "total_units": 2800,
+      "avg_vacancy_period_months": 12.4,
+      "top_recommended_business": "학원",
+      "monthly_vacant_units": [
+        574,
+        563,
+        552,
+        546,
+        538,
+        532
+      ]
+    },
+    {
+      "id": "jeongeup",
+      "scope": "district",
+      "region_name": "정읍시",
+      "lat": 35.5699,
+      "lng": 126.856,
+      "total_units": 1400,
+      "avg_vacancy_period_months": 11.6,
+      "top_recommended_business": "병원",
+      "monthly_vacant_units": [
+        231,
+        235,
+        239,
+        244,
+        248,
+        252
+      ]
+    },
+    {
+      "id": "namwon",
+      "scope": "district",
+      "region_name": "남원시",
+      "lat": 35.4164,
+      "lng": 127.3905,
+      "total_units": 1100,
+      "avg_vacancy_period_months": 13.1,
+      "top_recommended_business": "카페",
+      "monthly_vacant_units": [
+        198,
+        201,
+        209,
+        212,
+        217,
+        220
+      ]
+    },
+    {
+      "id": "gimje",
+      "scope": "district",
+      "region_name": "김제시",
+      "lat": 35.8036,
+      "lng": 126.8809,
+      "total_units": 1200,
+      "avg_vacancy_period_months": 10.2,
+      "top_recommended_business": "편의점",
+      "monthly_vacant_units": [
+        216,
+        210,
+        204,
+        199,
+        196,
+        192
+      ]
+    },
+    {
+      "id": "wanju",
+      "scope": "district",
+      "region_name": "완주군",
+      "lat": 35.9047,
+      "lng": 127.1622,
+      "total_units": 1000,
+      "avg_vacancy_period_months": 6.4,
+      "top_recommended_business": "스터디카페",
+      "monthly_vacant_units": [
+        115,
+        108,
+        103,
+        97,
+        93,
+        90
+      ]
+    },
+    {
+      "id": "jinan",
+      "scope": "district",
+      "region_name": "진안군",
+      "lat": 35.7917,
+      "lng": 127.4249,
+      "total_units": 350,
+      "avg_vacancy_period_months": 8.5,
+      "top_recommended_business": "편의점",
+      "monthly_vacant_units": [
+        49,
+        48,
+        46,
+        45,
+        44,
+        42
+      ]
+    },
+    {
+      "id": "muju",
+      "scope": "district",
+      "region_name": "무주군",
+      "lat": 36.0071,
+      "lng": 127.6608,
+      "total_units": 300,
+      "avg_vacancy_period_months": 7.8,
+      "top_recommended_business": "카페",
+      "monthly_vacant_units": [
+        39,
+        38,
+        36,
+        35,
+        34,
+        33
+      ]
+    },
+    {
+      "id": "jangsu",
+      "scope": "district",
+      "region_name": "장수군",
+      "lat": 35.6473,
+      "lng": 127.5212,
+      "total_units": 250,
+      "avg_vacancy_period_months": 9.7,
+      "top_recommended_business": "편의점",
+      "monthly_vacant_units": [
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+      ]
+    },
+    {
+      "id": "imsil",
+      "scope": "district",
+      "region_name": "임실군",
+      "lat": 35.6178,
+      "lng": 127.2891,
+      "total_units": 400,
+      "avg_vacancy_period_months": 10.6,
+      "top_recommended_business": "병원",
+      "monthly_vacant_units": [
+        56,
+        57,
+        59,
+        61,
+        62,
+        64
+      ]
+    },
+    {
+      "id": "sunchang",
+      "scope": "district",
+      "region_name": "순창군",
+      "lat": 35.3745,
+      "lng": 127.1375,
+      "total_units": 400,
+      "avg_vacancy_period_months": 9.2,
+      "top_recommended_business": "편의점",
+      "monthly_vacant_units": [
+        68,
+        66,
+        64,
+        63,
+        61,
+        60
+      ]
+    },
+    {
+      "id": "gochang",
+      "scope": "district",
+      "region_name": "고창군",
+      "lat": 35.4358,
+      "lng": 126.702,
+      "total_units": 650,
+      "avg_vacancy_period_months": 11.8,
+      "top_recommended_business": "카페",
+      "monthly_vacant_units": [
+        104,
+        107,
+        110,
+        113,
+        115,
+        117
+      ]
+    },
+    {
+      "id": "buan",
+      "scope": "district",
+      "region_name": "부안군",
+      "lat": 35.7316,
+      "lng": 126.7335,
+      "total_units": 700,
+      "avg_vacancy_period_months": 12.9,
+      "top_recommended_business": "카페",
+      "monthly_vacant_units": [
+        126,
+        130,
+        135,
+        139,
+        143,
+        147
+      ]
+    },
+    {
+      "id": "paldal",
+      "scope": "neighborhood",
+      "region_name": "팔달로",
+      "lat": 35.816,
+      "lng": 127.148,
+      "total_units": 180,
+      "avg_vacancy_period_months": 13.5,
+      "top_recommended_business": "학원",
+      "building_id": "b1",
+      "parent_id": "jeonju",
+      "monthly_vacant_units": [
+        39,
+        40,
+        42,
+        43,
+        44,
+        45
+      ]
+    },
+    {
+      "id": "gaeksa",
+      "scope": "neighborhood",
+      "region_name": "객사길",
+      "lat": 35.818,
+      "lng": 127.143,
+      "total_units": 240,
+      "avg_vacancy_period_months": 6.2,
+      "top_recommended_business": "카페",
+      "building_id": "b2",
+      "parent_id": "jeonju",
+      "monthly_vacant_units": [
+        34,
+        32,
+        29,
+        27,
+        25,
+        24
+      ]
+    },
+    {
+      "id": "taepyeong",
+      "scope": "neighborhood",
+      "region_name": "태평동",
+      "lat": 35.826,
+      "lng": 127.138,
+      "total_units": 160,
+      "avg_vacancy_period_months": 9.8,
+      "top_recommended_business": "병원",
+      "building_id": "b3",
+      "parent_id": "jeonju",
+      "monthly_vacant_units": [
+        28,
+        27,
+        26,
+        25,
+        25,
+        24
+      ]
+    },
+    {
+      "id": "gyeongwon",
+      "scope": "neighborhood",
+      "region_name": "경원동",
+      "lat": 35.818,
+      "lng": 127.152,
+      "total_units": 200,
+      "avg_vacancy_period_months": 17.2,
+      "top_recommended_business": "편의점",
+      "building_id": "b4",
+      "parent_id": "jeonju",
+      "monthly_vacant_units": [
+        48,
+        50,
+        53,
+        55,
+        58,
+        60
+      ]
+    },
+    {
+      "id": "station",
+      "scope": "neighborhood",
+      "region_name": "전주역",
+      "lat": 35.85,
+      "lng": 127.161,
+      "total_units": 220,
+      "avg_vacancy_period_months": 7.1,
+      "top_recommended_business": "스터디카페",
+      "building_id": "b5",
+      "parent_id": "jeonju",
+      "monthly_vacant_units": [
+        31,
+        29,
+        27,
+        25,
+        23,
+        22
+      ]
+    }
+  ]
+}

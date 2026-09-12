@@ -20,6 +20,11 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
 class DataProvider(ABC):
     @abstractmethod
+    def get_region_stats(self) -> dict[str, Any]:
+        """지역별 공실 집계. 개별 매물 데이터와 별도의 조사 모집단."""
+        ...
+
+    @abstractmethod
     def list_business_types(self) -> list[str]:
         ...
 
@@ -63,12 +68,16 @@ class DataProvider(ABC):
 
 class MockDataProvider(DataProvider):
     def __init__(self, data_dir: Path = DATA_DIR):
+        self._data_dir = data_dir
         self._buildings: dict[str, Any] = json.loads((data_dir / "buildings.json").read_text(encoding="utf-8"))
         self._market_data: dict[str, Any] = json.loads((data_dir / "market_data.json").read_text(encoding="utf-8"))
         self._permits: dict[str, Any] = json.loads((data_dir / "permits.json").read_text(encoding="utf-8"))
 
     def list_business_types(self) -> list[str]:
         return list(self._permits.keys())
+
+    def get_region_stats(self) -> dict[str, Any]:
+        return json.loads((self._data_dir / "region_stats.json").read_text(encoding="utf-8"))
 
     def list_buildings(self) -> list[dict[str, Any]]:
         return [
