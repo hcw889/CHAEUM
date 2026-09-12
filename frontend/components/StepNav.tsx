@@ -9,7 +9,7 @@ export const STEPS = [
   { path: "dashboard", label: "리스크 대시보드" },
   { path: "permits", label: "인허가" },
   { path: "strategy", label: "전략" },
-  { path: "visualize", label: "시각화" },
+  { path: "visualize", label: "유동인구" },
   { path: "report", label: "리포트" },
 ];
 

@@ -93,7 +93,7 @@ export interface MatchRequest {
   /**
    * 입점 희망 기간(단기/장기). 팝업 브랜드 role에서만 입력받는다.
    * TODO: 단기임대 가중치 반영은 로드맵 다음 단계 — 현재 매칭 스코어링에는 쓰이지 않고
-   * 저장/로깅과 공간 시각화 프롬프트 연출에만 쓰인다.
+   * 저장/로깅에만 쓰인다.
    */
   occupancy_term?: string;
 }
@@ -133,43 +133,6 @@ export interface MatchCandidate {
 export interface MatchResponse {
   matches: MatchCandidate[];
 }
-
-// --- 공간 시각화 (팝업 컨셉 적용 이미지 생성) ---
-
-export type RenderMode = "hf_api" | "local" | "mock" | "demo";
-
-export interface SpaceRenderRequest {
-  concept: string;
-  photo_data_url?: string;
-  mask_data_url?: string;
-  commercial_style_pref?: string;
-  occupancy_term?: string;
-  strength?: number;
-}
-
-export interface BuildingPhotoResponse {
-  image: string;
-  /** file = 실제 촬영본, placeholder = 매물 속성으로 그린 참고용 이미지 */
-  source: "file" | "placeholder";
-  /** 시공 후 촬영본이 있어 demo 모드로 전/후를 보여줄 수 있는 매물인지 */
-  has_after: boolean;
-}
-
-export interface SpaceRenderResponse {
-  mode: RenderMode;
-  model: string;
-  prompt: string;
-  before_image: string;
-  after_image: string;
-  note?: string | null;
-}
-
-export const RENDER_MODE_LABELS: Record<RenderMode, string> = {
-  hf_api: "HuggingFace 생성",
-  local: "로컬 diffusers 생성",
-  mock: "미리보기 (생성 미연결)",
-  demo: "실제 시공 전/후 사진",
-};
 
 export const BUSINESS_TYPE_OPTIONS = ["카페", "학원", "병원", "편의점", "스터디카페"];
 export const REGION_OPTIONS = [

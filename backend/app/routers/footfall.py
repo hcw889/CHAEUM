@@ -1,7 +1,7 @@
 """
 추천 매물 주변 유동인구 조회 API.
 
-매칭 결과 화면(/match/results)의 "주변 유동인구" 대시보드가 쓴다.
+유동인구 시각화 화면(/visualize/[id])의 "주변 유동인구" 대시보드가 쓴다.
 데이터 획득은 app/services/sk_footfall.py가 담당하며(SK open API -> 실패 시 mock),
 이 라우터는 구역 선별/집계/응답 스키마만 책임진다.
 """

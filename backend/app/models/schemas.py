@@ -114,31 +114,3 @@ class MatchCandidate(BaseModel):
 
 class MatchResponse(BaseModel):
     matches: list[MatchCandidate]
-
-
-# --- 공간 시각화 (팝업 컨셉 적용 이미지 생성) ---
-# 매칭 flow와는 독립적인 기능이다. MatchRequest / MatchResponse는 건드리지 않는다.
-
-
-class SpaceRenderRequest(BaseModel):
-    concept: str = Field(..., min_length=1)  # 업종 또는 팝업 브랜드/컨셉
-    photo_data_url: Optional[str] = None  # 업로드 사진 (data URL). 없으면 기본 이미지
-    mask_data_url: Optional[str] = None  # 다시 그릴 영역 마스크. local 모드에서만 사용
-    commercial_style_pref: Optional[str] = None
-    occupancy_term: Optional[str] = None  # 단기 | 장기
-    strength: float = Field(0.65, ge=0.1, le=1.0)
-
-
-class BuildingPhotoResponse(BaseModel):
-    image: str  # data URL
-    source: str  # file(실제 촬영본) | placeholder(참고용 생성 이미지)
-    has_after: bool = False  # 시공 후 촬영본이 있어 demo 모드로 보여줄 수 있는 매물인지
-
-
-class SpaceRenderResponse(BaseModel):
-    mode: str  # hf_api | local | mock
-    model: str
-    prompt: str
-    before_image: str
-    after_image: str
-    note: Optional[str] = None
