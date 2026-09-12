@@ -105,6 +105,134 @@ http://localhost:3000 접속 (백엔드가 8000번 포트에서 실행 중이어
 > 구역 좌표·반경은 지도 표시용 대표값이고, 연동 전 수치는 모두 시연용 가상 데이터입니다.
 > 실제 응답 예시를 확보하면 `sk_footfall._parse_hourly()`만 엄격한 파서로 바꾸면 됩니다.
 
+## 실제 공실 데이터 연동 (공공데이터포털)
+
+두 개의 공공 API를 **건물 단위로 조인해** 공실 매물을 만들고, 매칭 추천(`/api/match`)의
+후보로 쓴다. 캐시가 있으면 `RealSanggaProvider`, 없으면 기존 `MockDataProvider`가 쓰인다.
+
+| API | 얻는 것 |
+| --- | --- |
+| 소상공인시장진흥공단_상가(상권)정보 | 영업 중인 점포 목록 (업종·층·좌표·건물관리번호·지번) |
+| 국토교통부_건축HUB_건축물대장정보 서비스 | 건물 제원 (사용승인일·층별 용도/면적·구조·승강기) |
+
+### 공실은 추정값이다
+
+**두 API 모두 "공실" 필드를 제공하지 않는다.** 그래서 다음 논리로 추론한다:
+
+```
+건축물대장 층별개요에 근린생활시설·판매시설로 등재된 층
+  AND 상가정보에 그 층의 등록 점포가 0건
+-> 공실 후보
+```
+
+조인 키는 상가정보 응답의 `bldMngNo`(건물관리번호), 없으면 `ldongCd`+`plotSctCd`+
+`lnbrMnnm`/`lnbrSlno`(법정동코드+대지구분+본번/부번)이며, 이 값들이 건축물대장의
+`sigunguCd`/`bjdongCd`/`platGbCd`/`bun`/`ji`와 그대로 맞물린다.
+
+틀릴 수 있는 경로가 분명히 있으므로 매물마다 `confidence`와 판정 근거(`basis`)를
+붙이고 결과 화면에도 "추정"으로 표시한다:
+
+- 상가정보는 분기 스냅샷이라 신규 개업이 아직 반영되지 않았을 수 있다
+- 사업자등록 주소의 층 표기(`flrNo`)가 비었거나 실제와 다를 수 있다
+- 대장상 근린생활시설이지만 자가 사용(사무실·창고)인 층일 수 있다
+
+### 실데이터와 추정값 구분
+
+`DataProvider.get_data_sources()`가 필드별 출처를 내려주고, 결과 화면의
+`components/VacancyEvidence.tsx`가 배지로 구분해 보여 준다.
+
+| 구분 | 필드 |
+| --- | --- |
+| 실데이터 (건축물대장) | 준공연도(사용승인일), 층별 전용면적, 층, 대장 용도, 구조, 승강기 |
+| 실데이터 (상가정보) | 소재지, 좌표, 인근 영업 점포, **경쟁포화도**(반경 300m 동일업종 실측 점포 수) |
+| 실데이터 파생 계산 | 노후도 점수(경과연수), 접근성 점수(층수+승강기) |
+| 추정값 | 공실 판정, 채광 점수, 유동인구 지수(상가 밀도 프록시), 인구통계 적합도, 월세 |
+
+임대 시세와 일조 데이터는 두 API에 없어 `vacancy_estimator.py`의 가정값
+(`RENT_PER_PYEONG_BY_SIGNGU`, `FLOOR_RENT_FACTOR`)을 쓴다. 실제 임대 시세 API를
+붙이면 그 표만 교체하면 된다.
+
+### 수집 방법
+
+1. [공공데이터포털](https://www.data.go.kr)에서 두 API의 활용신청을 각각 승인받는다.
+   - 소상공인시장진흥공단_상가(상권)정보
+   - 국토교통부_건축HUB_건축물대장정보 서비스
+2. `backend/.env`에 **API별 일반 인증키(Decoding)** 를 넣는다. 포털 개발계정은
+   활용신청 건별로 키가 따로 발급되므로 두 줄이 필요하다. Encoding 키를 넣으면
+   httpx가 한 번 더 인코딩해 `SERVICE_KEY_IS_NOT_REGISTERED_ERROR`가 난다.
+
+   ```
+   SANGGA_API_SERVICE_KEY=상가정보_Decoding_키
+   BLDRGST_API_SERVICE_KEY=건축물대장_Decoding_키
+   ```
+
+   한 키로 두 API가 모두 열리는 계정이면 공통 폴백 한 줄로 대체할 수 있다:
+
+   ```
+   DATA_GO_KR_SERVICE_KEY=공통_Decoding_키
+   ```
+
+   | 환경변수 | 대상 API |
+   | --- | --- |
+   | `SANGGA_API_SERVICE_KEY` | 소상공인시장진흥공단_상가(상권)정보 |
+   | `BLDRGST_API_SERVICE_KEY` | 국토교통부_건축HUB_건축물대장정보 서비스 |
+   | `DATA_GO_KR_SERVICE_KEY` | 위 둘이 없을 때의 공통 폴백 |
+
+3. 수집 스크립트를 실행한다. venv를 반드시 쓴다(시스템 Python에는 의존성이 없다).
+   런타임이 아니라 사전 수집인 이유는 건축물대장이 건물당 2회 호출이라 매칭
+   요청마다 돌리면 응답이 수십 초가 되고, 개발계정 호출 한도를 데모 중에
+   소진하기 때문이다.
+
+   ```bash
+   cd backend
+   .\.venv\Scripts\python.exe scripts/fetch_real_vacancies.py                     # 전북 시·군 전역(기본)
+   .\.venv\Scripts\python.exe scripts/fetch_real_vacancies.py --max-buildings 200 # 호출 절약
+   .\.venv\Scripts\python.exe scripts/fetch_real_vacancies.py --mode grid --bbox 127.08,35.79,127.20,35.86
+   ```
+
+4. 서버를 재시작하면 `RealSanggaProvider`로 전환된다. 결과 화면 상단에
+   "실데이터 기반 공실 추정" 배너가 뜬다.
+
+출력은 `backend/app/data/real/`에 쌓인다 — `buildings.json`(매물 후보),
+`market_data.json`(매물 x 업종 시장 신호), `region_stats.json`(시군별 표본 공실
+집계), `meta.json`(수집 시각·건수·출처).
+
+`CHAEUM_FORCE_MOCK=1`을 주면 캐시가 있어도 목업을 쓴다 (비교용).
+
+### 실제 API에서 확인한 제약
+
+문서와 다른 부분이 있어 실호출로 확인한 내용이다 (`tests/test_real_vacancy.py`가 고정한다).
+
+| 항목 | 실제 동작 |
+| --- | --- |
+| `storeListInAdmi` (행정구역 단위) | **폐기됨** — `NO_OPENAPI_SERVICE_ERROR`. 영역/반경 조회만 쓸 수 있다 |
+| 사각형 조회 크기 | 0.1도 격자는 `INVALID_REQUEST_PARAMETER_ERROR`로 거부. 0.04도는 정상 |
+| 호출 한도 | 격자 전역 순회는 HTTP 429에 걸린다. 분 단위 제한이라 잠시 뒤 풀린다 |
+| 지번 필드명 | `lnoMnno` / `lnoSlno` (문서의 `lnbrMnnm`/`lnbrSlno`가 아님), 값은 정수 |
+| `flrNo` (층) | **50.3%만 채워져 있다**. 빈 값이면 층 판정 불가 → 공실 신뢰도 '낮음' |
+| `bldMngNo` (건물관리번호) | 99.8% 채워짐. 가장 믿을 만한 건물 조인 키 |
+| `bldMngNo` 접두 | 구 코드 `45…`, `ldongCd`는 신 코드 `52…`. 건축물대장은 `52…`를 받는다 |
+| 건축물대장 `flrGbCdNm` | `지하` / `지상` / **`옥탑`**. 옥탑은 `flrNo`가 1부터 다시 시작해 지상층과 겹친다 |
+| 건축물대장 `bldNm` | 값이 없을 때 빈 문자열이 아니라 `" "`(공백)으로 온다 |
+| 서비스키 | 계정당 한 키로 두 API가 모두 열렸다. API별 키를 따로 넣어도 된다 |
+
+그래서 기본 수집 방식은 **시·군 대표 지점 반경 조회**다. 전북 14개 시·군 +
+전주 5개 시범 상권 좌표(`region_stats.json`)를 중심으로 반경 2km씩 훑는다.
+`--mode grid`는 호출 한도가 넉넉한 계정이나 좁은 `--bbox`에서만 쓴다.
+
+### 알려진 한계
+
+- **표본 기준이다.** 전북 전체 건물의 건축물대장을 다 조회하면 호출 한도를 넘기므로
+  시군별로 비례 배분한 상한(`--max-buildings`) 안에서만 조사한다. `region_stats.json`의
+  `total_units`는 "전체 상가 수"가 아니라 "조사한 상업용도 층 수"다.
+- **도심 반경 표본이다.** 기본 수집은 시·군 대표 지점 반경 2km라서, 그 바깥의
+  읍·면 상가는 후보에 들어오지 않는다.
+- **월별 추이가 없다.** 과거 이력을 주는 API가 아니라서 `months`가 기준월 1개뿐이고,
+  `/official`의 추이 차트는 단일 스냅샷으로 표시된다.
+- **평균 공실 기간은 미집계(0)다.** 두 API에 공실 시작 시점 정보가 없다.
+- 매칭은 사전 필터로 후보를 좁힌 뒤 상위 40건만 4-agent 스코어링하고 12건을
+  돌려준다 (`routers/match.py`의 `SCORING_LIMIT`/`RESPONSE_LIMIT`).
+
 ## 지자체 공실 현황 대시보드
 
 역할 선택 화면에서 **지자체 담당자**를 선택하면 입력 단계 없이 `/official`로 이동합니다.
