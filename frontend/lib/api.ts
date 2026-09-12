@@ -1,6 +1,5 @@
 import type {
   Building,
-  BuildingPhotoResponse,
   BuildingSummary,
   BusinessFitCandidate,
   DashboardMetrics,
@@ -8,10 +7,7 @@ import type {
   MatchResponse,
   PermitChecklistItem,
   PropertyInput,
-  RenderMode,
   ReportSummary,
-  SpaceRenderRequest,
-  SpaceRenderResponse,
 } from "./types";
 
 import type { RegionStatsResponse } from "./regionTypes";
@@ -54,11 +50,4 @@ export const api = {
     }),
   getFootfall: (id: string, dayType: DayType) =>
     request<FootfallResponse>(`/api/buildings/${id}/footfall?day_type=${dayType}`),
-  getRenderMode: () => request<{ mode: RenderMode }>("/api/visualize/mode"),
-  getBuildingPhoto: (id: string) => request<BuildingPhotoResponse>(`/api/buildings/${id}/photo`),
-  renderSpace: (id: string, payload: SpaceRenderRequest) =>
-    request<SpaceRenderResponse>(`/api/buildings/${id}/visualize`, {
-      method: "POST",
-      body: JSON.stringify(payload),
-    }),
 };

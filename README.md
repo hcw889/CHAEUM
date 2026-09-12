@@ -1,11 +1,11 @@
 # 채움 (Chaeum)
 
-전북 원도심 공실 상가의 건물 진단·업종 적합도, 조건 기반 매물 매칭과 공간 컨셉 이미지 생성을 시연하는 해커톤 MVP입니다.
+전북 원도심 공실 상가의 건물 진단·업종 적합도, 조건 기반 매물 매칭과 주변 유동인구 시각화를 시연하는 해커톤 MVP입니다.
 
 ## 구조
 
 ```
-backend/   FastAPI (Python) — 진단/스코어링·매칭·시각화·지역 집계 API, mock JSON 데이터
+backend/   FastAPI (Python) — 진단/스코어링·매칭·유동인구·지역 집계 API, mock JSON 데이터
 frontend/  Next.js + TypeScript + Tailwind CSS
 ```
 
@@ -58,21 +58,24 @@ http://localhost:3000 접속 (백엔드가 8000번 포트에서 실행 중이어
 | 온보딩 (역할 선택) | `/` | 공통 |
 | 매물 입력 | `/property/new` | 건물주 |
 | 매칭 조건 입력 | `/match/new?role=founder` 또는 `/match/new?role=brand` | 예비 창업자·팝업 브랜드 |
-| 매칭 결과 (주변 유동인구 지도 포함) | `/match/results` | 예비 창업자·팝업 브랜드 |
+| 매칭 결과 | `/match/results` | 예비 창업자·팝업 브랜드 |
 | 진단 결과 | `/diagnosis/[id]` | 공통 |
 | 업종 적합도 순위 | `/ranking/[id]` | 공통 |
 | 리스크 대시보드 | `/dashboard/[id]` | 공통 |
 | 인허가 체크리스트 | `/permits/[id]` | 공통 |
 | 전략 그리드 | `/strategy/[id]` | 공통 |
-| 시각화 (컨셉 이미지 생성·전후 비교) | `/visualize/[id]` | 공통 |
+| 유동인구 시각화 (지도·시간대별 비교) | `/visualize/[id]` | 공통 |
 | 리포트 (요약·브라우저 인쇄로 PDF 저장) | `/report/[id]` | 공통 |
 | 지자체 공실 현황 대시보드 | `/official` | 지자체 담당자 |
 
 ## 주변 유동인구 대시보드 (SK open API)
 
-매칭 결과(`/match/results`)에서 추천 매물을 고르면, 그 매물 반경 1.5km의 상권 구역별
-**시간대별 유동인구**가 색상 지도로 따라 붙습니다. 매칭 스코어링(`/api/match`)과는 완전히
-분리된 별도 조회이므로, 유동인구 조회가 실패해도 추천 결과는 그대로 보입니다.
+유동인구 시각화(`/visualize/[id]`)에서 선택한 매물 반경 1.5km의 상권 구역별
+**시간대별 유동인구**를 색상 지도로 확인합니다. 매칭 결과(`/match/results`)에서
+매물을 고른 뒤 “주변 유동인구 보기”를 누르거나, 건물별 분석 메뉴의 “유동인구”로 이동합니다.
+주소로 직접 진입할 수 있으며, 화면 상단의 매물 선택기로 조회 대상을 바꿀 수 있습니다.
+
+유동인구는 이 화면에서 별도로 조회합니다. 조회가 실패하면 오류 안내와 재시도 버튼을 표시합니다.
 
 - 구역 원의 **색** = 선택한 시간대의 유동인구(조회 구역 중 최댓값 대비 상대값), **크기** = 구역 반경
 - 시간 슬라이더(하루 전체 / 00시~23시)와 평일·주말 전환, 24시간 막대, 구역별 비교 목록
@@ -173,72 +176,9 @@ npm run build
 
 - 역할 해석은 `lib/roleContext.tsx`에서 처리합니다.
 - 매칭 화면의 역할별 문구는 `lib/roleCopy.ts`에 모여 있습니다.
-- 입점 희망 기간은 팝업 브랜드에만 노출하며 Step 1 안에 있습니다. 일반 제출 시 전달·세션 저장·로깅하고 공간 시각화 프롬프트 연출에 사용하지만 **현재 스코어링 가중치에는 반영하지 않습니다**.
+- 입점 희망 기간은 팝업 브랜드에만 노출하며 Step 1 안에 있습니다. 일반 제출 시 전달·세션 저장·로깅하지만 **현재 스코어링 가중치에는 반영하지 않습니다**.
 - 빠른 데모 프리셋에는 입점 희망 기간이 포함되지 않습니다. 기간 전달을 시연할 때는 6단계 입력을 직접 제출합니다.
 - 단기 임대 가능 매물 우선 필터링은 실제 데이터 연동 단계의 로드맵 항목입니다.
-
-## 공간 시각화 (HuggingFace 연동)
-
-`/visualize/[id]` 화면에서 공실 사진과 컨셉(업종 또는 팝업 브랜드)을 입력하면
-적용 후 이미지를 생성합니다. 팝업 브랜드 담당자가 입지를 고르는 단계에서
-"이 공간이 내가 기획한 팝업을 구현하기에 적당한가"를 눈으로 확인하기 위한 기능이며,
-매칭 API와는 서로 호출하지 않는 독립 경로입니다.
-
-구현은 `backend/app/services/space_render.py`, 엔드포인트는
-`POST /api/buildings/{id}/visualize`입니다. 화면은 `GET /api/visualize/mode`로
-실행 모드를 먼저 조회해 실제 생성과 보정 미리보기를 구분해 안내합니다.
-
-### 매물 사진은 어디서 오는가
-
-이 화면의 사용자(팝업 브랜드·예비창업자)는 공간을 **찾는** 쪽이라 공실 사진을 갖고
-있지 않습니다. 그래서 사진 업로드를 요구하지 않고 매물 데이터에서 공급합니다
-(`backend/app/services/building_photo.py`, `GET /api/buildings/{id}/photo`).
-
-1. `backend/app/data/photos/{매물id}.{jpg,png,webp}`에 실제 촬영본이 있으면 그것을 사용
-   (이 디렉터리의 이미지는 git 추적 제외 — 각자 로컬에 두는 데모 자산이다)
-2. 없으면 해당 매물의 노후도·채광 점수와 `thumbnail_color`로 그린 참고용 공실
-   이미지를 사용
-
-화면은 둘을 구분해 표시하므로("매물 등록 사진 사용 중" / "매물 참고 이미지 사용 중"),
-참고용 이미지가 실제 매물 사진으로 오인되지 않습니다. 촬영본이 생기면 `photos/`에
-파일만 넣으면 코드 변경 없이 1번으로 전환됩니다. 업로드 버튼은 "다른 사진으로
-해보기"라는 선택 수단으로 남아 있습니다.
-
-### 실행 모드
-
-환경에 따라 아래 모드를 선택하며 생성에 실패하면 보정 미리보기로 폴백합니다.
-API 요청 자체가 실패하면 입력 화면에 오류를 표시하고 다시 생성할 수 있습니다.
-
-| 모드 | 조건 | 동작 |
-|---|---|---|
-| `hf_api` | 강제 모드 지정 없이 `HF_TOKEN` 설정됨 | HuggingFace Inference Providers의 image-to-image로 생성 |
-| `local` | `CHAEUM_RENDER_MODE=local` | 로컬 `diffusers` 마스크 인페인팅 (GPU 필요) |
-| `demo` | 해당 매물에 `{id}.after.*` 촬영본 있음 + 생성 미연결 | 실제 시공 전/후 사진 (AI 생성 아님을 화면에 명시) |
-| `mock` | 그 외 / 모든 예외 | Pillow 색보정 기반 미리보기 |
-
-`CHAEUM_RENDER_MODE`로 유효한 모드를 지정하면 토큰 유무보다 우선 적용합니다.
-
-필요한 환경변수는 `backend/.env.example`에 정리되어 있습니다. 아래 값은 백엔드를 시작할
-PowerShell 터미널에 설정합니다. `.env` 파일을 사용하면 Uvicorn 실행 시 `--env-file .env`를
-추가해 명시적으로 읽습니다(`.env`는 Git 추적에서 제외됩니다).
-
-```powershell
-# 실제 생성을 쓰려면 (권장)
-$env:HF_TOKEN = "hf_xxx"  # Inference Providers 권한이 있는 fine-grained 토큰
-$env:CHAEUM_HF_MODEL = "black-forest-labs/FLUX.1-Kontext-dev"  # 선택
-
-# GPU가 있어 마스크 인페인팅을 쓰려면
-pip install torch diffusers accelerate transformers
-$env:CHAEUM_RENDER_MODE = "local"
-$env:CHAEUM_LOCAL_MODEL = "diffusers/stable-diffusion-xl-1.0-inpainting-0.1"  # 선택
-```
-
-주의: HuggingFace **호스팅** image-to-image 스펙에는 `mask_image` 파라미터가 없습니다.
-즉 `hf_api` 모드는 프롬프트 기반 편집만 가능하고, 마스크로 특정 영역만 다시 그리는
-인페인팅은 `local` 모드에서만 동작합니다.
-
-생성된 이미지는 `backend/app/data/generated/`에 캐시되어 같은 조건 재시연 시
-즉시 응답합니다 (git 추적 제외).
 
 ## 테스트
 

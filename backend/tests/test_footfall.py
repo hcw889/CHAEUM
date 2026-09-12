@@ -1,7 +1,7 @@
 """
 주변 유동인구 API 가드.
 
-SK open API 키가 없는 환경(= 채점자/팀원 로컬)에서도 매칭 결과 화면이
+SK open API 키가 없는 환경(= 채점자/팀원 로컬)에서도 유동인구 시각화 화면이
 항상 값을 받도록, mock 폴백과 집계 규칙을 고정한다.
 
 실행: cd backend && python -m pytest tests/

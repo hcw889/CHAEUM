@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/Card";
-import FootfallPanel from "@/components/footfall/FootfallPanel";
 import { Wordmark } from "@/components/Logo";
 import { RadialGauge } from "@/components/RadialGauge";
 import { RankMedal } from "@/components/RankMedal";
@@ -200,20 +199,21 @@ export default function MatchResultsPage() {
             <p className="mt-4 text-xs text-muted">{selectedMatch.space_vision.detected_elements.join(" · ")}</p>
           )}
 
-          <Link
-            href={`/diagnosis/${selectedMatch.building_id}`}
-            className="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-brand-gradient py-3 font-semibold uppercase tracking-[0.16em] text-accent-foreground shadow-card transition-all hover:shadow-glow-brand sm:w-auto sm:px-8"
-          >
-            건물 상세 진단 보기 →
-          </Link>
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <Link
+              href={`/diagnosis/${selectedMatch.building_id}`}
+              className="inline-flex items-center justify-center rounded-2xl bg-brand-gradient px-6 py-3 font-semibold text-accent-foreground shadow-card transition-all hover:shadow-glow-brand"
+            >
+              건물 상세 진단 보기 →
+            </Link>
+            <Link
+              href={`/visualize/${selectedMatch.building_id}`}
+              className="inline-flex items-center justify-center rounded-2xl border border-border px-6 py-3 font-semibold transition-colors hover:bg-accent-soft"
+            >
+              주변 유동인구 보기 →
+            </Link>
+          </div>
         </Card>
-      )}
-
-      {/* 선택한 추천 매물 주변의 시간대별 유동인구. 매칭 스코어링과는 독립된 별도 조회다. */}
-      {selectedMatch && (
-        <div className="mt-6">
-          <FootfallPanel buildingId={selectedMatch.building_id} address={selectedMatch.address} />
-        </div>
       )}
     </main>
   );

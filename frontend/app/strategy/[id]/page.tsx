@@ -91,7 +91,7 @@ export default function StrategyPage() {
         href={`/visualize/${id}`}
         className="mt-8 inline-flex w-full items-center justify-center rounded-2xl bg-brand-gradient py-3 font-semibold uppercase tracking-[0.16em] text-accent-foreground shadow-card transition-all hover:shadow-glow-brand sm:w-auto sm:px-8"
       >
-        시각화 보기 →
+        주변 유동인구 보기 →
       </Link>
     </main>
   );
