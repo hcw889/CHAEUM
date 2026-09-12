@@ -97,7 +97,7 @@ export default function OfficialPage() {
               <div className="occupancy-track"><span style={{ width: selected.vacancy_rate + "%", background: vacancyColor(selected.vacancy_rate, "rate") }} /></div>
               <div className="detail-pair"><span>공실 <b>{number(selected.vacant_units)}개</b></span><span>전체 상가 <b>{number(selected.total_units)}개</b></span></div>
               <div className="detail-facts"><div><span>평균 공실 기간</span><strong>{selected.avg_vacancy_period_months}개월</strong></div><div><span>추천 업종 {data.is_mock && "(시나리오)"}</span><strong>{selected.top_recommended_business}</strong></div></div>
-              <div className="trend-heading"><h3>최근 6개월 공실률</h3><span>{data.months[0].slice(5)}–{data.months.at(-1)?.slice(5)}월</span></div>
+              <div className="trend-heading"><h3>{data.months.length > 1 ? `최근 ${data.months.length}개월 공실률` : "공실률 (단일 기준월)"}</h3><span>{data.months.length > 1 ? `${data.months[0].slice(5)}–${data.months.at(-1)?.slice(5)}월` : `${data.months[0].replace("-", ". ")} 기준`}</span></div>
               <svg className="trend-chart" viewBox="0 0 280 110" role="img" aria-label={selected.region_name + " 월별 공실률: " + data.months.map((month, i) => month + " " + selected.vacancy_trend_6m[i] + "%").join(", ")}>
                 {[0, trendMax / 2, trendMax].map((tick) => <g key={tick}><line x1="28" y1={85 - tick / trendMax * 80} x2="269" y2={85 - tick / trendMax * 80} stroke="#e8e2da" strokeDasharray="3 4" /><text x="0" y={89 - tick / trendMax * 80} fontSize="10" fill="#8a8078">{tick}%</text></g>)}
                 <polyline fill="none" stroke="#b5502e" strokeWidth="2.5" strokeLinejoin="round" points={selected.vacancy_trend_6m.map((value, i) => (32 + i * 46) + "," + (85 - value / trendMax * 80)).join(" ")} />
@@ -117,7 +117,7 @@ export default function OfficialPage() {
               <strong>{metric === "count" ? number(region.vacant_units) + "개" : region.vacancy_rate.toFixed(1) + "%"}</strong>
             </button>)}</div>
           </section>
-          <footer className="official-footnote"><strong>{data.is_mock ? "시연용 목업 데이터 안내" : "집계 안내"}</strong><p>{data.description}</p><p>전체 공실률 = 공실 수 합계 ÷ 전체 상가 수 합계 × 100 · 전주 시범 상권은 전북 전체 집계에 중복 합산하지 않습니다.</p></footer>
+          <footer className="official-footnote"><strong>{data.is_mock ? "시연용 목업 데이터 안내" : "집계 안내"}</strong><p>{data.description}</p>{data.months.length === 1 && <p>과거 이력이 없는 기준월 단일 스냅샷이므로 월별 추이는 제공하지 않습니다.</p>}<p>전체 공실률 = 공실 수 합계 ÷ 전체 상가 수 합계 × 100 · 전주 시범 상권은 전북 전체 집계에 중복 합산하지 않습니다.</p></footer>
         </>}
       </main>
     </div>

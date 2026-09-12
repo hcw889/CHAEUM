@@ -119,6 +119,34 @@ export interface SpaceVision {
   visual_summary: string;
 }
 
+/**
+ * 공실 추정 결과 (backend vacancy_estimator.py).
+ *
+ * 상가(상권)정보 API와 건축물대장 API 어느 쪽도 공실 여부를 직접 주지 않는다.
+ * 건축물대장에 근린생활시설·판매시설로 등재된 층 중 상가정보에 등록 점포가
+ * 0건인 층을 공실로 추정한 값이므로, 화면에는 반드시 "추정"과 근거를 함께 띄운다.
+ * 목업 데이터에는 이 필드가 없다.
+ */
+export interface VacancyEstimate {
+  estimated: boolean;
+  confidence: "high" | "medium" | "low";
+  method: string;
+  /** 판정 근거. 화면에서 펼쳐 보여 준다. */
+  basis: string[];
+  register_purpose: string;
+  floor_label: string;
+  floor_area_sqm?: number;
+  building_store_count: number;
+  floor_store_count: number;
+  unknown_floor_store_count: number;
+}
+
+export const VACANCY_CONFIDENCE_LABEL: Record<VacancyEstimate["confidence"], string> = {
+  high: "높음",
+  medium: "보통",
+  low: "낮음",
+};
+
 export interface MatchCandidate {
   building_id: string;
   address: string;
@@ -127,11 +155,48 @@ export interface MatchCandidate {
   agent_scores: MatchAgentScores;
   explanation: string;
   photo_url?: string;
+  // 로드뷰 파노라마 조회용. 없으면 RoadviewPanel이 address로 지오코딩한다.
+  lat?: number;
+  lng?: number;
   space_vision?: SpaceVision;
+
+  // --- 실데이터(상가정보 + 건축물대장) 연동 필드. 목업에서는 대부분 비어 있다 ---
+  name?: string;
+  floor?: number;
+  area_pyeong?: number;
+  built_year?: number;
+  region?: string;
+  risk_grade?: string;
+  vacancy?: VacancyEstimate;
+  /** {필드명: "실데이터 · 기관명" | "추정값 · 근거"} — 출처 배지용 */
+  data_sources?: Record<string, string>;
+  /** 반경 300m 내 동일 업종 점포 수 (상가정보 실측) */
+  competitor_count?: number;
+  /** 반경 300m 내 전체 점포 수 (상가정보 실측) */
+  nearby_store_count?: number;
+  /** 같은 건물에서 영업 중인 점포 상호 — 공실 판정의 방증 */
+  nearby_stores?: string[];
 }
 
 export interface MatchResponse {
   matches: MatchCandidate[];
+  /** "real" = 상가정보 + 건축물대장 실데이터, "mock" = 시연용 목업 */
+  data_mode?: "real" | "mock";
+  source_note?: string;
+  /** 입력 조건을 만족한 후보 수. matches는 그중 상위 일부다. */
+  total_candidates?: number;
+}
+
+export interface MatchOptions {
+  data_mode: "real" | "mock";
+  /** 실데이터에서 매물이 실제로 존재하는 지역만. null이면 정적 REGION_OPTIONS를 쓴다. */
+  region_options: string[] | null;
+  business_types: string[];
+  building_count: number;
+  collected_at?: string | null;
+  data_reference_month?: string | null;
+  sources?: Record<string, string> | null;
+  source_note?: string | null;
 }
 
 export const BUSINESS_TYPE_OPTIONS = ["카페", "학원", "병원", "편의점", "스터디카페"];

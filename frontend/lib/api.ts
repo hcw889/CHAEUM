@@ -3,6 +3,7 @@ import type {
   BuildingSummary,
   BusinessFitCandidate,
   DashboardMetrics,
+  MatchOptions,
   MatchRequest,
   MatchResponse,
   PermitChecklistItem,
@@ -48,6 +49,8 @@ export const api = {
       method: "POST",
       body: JSON.stringify(payload),
     }),
+  // 매칭 입력 화면의 선택지. 실데이터에서는 매물이 존재하는 지역만 내려온다.
+  getMatchOptions: () => request<MatchOptions>("/api/match/options"),
   getFootfall: (id: string, dayType: DayType) =>
     request<FootfallResponse>(`/api/buildings/${id}/footfall?day_type=${dayType}`),
 };

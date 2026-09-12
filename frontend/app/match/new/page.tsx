@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Card } from "@/components/Card";
 import { Skeleton } from "@/components/Skeleton";
 import { api } from "@/lib/api";
@@ -122,6 +122,35 @@ function WizardBody() {
   const [loadingStepIndex, setLoadingStepIndex] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [showPresets, setShowPresets] = useState(true);
+
+  // 희망 지역 선택지. 실데이터(상가정보+건축물대장)로 전환되면 전주 동 이름이 아니라
+  // 실제로 매물이 수집된 지역만 떠야 한다 — 없는 지역을 고르면 추천이 비어 버린다.
+  // /api/match/options가 실패하거나 목업 모드면 정적 목록을 그대로 쓴다.
+  const [regionOptions, setRegionOptions] = useState<string[]>(REGION_OPTIONS);
+  const [dataMode, setDataMode] = useState<"real" | "mock" | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    api
+      .getMatchOptions()
+      .then((options) => {
+        if (cancelled) return;
+        setDataMode(options.data_mode);
+        if (!options.region_options?.length) return;
+
+        const next = options.region_options;
+        setRegionOptions(next);
+        // 목록이 교체되면 기존 선택값이 사라질 수 있다 (프리셋이 넣은 "객사길" 등).
+        // 그대로 두면 없는 지역으로 매칭을 돌려 결과가 비므로 첫 항목으로 되돌린다.
+        setRegionPref((current) => (next.includes(current) ? current : next[0]));
+      })
+      .catch(() => {
+        // 백엔드가 꺼져 있어도 입력 자체는 막지 않는다.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const isCustomType = businessType === CUSTOM_BUSINESS_TYPE;
   const canProceed = step !== 1 || !isCustomType || customBusinessType.trim().length > 0;
@@ -330,13 +359,18 @@ function WizardBody() {
 
         {step === 4 && (
           <Step title="희망하는 지역이 있나요?">
+            {dataMode === "real" && (
+              <p className="mb-3 text-xs leading-relaxed text-muted">
+                공공데이터(상가정보·건축물대장)에서 공실이 확인된 지역만 표시됩니다.
+              </p>
+            )}
             <select
               value={regionPref}
               onChange={(e) => setRegionPref(e.target.value)}
               aria-label="희망하는 지역이 있나요?"
               className="w-full rounded-xl border border-border bg-background px-4 py-2.5 outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-400/30"
             >
-              {REGION_OPTIONS.map((r) => (
+              {regionOptions.map((r) => (
                 <option key={r} value={r}>
                   {r}
                 </option>

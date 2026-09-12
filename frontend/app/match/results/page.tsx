@@ -7,13 +7,15 @@ import { Card } from "@/components/Card";
 import { Wordmark } from "@/components/Logo";
 import { RadialGauge } from "@/components/RadialGauge";
 import { RankMedal } from "@/components/RankMedal";
+import RoadviewPanel from "@/components/RoadviewPanel";
 import { SkeletonCardGrid } from "@/components/Skeleton";
 import { Tag } from "@/components/Tag";
+import VacancyEvidence from "@/components/VacancyEvidence";
 import { parseStored, useStoredValue } from "@/lib/browserStore";
 import { formatPercent, formatScore } from "@/lib/format";
 import { useStoredRole } from "@/lib/role";
 import { getRoleCopy } from "@/lib/roleCopy";
-import type { MatchAgentScores, MatchCandidate, MatchRequest } from "@/lib/types";
+import type { MatchAgentScores, MatchRequest, MatchResponse } from "@/lib/types";
 
 // matching_agents.PRIORITY_WEIGHTS(backend)와 동일한 값. 결과 화면의 기여도 막대그래프 표시에만 사용.
 const PRIORITY_WEIGHTS: Record<string, { budget: number; market_fit: number; condition: number }> = {
@@ -42,10 +44,8 @@ export default function MatchResultsPage() {
   const resultRaw = useStoredValue("session", "chaeum_match_result");
   // raw 문자열 기준으로 memo해 파싱 결과의 identity를 안정시킨다 (아래 useMemo들의 deps).
   const request = useMemo(() => parseStored<MatchRequest>(requestRaw), [requestRaw]);
-  const matches = useMemo(
-    () => parseStored<{ matches: MatchCandidate[] }>(resultRaw)?.matches ?? null,
-    [resultRaw],
-  );
+  const result = useMemo(() => parseStored<MatchResponse>(resultRaw), [resultRaw]);
+  const matches = useMemo(() => result?.matches ?? null, [result]);
 
   // 선택된 매물은 사용자가 고르기 전까지 1순위를 가리킨다 (파생값이라 상태로 두지 않는다).
   const [picked, setPicked] = useState<string | null>(null);
@@ -91,6 +91,24 @@ export default function MatchResultsPage() {
         {request.business_type} · {request.region_pref} · 우선순위 &apos;{request.priority}&apos; 기준 추천 매물입니다.
       </p>
 
+      {result?.source_note && (
+        <div
+          className={`mb-6 rounded-lg border p-4 text-xs leading-relaxed ${
+            result.data_mode === "real"
+              ? "border-brand-200 bg-brand-50 text-accent-text"
+              : "border-amber-200 bg-amber-50 text-amber-800"
+          }`}
+        >
+          <p className="mb-1 font-semibold">
+            {result.data_mode === "real" ? "실데이터 기반 공실 추정" : "시연용 목업 데이터"}
+            {result.data_mode === "real" && result.total_candidates != null && (
+              <> · 조건 만족 매물 {result.total_candidates}건</>
+            )}
+          </p>
+          <p>{result.source_note}</p>
+        </div>
+      )}
+
       <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
         {top3.map((m) => (
           <button key={m.building_id} onClick={() => setPicked(m.building_id)} className="text-left">
@@ -105,6 +123,14 @@ export default function MatchResultsPage() {
               </div>
               <p className="text-3xl font-bold tracking-tight">{formatScore(m.final_score)}</p>
               <p className="text-xs text-muted">종합 매칭 점수</p>
+
+              {(m.area_pyeong || m.built_year) && (
+                <p className="mt-2 text-xs text-muted">
+                  {m.area_pyeong ? `${m.area_pyeong}평` : null}
+                  {m.area_pyeong && m.built_year ? " · " : null}
+                  {m.built_year ? `${m.built_year}년 준공` : null}
+                </p>
+              )}
 
               {m.space_vision && (
                 <div className="mt-3 flex flex-wrap gap-1.5">
@@ -146,17 +172,20 @@ export default function MatchResultsPage() {
           <h2 className="mb-1 font-semibold">{selectedMatch.address}</h2>
           <p className="mb-5 text-sm leading-relaxed text-foreground">{selectedMatch.explanation}</p>
 
-          {selectedMatch.photo_url && (
-            <div className="mb-6 overflow-hidden rounded-lg border border-border">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={selectedMatch.photo_url}
-                alt={`${selectedMatch.address} 상가 외관 사진`}
-                className="aspect-[4/3] w-full object-cover"
-              />
-              <p className="border-t border-border bg-background px-3 py-1.5 text-xs text-muted">BEFORE 원본 사진</p>
-            </div>
-          )}
+          {/* 공실 판정이 추정임을 밝히고 근거/출처를 보여 준다. 목업에서는 렌더되지 않는다. */}
+          <VacancyEvidence match={selectedMatch} />
+
+          {/* 실제 상가가 어떻게 생겼는지 카카오 로드뷰로 보여준다. 로드뷰가 없는
+              구간은 photo_url(참고 이미지)로 폴백한다. */}
+          <div className="mb-6">
+            <RoadviewPanel
+              key={selectedMatch.building_id}
+              lat={selectedMatch.lat}
+              lng={selectedMatch.lng}
+              address={selectedMatch.address}
+              fallbackSrc={selectedMatch.photo_url}
+            />
+          </div>
 
           <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">Why This Match</p>
           <h3 className="mb-4 text-lg font-bold">왜 이 매물?</h3>

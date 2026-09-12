@@ -72,8 +72,12 @@ test("팝업 브랜드도 기존 /api/match 하나만 호출하고 결과가 정
   await page.getByText("장기", { exact: true }).click();
   await completeWizard(page);
 
-  // 신규 엔드포인트가 생기지 않았다 — 매칭 flow가 부르는 백엔드 경로는 /api/match 하나뿐
-  expect(calls).toEqual(["POST /api/match"]);
+  // 신규 엔드포인트가 생기지 않았다 — role에 따라 갈라지는 경로는 없고,
+  // 매칭 스코어링을 부르는 경로는 여전히 POST /api/match 하나뿐이다.
+  // GET /api/match/options는 role과 무관한 입력 화면 선택지 조회다 (실데이터로
+  // 전환되면 매물이 실제로 수집된 지역만 보여야 하므로 필요하다).
+  expect(calls.filter((call) => call === "POST /api/match")).toHaveLength(1);
+  expect(new Set(calls)).toEqual(new Set(["GET /api/match/options", "POST /api/match"]));
 
   // 기존 6개 필드는 그대로, occupancy_term만 추가된다
   expect(payloads).toHaveLength(1);

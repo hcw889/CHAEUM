@@ -250,6 +250,13 @@ def get_space_vision(building_id: str, building_photo_path: Optional[str]) -> di
         return _cache[building_id]
 
     result = space_vision_agent(building_photo_path)
+
+    # 사진이 없으면 결과가 FALLBACK_FEATURES에서 나온 상수라서 캐시할 가치가 없다.
+    # 실데이터 매물(상가정보+건축물대장 조인)은 외관 사진이 없어 수백 건이 들어오는데,
+    # 그걸 전부 캐시에 쓰면 파일만 불어나고 매 요청마다 디스크 쓰기가 반복된다.
+    if not building_photo_path:
+        return result
+
     _cache[building_id] = result
     _save_cache(_cache)
     return result

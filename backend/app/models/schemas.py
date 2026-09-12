@@ -101,6 +101,25 @@ class SpaceVision(BaseModel):
     visual_summary: str
 
 
+class VacancyEstimate(BaseModel):
+    """
+    공실 추정 결과. 상가정보 API와 건축물대장 API 어느 쪽도 공실 여부를 직접
+    제공하지 않으므로, 두 소스를 조인해 추론한 값이다 (vacancy_estimator.py).
+    estimated는 항상 True이며, 판정 근거를 basis에 남겨 화면에서 펼쳐 볼 수 있게 한다.
+    """
+
+    estimated: bool = True
+    confidence: str  # high | medium | low
+    method: str
+    basis: list[str]
+    register_purpose: str = ""
+    floor_label: str = ""
+    floor_area_sqm: Optional[float] = None
+    building_store_count: int = 0
+    floor_store_count: int = 0
+    unknown_floor_store_count: int = 0
+
+
 class MatchCandidate(BaseModel):
     building_id: str
     address: str
@@ -109,8 +128,34 @@ class MatchCandidate(BaseModel):
     agent_scores: dict
     explanation: str
     photo_url: Optional[str] = None
+    # 로드뷰 파노라마 조회용 좌표. scripts/geocode_buildings.py가 채운다.
+    # 없으면 프론트가 address로 즉석 지오코딩한다.
+    lat: Optional[float] = None
+    lng: Optional[float] = None
     space_vision: Optional[SpaceVision] = None
+
+    # --- 실데이터 연동으로 추가된 필드 (목업에서는 대부분 None) ---
+    name: Optional[str] = None
+    floor: Optional[int] = None
+    area_pyeong: Optional[float] = None
+    built_year: Optional[int] = None
+    region: Optional[str] = None
+    risk_grade: Optional[str] = None
+    # 공실 추정 결과. 목업 데이터에는 없으므로 None이다.
+    vacancy: Optional[VacancyEstimate] = None
+    # 필드별 출처 배지용. {필드명: "실데이터 · 기관명" | "추정값 · 근거"}
+    data_sources: dict[str, str] = Field(default_factory=dict)
+    # 반경 300m 내 실제 영업 점포 수 / 그중 동일 업종 수 (상가정보 실측)
+    competitor_count: Optional[int] = None
+    nearby_store_count: Optional[int] = None
+    # 같은 건물에서 영업 중인 점포 상호 (공실 판정의 방증)
+    nearby_stores: list[str] = Field(default_factory=list)
 
 
 class MatchResponse(BaseModel):
     matches: list[MatchCandidate]
+    # "real" = 상가정보 + 건축물대장 실데이터, "mock" = 시연용 목업
+    data_mode: str = "mock"
+    source_note: Optional[str] = None
+    # 필터를 통과한 전체 후보 수. matches는 상위 일부만 담는다.
+    total_candidates: int = 0

@@ -11,9 +11,13 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
+import os
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any, Optional
+
+logger = logging.getLogger(__name__)
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
@@ -133,9 +137,55 @@ class MockDataProvider(DataProvider):
         return self._permits.get(business_type, [])
 
 
-_provider: DataProvider = MockDataProvider()
+def _build_provider() -> DataProvider:
+    """
+    실데이터 캐시가 있으면 RealSanggaProvider, 없으면 MockDataProvider.
+
+    캐시는 scripts/fetch_real_vacancies.py가 app/data/real/에 만든다(상가정보 API +
+    건축물대장 API 조인 결과). 캐시가 깨져 있어도 데모가 멈추지 않도록 예외를
+    흡수하고 목업으로 내려간다.
+
+    CHAEUM_FORCE_MOCK=1 을 주면 캐시가 있어도 목업을 쓴다 (목업/실데이터 비교용).
+    """
+    if os.environ.get("CHAEUM_FORCE_MOCK") == "1":
+        logger.info("CHAEUM_FORCE_MOCK=1 — MockDataProvider를 사용합니다.")
+        return MockDataProvider()
+
+    # 순환 임포트를 피하려고 함수 안에서 임포트한다
+    # (real_data_provider가 이 모듈의 DataProvider/DATA_DIR를 참조한다).
+    from app.services import real_data_provider
+
+    if not real_data_provider.cache_is_available():
+        logger.info(
+            "실데이터 캐시(%s)가 없어 MockDataProvider를 사용합니다. "
+            "python scripts/fetch_real_vacancies.py 로 수집하세요.",
+            real_data_provider.REAL_DIR,
+        )
+        return MockDataProvider()
+
+    try:
+        return real_data_provider.RealSanggaProvider()
+    except Exception as exc:  # 캐시 파손/스키마 불일치 — 데모를 멈추지 않는다.
+        logger.warning("실데이터 캐시를 읽지 못해 목업으로 폴백합니다: %s", exc)
+        return MockDataProvider()
+
+
+# 모듈 임포트 시점이 아니라 첫 호출 때 만든다. real_data_provider가 이 모듈의
+# DataProvider/DATA_DIR를 임포트하므로, 임포트 중에 _build_provider()를 부르면
+# 순환 임포트로 깨진다.
+_provider: Optional[DataProvider] = None
+
+
+def reload_provider() -> DataProvider:
+    """수집 스크립트를 돌린 뒤 서버 재시작 없이 캐시를 다시 읽는다 (테스트/운영 편의)."""
+    global _provider
+    _provider = _build_provider()
+    return _provider
 
 
 def get_data_provider() -> DataProvider:
     """FastAPI Depends()에서 사용할 provider 팩토리. 실데이터 전환 시 이 함수만 교체."""
+    global _provider
+    if _provider is None:
+        _provider = _build_provider()
     return _provider

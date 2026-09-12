@@ -10,6 +10,9 @@ python-dotenv==1.2.3
 # langgraph 설치 시 필요한 langchain-core만 함께 따라온다(직접 의존은 아님).
 langgraph==1.2.11
 
+# 공공데이터포털 API 호출 (상가정보/건축물대장) + 카카오 로컬 지오코딩 +
+# SK 유동인구. FastAPI TestClient도 httpx를 쓰므로 테스트 의존이기도 하다.
+httpx==0.27.2
+
 # 테스트 (pytest tests/)
 pytest==8.3.3
-httpx==0.27.2
