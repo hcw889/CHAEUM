@@ -1,8 +1,10 @@
+import { mockAnalysisApi } from "./fixtures/analysis";
 import { expect, test } from "@playwright/test";
 import { footfallResponse, mockFootfallApi } from "./fixtures/footfall";
 
 test.beforeEach(async ({ page }) => {
   await mockFootfallApi(page);
+  await mockAnalysisApi(page);
 });
 
 test("유동인구 지도와 요약을 표시하고 타일 실패 시에도 구역을 비교할 수 있다", async ({ page }) => {
@@ -71,7 +73,7 @@ test("없는 매물로 직접 진입하면 오류를 표시하고 다른 매물�
   await expect(page.getByText("주변 유동인구를 불러오지 못했습니다.")).toBeVisible();
   await expect(page.getByText("하루 유동인구", { exact: true })).toHaveCount(0);
   await page.getByRole("combobox", { name: "데모 매물" }).selectOption("b2");
-  await expect(page).toHaveURL("/visualize/b2");
+  await expect(page).toHaveURL("/diagnosis/b2#visualize");
   await expect(page.getByText(/전주시 태평동 2 반경/)).toBeVisible();
 });
 

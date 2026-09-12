@@ -20,15 +20,11 @@ frontend/  Next.js + TypeScript + Tailwind CSS
 ```powershell
 cd backend
 py -3.11 -m venv .venv   # Python 3.14는 아직 일부 의존성 wheel이 없어 3.11 권장
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000
 ```
 
-> `Activate.ps1` 실행이 보안 정책으로 막히면(`... cannot be loaded because running scripts is disabled ...`), 먼저 아래 명령으로 현재 세션에서만 정책을 완화하세요.
-> ```powershell
-> Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-> ```
+설치와 실행 모두 프로젝트의 `.venv` Python을 직접 사용하므로 가상환경 활성화는 필요하지 않습니다. 전역 `uvicorn`으로 실행하면 `.venv`에 설치된 `langgraph` 등을 찾지 못할 수 있습니다. 이미 가상환경이 있으면 생성 단계는 생략합니다.
 
 API 문서: http://localhost:8000/docs
 
@@ -51,7 +47,7 @@ http://localhost:3000 접속 (백엔드가 8000번 포트에서 실행 중이어
 
 ## 화면 구성
 
-총 **12개 화면**이며, 건물별 분석 화면 7개는 `StepNav`로 이동합니다.
+총 **6개 화면**입니다. 건물별 분석은 `/diagnosis/[id]` 한 페이지에서 일곱 섹션을 연속으로 보여줍니다. 상단 메뉴는 스크롤 중에도 고정되고, 선택한 섹션으로 이동하며 현재 위치를 표시합니다.
 
 | 화면 | 경로 | 기본 진입 역할 |
 | --- | --- | --- |
@@ -59,18 +55,14 @@ http://localhost:3000 접속 (백엔드가 8000번 포트에서 실행 중이어
 | 매물 입력 | `/property/new` | 건물주 |
 | 매칭 조건 입력 | `/match/new?role=founder` 또는 `/match/new?role=brand` | 예비 창업자·팝업 브랜드 |
 | 매칭 결과 (TOP 3 위치 지도·상세 팝업) | `/match/results` | 예비 창업자·팝업 브랜드 |
-| 진단 결과 | `/diagnosis/[id]` | 공통 |
-| 업종 적합도 순위 | `/ranking/[id]` | 공통 |
-| 리스크 대시보드 | `/dashboard/[id]` | 공통 |
-| 인허가 체크리스트 | `/permits/[id]` | 공통 |
-| 전략 그리드 | `/strategy/[id]` | 공통 |
-| 유동인구 시각화 (지도·시간대별 비교) | `/visualize/[id]` | 공통 |
-| 리포트 (요약·브라우저 인쇄로 PDF 저장) | `/report/[id]` | 공통 |
+| 건물 종합 분석 (진단·업종 순위·리스크·인허가·전략·유동인구·리포트) | `/diagnosis/[id]` | 공통 |
 | 지자체 공실 현황 대시보드 | `/official` | 지자체 담당자 |
+
+분석 섹션의 직접 주소는 `/diagnosis/[id]#ranking`처럼 사용합니다. 해시는 `diagnosis`, `ranking`, `dashboard`, `permits`, `strategy`, `visualize`, `report`입니다. 기존 `/ranking/[id]` 등 여섯 상세 주소도 대응하는 섹션으로 이동합니다. 건물 정보와 업종 순위는 섹션끼리 공유하며, 메뉴 이동은 재조회나 페이지 전환을 일으키지 않습니다. 유동인구 지도는 해당 섹션 근처에 도달하면 불러오고 이후 상태를 유지합니다. PDF 다운로드는 리포트 섹션만 인쇄합니다.
 
 ## 주변 유동인구 대시보드 (SK open API)
 
-유동인구 시각화(`/visualize/[id]`)에서 선택한 매물 반경 1.5km의 상권 구역별
+유동인구 섹션(`/diagnosis/[id]#visualize`)에서 선택한 매물 반경 1.5km의 상권 구역별
 **시간대별 유동인구**를 색상 지도로 확인합니다. 매칭 결과(`/match/results`)에서
 지도 마커 또는 추천 카드를 눌러 상세 팝업의 “주변 유동인구 보기”를 선택하거나, 건물별 분석 메뉴의 “유동인구”로 이동합니다.
 주소로 직접 진입할 수 있으며, 화면 상단의 매물 선택기로 조회 대상을 바꿀 수 있습니다.

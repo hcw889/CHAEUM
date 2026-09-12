@@ -131,7 +131,7 @@ export default function MatchDetailDialog({ match, priority, onClose }: {
             </div>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link href={`/diagnosis/${match.building_id}`} className="match-detail-primary">건물 상세 진단 보기 →</Link>
-              <Link href={`/visualize/${match.building_id}`} className="match-detail-secondary">주변 유동인구 보기 →</Link>
+              <Link href={`/diagnosis/${match.building_id}#visualize`} className="match-detail-secondary">주변 유동인구 보기 →</Link>
             </div>
           </div>
         </div>

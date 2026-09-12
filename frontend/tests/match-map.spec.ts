@@ -40,7 +40,7 @@ test("각 순위 마커를 누르면 선택한 매물의 확대 지도와 추천
     await expect(dialog.getByRole("region", { name: "예산 적합도" }).getByText(String(match.agent_scores.budget), { exact: true })).toBeVisible();
     await expect(dialog.getByRole("region", { name: "상권 적합도" }).getByText("이번 추천에서 가중치 60% 반영")).toBeVisible();
     await expect(dialog.getByRole("link", { name: "건물 상세 진단 보기 →" })).toHaveAttribute("href", `/diagnosis/${match.building_id}`);
-    await expect(dialog.getByRole("link", { name: "주변 유동인구 보기 →" })).toHaveAttribute("href", `/visualize/${match.building_id}`);
+    await expect(dialog.getByRole("link", { name: "주변 유동인구 보기 →" })).toHaveAttribute("href", `/diagnosis/${match.building_id}#visualize`);
     if (index === 0) {
       await expect(dialog.getByText("노출 59", { exact: true })).toBeVisible();
       const left = (await closeup.boundingBox())!;
