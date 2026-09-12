@@ -3,13 +3,38 @@
 import { useRouter } from "next/navigation";
 import { RoleCard } from "@/components/RoleCard";
 import { saveRole } from "@/lib/role";
+import { getRoleRoute } from "@/lib/roleRoutes";
 import type { Role } from "@/lib/types";
 
-const ROLES: { role: Role; emoji: string; title: string; description: string }[] = [
-  { role: "owner", emoji: "🏢", title: "건물주", description: "보유하신 공실 상가의 리스크와 잠재력을 진단받아보세요." },
-  { role: "founder", emoji: "🌱", title: "예비 창업자", description: "내 아이템에 가장 적합한 상가를 데이터로 확인해보세요." },
-  { role: "brand", emoji: "🎪", title: "팝업 브랜드", description: "짧은 기간 임팩트를 낼 수 있는 원도심 공간을 찾아보세요." },
-  { role: "official", emoji: "🏛️", title: "지자체 담당자", description: "원도심 공실 현황과 활성화 전략을 한눈에 파악해보세요." },
+const ROLES: { role: Role; emoji: string; title: string; hook: string; description: string }[] = [
+  {
+    role: "owner",
+    emoji: "🏢",
+    title: "건물주",
+    hook: "내 건물에 맞는 업종을 찾고 싶다면",
+    description: "보유하신 공실 상가의 리스크와 잠재력을 진단받아보세요.",
+  },
+  {
+    role: "founder",
+    emoji: "🌱",
+    title: "예비 창업자",
+    hook: "내 아이템에 맞는 상가를 찾고 싶다면",
+    description: "내 아이템에 가장 적합한 상가를 데이터로 확인해보세요.",
+  },
+  {
+    role: "brand",
+    emoji: "🎪",
+    title: "팝업 브랜드",
+    hook: "짧게, 굵게 임팩트를 남기고 싶다면",
+    description: "짧은 기간 임팩트를 낼 수 있는 원도심 공간을 찾아보세요.",
+  },
+  {
+    role: "official",
+    emoji: "🏛️",
+    title: "지자체 담당자",
+    hook: "원도심에 필요한 전략이 궁금하다면",
+    description: "원도심 공실 현황과 활성화 전략을 한눈에 파악해보세요.",
+  },
 ];
 
 export default function OnboardingPage() {
@@ -17,9 +42,7 @@ export default function OnboardingPage() {
 
   function handleSelect(role: Role) {
     saveRole(role);
-    // 건물주: 매물 입력 → 업종 추천 (기존 진단 flow)
-    // 예비창업자/팝업브랜드/지자체담당자: 조건 입력 → 매물 추천 (매칭 flow)
-    router.push(role === "owner" ? "/property/new" : "/match/new");
+    router.push(getRoleRoute(role));
   }
 
   return (
@@ -40,6 +63,7 @@ export default function OnboardingPage() {
             key={r.role}
             emoji={r.emoji}
             title={r.title}
+            hook={r.hook}
             description={r.description}
             onClick={() => handleSelect(r.role)}
           />

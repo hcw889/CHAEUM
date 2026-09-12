@@ -3,11 +3,12 @@
 interface RoleCardProps {
   emoji: string;
   title: string;
+  hook: string;
   description: string;
   onClick: () => void;
 }
 
-export function RoleCard({ emoji, title, description, onClick }: RoleCardProps) {
+export function RoleCard({ emoji, title, hook, description, onClick }: RoleCardProps) {
   return (
     <button
       onClick={onClick}
@@ -15,7 +16,8 @@ export function RoleCard({ emoji, title, description, onClick }: RoleCardProps) 
     >
       <span className="text-3xl">{emoji}</span>
       <div>
-        <h3 className="font-semibold text-foreground">{title}</h3>
+        <p className="text-xs italic text-muted">{hook}</p>
+        <h3 className="mt-0.5 font-semibold text-foreground">{title}</h3>
         <p className="mt-1 text-sm leading-relaxed text-muted">{description}</p>
       </div>
       <span className="mt-auto pt-2 text-sm font-medium text-accent opacity-0 transition-opacity group-hover:opacity-100">
