@@ -8,7 +8,10 @@ import { Wordmark } from "@/components/Logo";
 import { RankMedal } from "@/components/RankMedal";
 import { ScoreBarBreakdown } from "@/components/ScoreBarBreakdown";
 import { SkeletonCardGrid } from "@/components/Skeleton";
+import { parseStored, useStoredValue } from "@/lib/browserStore";
 import { formatScore } from "@/lib/format";
+import { useStoredRole } from "@/lib/role";
+import { getRoleCopy } from "@/lib/roleCopy";
 import type { MatchCandidate, MatchRequest, ScoreBreakdown } from "@/lib/types";
 
 // matching_agents.PRIORITY_WEIGHTS(backend)와 동일한 값. 결과 화면의 기여도 막대그래프 표시에만 사용.
@@ -34,31 +37,27 @@ const RANK_BORDER: Record<string, string> = {
 
 export default function MatchResultsPage() {
   const router = useRouter();
-  const [request, setRequest] = useState<MatchRequest | null>(null);
-  const [matches, setMatches] = useState<MatchCandidate[] | null>(null);
-  const [selected, setSelected] = useState<string | null>(null);
+  const role = useStoredRole();
+  const requestRaw = useStoredValue("session", "chaeum_match_request");
+  const resultRaw = useStoredValue("session", "chaeum_match_result");
+  // raw 문자열 기준으로 memo해 파싱 결과의 identity를 안정시킨다 (아래 useMemo들의 deps).
+  const request = useMemo(() => parseStored<MatchRequest>(requestRaw), [requestRaw]);
+  const matches = useMemo(
+    () => parseStored<{ matches: MatchCandidate[] }>(resultRaw)?.matches ?? null,
+    [resultRaw],
+  );
 
+  // 선택된 매물은 사용자가 고르기 전까지 1순위를 가리킨다 (파생값이라 상태로 두지 않는다).
+  const [picked, setPicked] = useState<string | null>(null);
+  const selected = picked ?? matches?.[0]?.building_id ?? null;
+
+  // wizard를 거치지 않고 결과 URL로 바로 들어온 경우 입력 화면으로 돌려보낸다.
   useEffect(() => {
-    // sessionStorage is browser-only; schedule this after hydration so the
-    // initial server/client trees remain consistent.
-    const timer = window.setTimeout(() => {
-      try {
-        const reqRaw = sessionStorage.getItem("chaeum_match_request");
-        const resultRaw = sessionStorage.getItem("chaeum_match_result");
-        if (!reqRaw || !resultRaw) {
-          router.replace("/match/new");
-          return;
-        }
-        const req: MatchRequest = JSON.parse(reqRaw);
-        const result: { matches: MatchCandidate[] } = JSON.parse(resultRaw);
-        setRequest(req);
-        setMatches(result.matches);
-        setSelected(result.matches[0]?.building_id ?? null);
-      } catch {
-        router.replace("/match/new");
-      }
-    }, 0);
-    return () => window.clearTimeout(timer);
+    try {
+      if (!sessionStorage.getItem("chaeum_match_result")) router.replace("/match/new");
+    } catch {
+      router.replace("/match/new");
+    }
   }, [router]);
 
   const top3 = useMemo(() => matches?.filter((m) => m.rank) ?? [], [matches]);
@@ -96,14 +95,14 @@ export default function MatchResultsPage() {
         </Link>
       </div>
 
-      <h1 className="mb-1 text-2xl font-bold tracking-tight">매물 추천 결과</h1>
+      <h1 className="mb-1 text-2xl font-bold tracking-tight">{getRoleCopy(role).resultsTitle}</h1>
       <p className="mb-6 text-sm text-muted">
         {request.business_type} · {request.region_pref} · 우선순위 &apos;{request.priority}&apos; 기준 추천 매물입니다.
       </p>
 
       <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
         {top3.map((m) => (
-          <button key={m.building_id} onClick={() => setSelected(m.building_id)} className="text-left">
+          <button key={m.building_id} onClick={() => setPicked(m.building_id)} className="text-left">
             <Card
               className={`h-full border-2 transition-all ${
                 selected === m.building_id ? RANK_BORDER[m.rank ?? ""] : "border-border"
@@ -125,7 +124,7 @@ export default function MatchResultsPage() {
           {rest.map((m) => (
             <button
               key={m.building_id}
-              onClick={() => setSelected(m.building_id)}
+              onClick={() => setPicked(m.building_id)}
               className={`flex w-full items-center justify-between rounded-md border px-4 py-3 text-left transition-colors ${
                 selected === m.building_id ? "border-accent bg-accent-soft" : "border-border bg-surface"
               }`}

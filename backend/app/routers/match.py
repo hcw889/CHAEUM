@@ -1,10 +1,14 @@
 from __future__ import annotations
 
+import logging
+
 from fastapi import APIRouter, Depends
 
 from app.models.schemas import MatchRequest, MatchResponse
 from app.services import matching_agents
 from app.services.data_provider import DataProvider, get_data_provider
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api", tags=["match"])
 
@@ -36,6 +40,11 @@ def match_buildings(payload: MatchRequest, provider: DataProvider = Depends(get_
     기존 진단 flow(/business-fit)와 반대 방향이며, 상권/건물 컨디션 계산 로직은
     scoring.py를 그대로 재사용한다 (matching_agents.py 참고).
     """
+    # 입점 희망 기간은 값만 남기고 스코어링에는 넣지 않는다.
+    # TODO: 단기임대 가중치 반영은 로드맵 다음 단계
+    if payload.occupancy_term:
+        logger.info("match: occupancy_term=%s (스코어링 미반영)", payload.occupancy_term)
+
     priority_weights = matching_agents.get_priority_weights(payload.priority)
     user_budget = payload.budget.model_dump()
 

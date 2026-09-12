@@ -7,7 +7,10 @@ import type {
   MatchResponse,
   PermitChecklistItem,
   PropertyInput,
+  RenderMode,
   ReportSummary,
+  SpaceRenderRequest,
+  SpaceRenderResponse,
 } from "./types";
 
 import type { RegionStatsResponse } from "./regionTypes";
@@ -44,6 +47,12 @@ export const api = {
   listBusinessTypes: () => request<string[]>("/api/business-types"),
   matchBuildings: (payload: MatchRequest) =>
     request<MatchResponse>("/api/match", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+  getRenderMode: () => request<{ mode: RenderMode }>("/api/visualize/mode"),
+  renderSpace: (id: string, payload: SpaceRenderRequest) =>
+    request<SpaceRenderResponse>(`/api/buildings/${id}/visualize`, {
       method: "POST",
       body: JSON.stringify(payload),
     }),

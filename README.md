@@ -57,7 +57,7 @@ http://localhost:3000 접속 (백엔드가 8000번 포트에서 실행 중이어
 5. 리스크 대시보드 — `/dashboard/[id]`
 6. 인허가 체크리스트 — `/permits/[id]`
 7. 전략 그리드 — `/strategy/[id]`
-8. 시각화 (Before/After 슬라이더) — `/visualize/[id]`
+8. 시각화 (공간 컨셉 이미지 생성 + Before/After 슬라이더) — `/visualize/[id]`
 9. 리포트 (Executive Summary + PDF) — `/report/[id]`
 10. 지자체 공실 현황 대시보드 — `/official`
 
@@ -110,4 +110,80 @@ cd ../frontend
 npx eslint app/official/page.tsx components/official/VacancyMap.tsx lib/regionTypes.ts lib/roleRoutes.ts lib/api.ts
 npx tsc --noEmit
 npm run build
+```
+
+## 팝업 브랜드 flow
+
+팝업 브랜드는 예비창업자와 **동일한 화면·동일한 `/api/match` 엔드포인트**를 그대로
+재사용한다. "짧은 기간, 확실한 노출"이라는 사용 맥락 차이는 로직이 아니라 문구로만
+표현하며, 같은 인프라로 다른 사용자층을 흡수하는 것이 이 설계의 핵심이다.
+
+| 구분 | 예비창업자 | 팝업 브랜드 |
+|---|---|---|
+| 진입 경로 | `/match/new?role=founder` | `/match/new?role=brand` |
+| 화면·컴포넌트 | 동일 (6단계 → 분석 중 → TOP3~5 → drill-down) | 동일 |
+| 백엔드 | `POST /api/match` | 동일 |
+| 스코어링 | `matching_agents.py` | 동일 (분기 없음) |
+| Step 1 문구 | 어떤 업종을 계획 중이신가요? | 어떤 브랜드/컨셉을 운영하시나요? |
+| 추가 입력 | — | 입점 희망 기간(단기/장기) |
+
+- role은 온보딩이 `?role=`로 붙여 보내고, 없으면 localStorage로 폴백한다
+  (`lib/roleContext.tsx`). 첫 렌더부터 확정되어 문구가 깜빡이지 않는다.
+- role별 문구는 전부 `lib/roleCopy.ts` 한 곳에 모여 있다. role이 늘어도
+  컴포넌트를 고칠 필요가 없다.
+- 입점 희망 기간은 팝업 브랜드에만 노출되며 별도 스텝이 아니라 Step 1 안에 있다
+  (6단계 구조를 role에 따라 갈라지지 않게 하기 위함).
+  **현재 스코어링 가중치에는 반영하지 않고** 전달·저장·로깅과 공간 시각화
+  프롬프트 연출에만 쓴다.
+  단기 임대 가능 매물 우선 필터링은 실제 데이터 연동 단계의 로드맵 항목이다.
+
+## 공간 시각화 (HuggingFace 연동)
+
+`/visualize/[id]` 화면에서 공실 사진과 컨셉(업종 또는 팝업 브랜드)을 입력하면
+적용 후 이미지를 생성합니다. 팝업 브랜드 담당자가 입지를 고르는 단계에서
+"이 공간이 내가 기획한 팝업을 구현하기에 적당한가"를 눈으로 확인하기 위한 기능이며,
+매칭 flow(`/api/match`)와는 서로 호출하지 않는 독립 경로입니다.
+
+구현은 `backend/app/services/space_render.py`, 엔드포인트는
+`POST /api/buildings/{id}/visualize` 입니다.
+
+### 실행 모드
+
+환경에 따라 3단계로 자동 폴백하며, 어떤 실패에서도 화면이 죽지 않습니다.
+
+| 모드 | 조건 | 동작 |
+|---|---|---|
+| `hf_api` | `HF_TOKEN` 설정됨 | HuggingFace Inference Providers의 image-to-image로 생성 |
+| `local` | `CHAEUM_RENDER_MODE=local` | 로컬 `diffusers` 마스크 인페인팅 (GPU 필요) |
+| `mock` | 그 외 / 모든 예외 | Pillow 색보정 기반 미리보기 |
+
+필요한 환경변수는 `backend/.env.example`에 정리해 두었다. 복사해서 값을 채운다
+(`.env`는 git에 올라가지 않는다).
+
+```bash
+# 실제 생성을 쓰려면 (권장)
+export HF_TOKEN=hf_xxx          # Inference Providers 권한이 있는 fine-grained 토큰
+export CHAEUM_HF_MODEL=black-forest-labs/FLUX.1-Kontext-dev   # 선택
+
+# GPU가 있어 마스크 인페인팅을 쓰려면
+pip install torch diffusers accelerate transformers
+export CHAEUM_RENDER_MODE=local
+export CHAEUM_LOCAL_MODEL=diffusers/stable-diffusion-xl-1.0-inpainting-0.1   # 선택
+```
+
+주의: HuggingFace **호스팅** image-to-image 스펙에는 `mask_image` 파라미터가 없습니다.
+즉 `hf_api` 모드는 프롬프트 기반 편집만 가능하고, 마스크로 특정 영역만 다시 그리는
+인페인팅은 `local` 모드에서만 동작합니다.
+
+생성된 이미지는 `backend/app/data/generated/`에 캐시되어 같은 조건 재시연 시
+즉시 응답합니다 (git 추적 제외).
+
+## 테스트
+
+```bash
+# 프론트 E2E — 백엔드가 :8000에서 실행 중이어야 합니다 (next dev는 자동 기동)
+cd frontend && npx playwright test
+
+# 백엔드 재사용 원칙 가드 (스코어링에 role 분기가 들어오면 실패한다)
+cd backend && python -m pytest tests/ -q
 ```

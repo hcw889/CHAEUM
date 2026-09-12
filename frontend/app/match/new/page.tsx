@@ -1,20 +1,21 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useState } from "react";
 import { Card } from "@/components/Card";
 import { Skeleton } from "@/components/Skeleton";
 import { api } from "@/lib/api";
 import { formatPercent, formatScore } from "@/lib/format";
-import { loadRole } from "@/lib/role";
+import { RoleProvider, useResolvedRole, useRole } from "@/lib/roleContext";
+import { getRoleCopy } from "@/lib/roleCopy";
 import {
   BUSINESS_TYPE_OPTIONS,
+  OCCUPANCY_TERM_OPTIONS,
   PRIORITY_OPTIONS,
   REGION_OPTIONS,
   ROLE_LABELS,
   STYLE_OPTIONS,
   type MatchRequest,
-  type Role,
 } from "@/lib/types";
 
 const TOTAL_STEPS = 6;
@@ -72,13 +73,43 @@ const DEMO_PRESETS: { key: string; label: string; description: string; payload: 
   },
 ];
 
+/**
+ * 매칭 flow 입력 wizard.
+ *
+ * 예비창업자·팝업 브랜드·지자체 담당자가 완전히 동일한 컴포넌트와 동일한
+ * /api/match 엔드포인트를 공유한다. role에 따라 갈라지는 것은 화면에 보이는
+ * 문구(lib/roleCopy.ts)와, 팝업 브랜드에만 추가로 노출되는 입점 희망 기간
+ * 입력뿐이며, 단계 수·요청 형태·스코어링은 role과 무관하게 같다.
+ */
 export default function MatchWizardPage() {
+  // useSearchParams()를 쓰므로 Suspense 경계가 필요하다.
+  return (
+    <Suspense fallback={<main className="mx-auto w-full max-w-xl flex-1 px-6 py-12" />}>
+      <MatchWizard />
+    </Suspense>
+  );
+}
+
+function MatchWizard() {
+  const role = useResolvedRole();
+
+  return (
+    <RoleProvider role={role}>
+      <WizardBody />
+    </RoleProvider>
+  );
+}
+
+function WizardBody() {
   const router = useRouter();
-  const [role, setRole] = useState<Role | null>(null);
+  const role = useRole();
+  const copy = getRoleCopy(role);
+  const isBrand = role === "brand";
 
   const [step, setStep] = useState(1);
   const [businessType, setBusinessType] = useState(BUSINESS_TYPE_OPTIONS[0]);
   const [customBusinessType, setCustomBusinessType] = useState("");
+  const [occupancyTerm, setOccupancyTerm] = useState(OCCUPANCY_TERM_OPTIONS[0].value);
   const [areaPyeong, setAreaPyeong] = useState(15);
   const [deposit, setDeposit] = useState(10_000_000);
   const [monthlyRent, setMonthlyRent] = useState(1_000_000);
@@ -90,13 +121,6 @@ export default function MatchWizardPage() {
   const [loadingStepIndex, setLoadingStepIndex] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [showPresets, setShowPresets] = useState(true);
-
-  useEffect(() => {
-    // Delay the browser-only storage read until after hydration. This also keeps
-    // the server and first client render identical.
-    const timer = window.setTimeout(() => setRole(loadRole()), 0);
-    return () => window.clearTimeout(timer);
-  }, []);
 
   const isCustomType = businessType === CUSTOM_BUSINESS_TYPE;
   const canProceed = step !== 1 || !isCustomType || customBusinessType.trim().length > 0;
@@ -135,7 +159,15 @@ export default function MatchWizardPage() {
       region_pref: regionPref,
       commercial_style_pref: stylePref,
       priority,
+      // 팝업 브랜드에서만 입력받는다. 백엔드로 전달·저장은 하되 현재 스코어링
+      // 가중치에는 반영하지 않는다.
+      // TODO: 단기임대 가중치 반영은 로드맵 다음 단계
+      ...(isBrand ? { occupancy_term: occupancyTerm } : {}),
     };
+
+    if (isBrand) {
+      console.info("[match] occupancy_term:", occupancyTerm, "(스코어링 미반영)");
+    }
 
     const timer = setInterval(() => {
       setLoadingStepIndex((i) => Math.min(i + 1, LOADING_STEPS.length - 1));
@@ -158,19 +190,17 @@ export default function MatchWizardPage() {
   }
 
   if (phase === "loading") {
-    return <LoadingScreen stepIndex={loadingStepIndex} />;
+    return <LoadingScreen stepIndex={loadingStepIndex} footer={copy.loadingFooter} />;
   }
 
   return (
     <main className="mx-auto w-full max-w-xl flex-1 px-6 py-12">
       <div className="mb-6">
-        {role && (
-          <span className="mb-3 inline-block rounded-full bg-accent-soft px-3 py-1 text-xs font-medium text-accent">
-            {ROLE_LABELS[role]}
-          </span>
-        )}
-        <h1 className="text-2xl font-bold tracking-tight">내 상황을 알려주세요</h1>
-        <p className="mt-2 text-sm text-muted">6가지 조건을 바탕으로 딱 맞는 매물을 찾아드려요.</p>
+        <span className="mb-3 inline-block rounded-full bg-accent-soft px-3 py-1 text-xs font-medium text-accent">
+          {ROLE_LABELS[role]}
+        </span>
+        <h1 className="text-2xl font-bold tracking-tight">{copy.wizardTitle}</h1>
+        <p className="mt-2 text-sm text-muted">{copy.wizardSubtitle}</p>
       </div>
 
       {showPresets && (
@@ -212,10 +242,11 @@ export default function MatchWizardPage() {
       <Card>
         <div key={step} className="step-transition">
         {step === 1 && (
-          <Step title="희망 업종이 무엇인가요?">
+          <Step title={copy.step1Title}>
             <select
               value={businessType}
               onChange={(e) => setBusinessType(e.target.value)}
+              aria-label={copy.step1Title}
               className="w-full rounded-md border border-border bg-background px-4 py-2.5 outline-none focus:border-accent"
             >
               {BUSINESS_TYPE_OPTIONS.map((t) => (
@@ -229,9 +260,24 @@ export default function MatchWizardPage() {
               <input
                 value={customBusinessType}
                 onChange={(e) => setCustomBusinessType(e.target.value)}
-                placeholder="예: 베이커리, 반려동물용품점"
+                placeholder={copy.step1Placeholder}
                 className="mt-3 w-full rounded-md border border-border bg-background px-4 py-2.5 outline-none focus:border-accent"
               />
+            )}
+
+            {/*
+              입점 희망 기간 — 팝업 브랜드에만 노출한다.
+              별도 스텝으로 빼지 않고 Step 1 안에 두어, 예비창업자와 동일한
+              "6단계" 구조가 role에 따라 갈라지지 않게 한다.
+            */}
+            {isBrand && (
+              <div className="mt-6 border-t border-border pt-5">
+                <p className="mb-3 text-sm font-medium">입점 희망 기간</p>
+                <RadioGroup options={OCCUPANCY_TERM_OPTIONS} value={occupancyTerm} onChange={setOccupancyTerm} />
+                <p className="mt-3 text-xs text-muted">
+                  * 현재는 추천 점수에 반영되지 않고, 단기 임대 가능 매물 우선 추천은 다음 단계에서 지원됩니다.
+                </p>
+              </div>
             )}
           </Step>
         )}
@@ -283,6 +329,7 @@ export default function MatchWizardPage() {
             <select
               value={regionPref}
               onChange={(e) => setRegionPref(e.target.value)}
+              aria-label="희망하는 지역이 있나요?"
               className="w-full rounded-md border border-border bg-background px-4 py-2.5 outline-none focus:border-accent"
             >
               {REGION_OPTIONS.map((r) => (
@@ -296,21 +343,13 @@ export default function MatchWizardPage() {
 
         {step === 5 && (
           <Step title="어떤 상권 분위기를 선호하세요?">
-            <RadioGroup
-              options={STYLE_OPTIONS}
-              value={stylePref}
-              onChange={setStylePref}
-            />
+            <RadioGroup options={STYLE_OPTIONS} value={stylePref} onChange={setStylePref} />
           </Step>
         )}
 
         {step === 6 && (
           <Step title="매물을 고를 때 가장 중요한 기준은?">
-            <RadioGroup
-              options={PRIORITY_OPTIONS}
-              value={priority}
-              onChange={setPriority}
-            />
+            <RadioGroup options={PRIORITY_OPTIONS} value={priority} onChange={setPriority} />
           </Step>
         )}
         </div>
@@ -331,7 +370,7 @@ export default function MatchWizardPage() {
             disabled={!canProceed}
             className="flex-1 rounded-md bg-accent py-2.5 font-medium text-accent-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
           >
-            {step < TOTAL_STEPS ? "다음" : "매물 추천받기"}
+            {step < TOTAL_STEPS ? "다음" : copy.submitLabel}
           </button>
         </div>
       </Card>
@@ -417,7 +456,7 @@ function RadioGroup({
   );
 }
 
-function LoadingScreen({ stepIndex }: { stepIndex: number }) {
+function LoadingScreen({ stepIndex, footer }: { stepIndex: number; footer: string }) {
   return (
     <main className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center px-6 py-12 text-center">
       <Card className="w-full text-left">
@@ -435,6 +474,7 @@ function LoadingScreen({ stepIndex }: { stepIndex: number }) {
         </div>
         <p className="mt-6 text-center text-sm text-muted">{LOADING_STEPS[stepIndex]}</p>
       </Card>
+      <p className="mt-6 text-sm text-muted">{footer}</p>
     </main>
   );
 }

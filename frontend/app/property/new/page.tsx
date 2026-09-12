@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Card } from "@/components/Card";
 import { api } from "@/lib/api";
-import { loadRole } from "@/lib/role";
+import { useStoredRole } from "@/lib/role";
 import { ROLE_LABELS, type BuildingSummary, type Role } from "@/lib/types";
 
 const ROLE_INTRO: Record<Role, string> = {
@@ -17,7 +17,7 @@ const ROLE_INTRO: Record<Role, string> = {
 
 export default function PropertyInputPage() {
   const router = useRouter();
-  const [role, setRole] = useState<Role | null>(null);
+  const role = useStoredRole();
   const [address, setAddress] = useState("");
   const [floor, setFloor] = useState("");
   const [areaPyeong, setAreaPyeong] = useState("");
@@ -27,10 +27,7 @@ export default function PropertyInputPage() {
   const [demoBuildings, setDemoBuildings] = useState<BuildingSummary[]>([]);
 
   useEffect(() => {
-    // Keep the first hydrated render aligned with SSR before reading storage.
-    const timer = window.setTimeout(() => setRole(loadRole()), 0);
     api.listBuildings().then(setDemoBuildings).catch(() => setDemoBuildings([]));
-    return () => window.clearTimeout(timer);
   }, []);
 
   async function handleSubmit(e: React.FormEvent) {

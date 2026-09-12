@@ -7,3 +7,20 @@ backend/**/__pycache__/
 
 # macOS
 .DS_Store
+
+# 생성된 시각화 이미지 캐시 (space_render.py)
+backend/app/data/generated/
+
+# Playwright
+frontend/test-results/
+frontend/playwright-report/
+
+# 환경변수 / 시크릿 (HF_TOKEN, ANTHROPIC_API_KEY 등)
+# frontend/.gitignore에도 .env* 규칙이 있지만, 루트와 backend를 함께 덮기 위해 여기에도 둔다.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+credentials.json
