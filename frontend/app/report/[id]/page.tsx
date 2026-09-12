@@ -51,13 +51,13 @@ export default function ReportPage() {
         <>
           <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="mb-1 text-sm font-medium text-accent">Executive Summary</p>
+              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-accent-text">Executive Summary</p>
               <h1 className="text-2xl font-bold tracking-tight">{report.building.name}</h1>
               <p className="mt-1 text-sm text-muted">{report.building.address}</p>
             </div>
             <button
               onClick={() => window.print()}
-              className="no-print rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-opacity hover:opacity-90"
+              className="no-print rounded-2xl bg-brand-gradient px-5 py-2.5 text-sm font-semibold uppercase tracking-[0.16em] text-accent-foreground shadow-card transition-all hover:shadow-glow-brand"
             >
               PDF 다운로드
             </button>

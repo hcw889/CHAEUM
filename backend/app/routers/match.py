@@ -5,7 +5,7 @@ import logging
 from fastapi import APIRouter, Depends
 
 from app.models.schemas import MatchRequest, MatchResponse
-from app.services import matching_agents, space_vision_agent
+from app.services import match_orchestrator, matching_agents
 from app.services.data_provider import DataProvider, get_data_provider
 
 logger = logging.getLogger(__name__)
@@ -57,42 +57,34 @@ def match_buildings(payload: MatchRequest, provider: DataProvider = Depends(get_
         market_data = provider.get_market_data(building["id"])
         raw_entry = _resolve_market_entry(market_data, payload.business_type)
 
-        budget_result = matching_agents.budget_agent(user_budget, raw_entry)
-
-        market_entry = {**raw_entry, "region": building.get("region")}
-        market_result = matching_agents.market_fit_agent(payload.business_type, payload.region_pref, market_entry)
-
-        condition_result = matching_agents.building_condition_agent(building.get("diagnosis", {}))
-
-        scores = {
-            "budget": budget_result["score"],
-            "market_fit": market_result["score"],
-            "condition": condition_result["score"],
-            "business_type": payload.business_type,
-        }
-        final_score = matching_agents.orchestrator(scores, priority_weights)
-        explanation = matching_agents.explanation_agent(building, scores)
-
-        # space_vision은 4-agent 스코어링(위)과 완전히 독립적으로 계산해 별도 필드로만
-        # 나란히 붙인다 — final_score/agent_scores 결과에는 전혀 영향을 주지 않는다.
+        # 매물 1건당 budget/market_fit/building_condition/space_vision을 병렬
+        # fan-out으로 실행하고, aggregate(기존 orchestrator 가중합 그대로) →
+        # explanation 순으로 이어지는 LangGraph StateGraph. 계산식은
+        # matching_agents.py/space_vision_agent.py에서 그대로 재사용한다
+        # (match_orchestrator.py는 실행 순서만 담당).
         # TODO: building["photo_url"]은 현재 실제 상가 사진이 아닌 플레이스홀더
         # 스톡이미지입니다. 실제 상가 외관 사진 확보 후 buildings.json의 photo_url을
         # 교체해야 합니다.
-        space_vision = space_vision_agent.get_space_vision(building["id"], building.get("photo_url"))
+        result = match_orchestrator.run_match_for_building(
+            building_id=building["id"],
+            building=building,
+            user_budget=user_budget,
+            business_type=payload.business_type,
+            region_pref=payload.region_pref,
+            raw_market_entry=raw_entry,
+            priority_weights=priority_weights,
+            photo_url=building.get("photo_url"),
+        )
 
         matches.append(
             {
                 "building_id": building["id"],
                 "address": building["address"],
-                "final_score": final_score,
-                "agent_scores": {
-                    "budget": scores["budget"],
-                    "market_fit": scores["market_fit"],
-                    "condition": scores["condition"],
-                },
-                "explanation": explanation,
+                "final_score": result["final_score"],
+                "agent_scores": result["agent_scores"],
+                "explanation": result["explanation"],
                 "photo_url": building.get("photo_url"),
-                "space_vision": space_vision,
+                "space_vision": result.get("space_vision"),
             }
         )
 

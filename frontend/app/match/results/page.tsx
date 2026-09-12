@@ -117,13 +117,13 @@ export default function MatchResultsPage() {
 
               {m.space_vision && (
                 <div className="mt-3 flex flex-wrap gap-1.5">
-                  <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-accent">
+                  <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-accent-text">
                     노출 {formatScore(m.space_vision.exposure_score)}
                   </span>
-                  <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-accent">
+                  <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-accent-text">
                     접근 {formatScore(m.space_vision.accessibility_score)}
                   </span>
-                  <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-accent">
+                  <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-accent-text">
                     팝업 {formatScore(m.space_vision.popup_fit_score)}
                   </span>
                 </div>
@@ -207,7 +207,7 @@ export default function MatchResultsPage() {
 
           <Link
             href={`/diagnosis/${selectedMatch.building_id}`}
-            className="mt-6 inline-flex w-full items-center justify-center rounded-md bg-accent py-3 font-medium text-accent-foreground transition-opacity hover:opacity-90 sm:w-auto sm:px-8"
+            className="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-brand-gradient py-3 font-semibold uppercase tracking-[0.16em] text-accent-foreground shadow-card transition-all hover:shadow-glow-brand sm:w-auto sm:px-8"
           >
             건물 상세 진단 보기 →
           </Link>

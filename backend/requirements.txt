@@ -3,6 +3,10 @@ uvicorn[standard]==0.30.6
 pydantic==2.9.2
 anthropic==0.69.0
 
+# 매칭 flow orchestrator (StateGraph). langchain 풀 프레임워크는 넣지 않음 —
+# langgraph 설치 시 필요한 langchain-core만 함께 따라온다(직접 의존은 아님).
+langgraph==1.2.11
+
 # 공간 시각화 (space_render.py)
 huggingface_hub==0.35.3
 pillow==11.3.0

@@ -49,7 +49,7 @@ export default function OnboardingPage() {
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 py-16">
       <div className="mb-12 text-center">
-        <p className="mb-3 text-sm font-medium tracking-wide text-accent">CHAEUM</p>
+        <p className="mb-3 text-sm font-medium tracking-wide text-accent-text">CHAEUM</p>
         <h1 className="flex items-center justify-center gap-2 text-3xl font-bold tracking-tight sm:text-4xl">
           <LogoMark size={32} />
           채움

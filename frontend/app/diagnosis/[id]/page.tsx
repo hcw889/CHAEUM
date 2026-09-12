@@ -60,7 +60,7 @@ export default function DiagnosisPage() {
 
       <Link
         href={`/ranking/${id}`}
-        className="mt-8 inline-flex w-full items-center justify-center rounded-md bg-accent py-3 font-medium text-accent-foreground transition-opacity hover:opacity-90 sm:w-auto sm:px-8"
+        className="mt-8 inline-flex w-full items-center justify-center rounded-2xl bg-brand-gradient py-3 font-semibold uppercase tracking-[0.16em] text-accent-foreground shadow-card transition-all hover:shadow-glow-brand sm:w-auto sm:px-8"
       >
         업종 적합도 순위 보기 →
       </Link>
@@ -93,7 +93,7 @@ function ErrorState({ message }: { message: string }) {
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-10">
       <p className="text-danger">{message}</p>
-      <Link href="/property/new" className="mt-4 inline-block text-sm text-accent">
+      <Link href="/property/new" className="mt-4 inline-block text-sm text-accent-text">
         ← 매물 입력으로 돌아가기
       </Link>
     </main>

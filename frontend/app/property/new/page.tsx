@@ -82,7 +82,7 @@ export default function PropertyInputPage() {
 
       <div className="mt-6 mb-8">
         {role && (
-          <span className="mb-3 inline-block rounded-full bg-accent-soft px-3 py-1 text-xs font-medium text-accent">
+          <span className="mb-3 inline-block rounded-full bg-accent-soft px-3 py-1 text-xs font-medium text-accent-text">
             {ROLE_LABELS[role]}
           </span>
         )}
@@ -94,10 +94,10 @@ export default function PropertyInputPage() {
         <section className="mb-6" aria-label="건물주 데모 시나리오">
           <div className="mb-3 flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold text-accent">⚡ 건물주 빠른 데모</p>
+              <p className="text-sm font-semibold text-accent-text">⚡ 건물주 빠른 데모</p>
               <p className="mt-1 text-xs text-muted">목업 매물로 진단부터 업종 추천까지 바로 확인하세요.</p>
             </div>
-            <span className="rounded-full bg-accent-soft px-2.5 py-1 text-xs font-medium text-accent">목업 데이터</span>
+            <span className="rounded-full bg-accent-soft px-2.5 py-1 text-xs font-medium text-accent-text">목업 데이터</span>
           </div>
           <div className="grid gap-2.5 sm:grid-cols-3">
             {OWNER_DEMO_SCENARIOS.map((scenario) => (
@@ -124,7 +124,7 @@ export default function PropertyInputPage() {
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="예: 전북 전주시 완산구 객사길 45"
-              className="w-full rounded-md border border-border bg-background px-4 py-2.5 outline-none focus:border-accent"
+              className="w-full rounded-xl border border-border bg-background px-4 py-2.5 outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-400/30"
             />
           </div>
 
@@ -136,7 +136,7 @@ export default function PropertyInputPage() {
                 value={floor}
                 onChange={(e) => setFloor(e.target.value)}
                 placeholder="예: 1"
-                className="w-full rounded-md border border-border bg-background px-4 py-2.5 outline-none focus:border-accent"
+                className="w-full rounded-xl border border-border bg-background px-4 py-2.5 outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-400/30"
               />
             </div>
             <div>
@@ -146,7 +146,7 @@ export default function PropertyInputPage() {
                 value={areaPyeong}
                 onChange={(e) => setAreaPyeong(e.target.value)}
                 placeholder="예: 15"
-                className="w-full rounded-md border border-border bg-background px-4 py-2.5 outline-none focus:border-accent"
+                className="w-full rounded-xl border border-border bg-background px-4 py-2.5 outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-400/30"
               />
             </div>
           </div>
@@ -157,7 +157,7 @@ export default function PropertyInputPage() {
               type="file"
               accept="image/*"
               onChange={(e) => setPhotoName(e.target.files?.[0]?.name ?? null)}
-              className="w-full rounded-md border border-dashed border-border bg-background px-4 py-2.5 text-sm text-muted file:mr-3 file:rounded-sm file:border-0 file:bg-accent-soft file:px-3 file:py-1.5 file:text-accent"
+              className="w-full rounded-md border border-dashed border-border bg-background px-4 py-2.5 text-sm text-muted file:mr-3 file:rounded-sm file:border-0 file:bg-accent-soft file:px-3 file:py-1.5 file:text-accent-text"
             />
             <p className="mt-1.5 text-xs text-muted">
               현재는 목업 단계로, 사진은 업로드 여부만 기록되며 실제 이미지 진단(CV 모델)은 추후 연동됩니다.
@@ -169,7 +169,7 @@ export default function PropertyInputPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-md bg-accent py-3 font-medium text-accent-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
+            className="w-full rounded-2xl bg-brand-gradient py-3 font-semibold uppercase tracking-[0.16em] text-accent-foreground shadow-card transition-all hover:shadow-glow-brand disabled:opacity-50 disabled:shadow-none"
           >
             {loading ? "진단 중..." : "이 건물 진단하기"}
           </button>
@@ -184,7 +184,7 @@ export default function PropertyInputPage() {
               <Link
                 key={b.id}
                 href={`/diagnosis/${b.id}`}
-                className="rounded-full border border-border bg-surface px-3.5 py-1.5 text-sm hover:border-accent hover:text-accent"
+                className="rounded-full border border-border bg-surface px-3.5 py-1.5 text-sm hover:border-accent hover:text-accent-text"
               >
                 {b.name}
               </Link>
