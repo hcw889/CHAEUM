@@ -22,7 +22,9 @@ def test_match_and_legacy_location_lookup_share_demo_coordinates(monkeypatch):
     locations = locations_response.json()
     centers = load_areas()["buildings"]
     matches = client.post("/api/match", json=PAYLOAD).json()["matches"]
-    assert len(locations) == len(matches) == 15
+    assert len(locations) == 15
+    # 위치 목록은 전체 데모 매물을, 매칭 응답은 상위 12건을 제공한다.
+    assert len(matches) == 12
 
     for match in matches:
         location = match["location"]

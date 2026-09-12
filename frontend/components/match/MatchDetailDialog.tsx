@@ -5,6 +5,8 @@ import { useEffect, useId, useMemo, useRef } from "react";
 import { RadialGauge } from "@/components/RadialGauge";
 import { RankMedal } from "@/components/RankMedal";
 import { Tag } from "@/components/Tag";
+import VacancyEvidence from "@/components/VacancyEvidence";
+import RoadviewPanel from "@/components/RoadviewPanel";
 import { formatPercent, formatScore } from "@/lib/format";
 import type { MatchAgentScores, MatchCandidate } from "@/lib/types";
 import MatchMap from "./MatchMap";
@@ -96,6 +98,8 @@ export default function MatchDetailDialog({ match, priority, onClose }: {
             <h3 className="mt-1 text-xl font-bold">왜 이 매물?</h3>
             <p className="mb-5 mt-2 text-sm leading-relaxed text-muted">{match.explanation}</p>
 
+            <VacancyEvidence match={match} />
+
             <div className="match-reasons-grid">
               {AGENTS.map((agent) => (
                 <section key={agent.key} className="match-reason-card text-center" aria-label={agent.label}>
@@ -122,6 +126,9 @@ export default function MatchDetailDialog({ match, priority, onClose }: {
             </div>
 
             {match.space_vision && <p className="mt-4 text-xs leading-relaxed text-muted">{match.space_vision.detected_elements.join(" · ")}</p>}
+            <div className="mt-6">
+              <RoadviewPanel lat={match.lat} lng={match.lng} address={match.address} fallbackSrc={match.photo_url} />
+            </div>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link href={`/diagnosis/${match.building_id}`} className="match-detail-primary">건물 상세 진단 보기 →</Link>
               <Link href={`/visualize/${match.building_id}`} className="match-detail-secondary">주변 유동인구 보기 →</Link>
