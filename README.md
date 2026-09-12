@@ -60,6 +60,41 @@ http://localhost:3000 접속 (백엔드가 8000번 포트에서 실행 중이어
 8. 시각화 (공간 컨셉 이미지 생성 + Before/After 슬라이더) — `/visualize/[id]`
 9. 리포트 (Executive Summary + PDF) — `/report/[id]`
 10. 지자체 공실 현황 대시보드 — `/official`
+11. 주변 유동인구 (매칭 결과 화면 내 색상 지도) — `/match/results`
+
+## 주변 유동인구 대시보드 (SK open API)
+
+매칭 결과(`/match/results`)에서 추천 매물을 고르면, 그 매물 반경 1.5km의 상권 구역별
+**시간대별 유동인구**가 색상 지도로 따라 붙습니다. 매칭 스코어링(`/api/match`)과는 완전히
+분리된 별도 조회이므로, 유동인구 조회가 실패해도 추천 결과는 그대로 보입니다.
+
+- 구역 원의 **색** = 선택한 시간대의 유동인구(조회 구역 중 최댓값 대비 상대값), **크기** = 구역 반경
+- 시간 슬라이더(하루 전체 / 00시~23시)와 평일·주말 전환, 24시간 막대, 구역별 비교 목록
+- 요약 지표: 하루 유동인구, 피크 시간대, 도보권(500m) 합계, 최대 구역
+
+### 데이터와 API
+
+`GET /api/buildings/{id}/footfall?day_type=weekday|weekend`
+→ `app/services/sk_footfall.py` → **SK open API 유동인구**(openapi.sk.com) 또는 mock
+
+| 모드 | 조건 | 값 |
+| --- | --- | --- |
+| `sk_api` | `SK_OPENAPI_APP_KEY` 설정 + 호출 성공 | SK open API 실측 |
+| `mock` | 키 없음 / 호출·파싱 실패 | 구역 특성 기반 시연용 가상 수치 (결정적) |
+
+폴백은 **구역 단위**로 동작합니다. 일부 구역만 실패하면 그 구역만 가상 수치가 되고,
+화면 하단 출처 문구가 어느 쪽인지 표시합니다.
+
+### 키 연결 방법
+
+1. `backend/.env`에 `SK_OPENAPI_APP_KEY=발급받은_키` 를 넣습니다.
+2. 계약한 상품의 엔드포인트를 `SK_FOOTFALL_AREA_PATH`(지역코드 기반) 또는
+   `SK_FOOTFALL_COORD_PATH`(좌표 기반)에 맞춥니다. `{area_code}` `{date}` `{lat}` `{lng}` `{radius}`가 치환됩니다.
+3. 지역코드 기반 상품이라면 `backend/app/data/footfall_areas.json`의 각 구역에
+   `sk_area_code`(행정동/집계구 코드)를 채웁니다. 비어 있으면 좌표 호출 → mock 순으로 내려갑니다.
+
+> 구역 좌표·반경은 지도 표시용 대표값이고, 연동 전 수치는 모두 시연용 가상 데이터입니다.
+> 실제 응답 예시를 확보하면 `sk_footfall._parse_hourly()`만 엄격한 파서로 바꾸면 됩니다.
 
 ## 지자체 공실 현황 대시보드
 
@@ -147,6 +182,22 @@ npm run build
 구현은 `backend/app/services/space_render.py`, 엔드포인트는
 `POST /api/buildings/{id}/visualize` 입니다.
 
+### 매물 사진은 어디서 오는가
+
+이 화면의 사용자(팝업 브랜드·예비창업자)는 공간을 **찾는** 쪽이라 공실 사진을 갖고
+있지 않습니다. 그래서 사진 업로드를 요구하지 않고 매물 데이터에서 공급합니다
+(`backend/app/services/building_photo.py`, `GET /api/buildings/{id}/photo`).
+
+1. `backend/app/data/photos/{매물id}.{jpg,png,webp}`에 실제 촬영본이 있으면 그것을 사용
+   (이 디렉터리의 이미지는 git 추적 제외 — 각자 로컬에 두는 데모 자산이다)
+2. 없으면 해당 매물의 노후도·채광 점수와 `thumbnail_color`로 그린 참고용 공실
+   이미지를 사용
+
+화면은 둘을 구분해 표시하므로("매물 등록 사진 사용 중" / "매물 참고 이미지 사용 중"),
+참고용 이미지가 실제 매물 사진으로 오인되지 않습니다. 촬영본이 생기면 `photos/`에
+파일만 넣으면 코드 변경 없이 1번으로 전환됩니다. 업로드 버튼은 "다른 사진으로
+해보기"라는 선택 수단으로 남아 있습니다.
+
 ### 실행 모드
 
 환경에 따라 3단계로 자동 폴백하며, 어떤 실패에서도 화면이 죽지 않습니다.
@@ -155,6 +206,7 @@ npm run build
 |---|---|---|
 | `hf_api` | `HF_TOKEN` 설정됨 | HuggingFace Inference Providers의 image-to-image로 생성 |
 | `local` | `CHAEUM_RENDER_MODE=local` | 로컬 `diffusers` 마스크 인페인팅 (GPU 필요) |
+| `demo` | 해당 매물에 `{id}.after.*` 촬영본 있음 + 생성 미연결 | 실제 시공 전/후 사진 (AI 생성 아님을 화면에 명시) |
 | `mock` | 그 외 / 모든 예외 | Pillow 색보정 기반 미리보기 |
 
 필요한 환경변수는 `backend/.env.example`에 정리해 두었다. 복사해서 값을 채운다

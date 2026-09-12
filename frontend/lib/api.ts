@@ -1,5 +1,6 @@
 import type {
   Building,
+  BuildingPhotoResponse,
   BuildingSummary,
   BusinessFitCandidate,
   DashboardMetrics,
@@ -14,6 +15,7 @@ import type {
 } from "./types";
 
 import type { RegionStatsResponse } from "./regionTypes";
+import type { DayType, FootfallResponse } from "./footfallTypes";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8000";
 
@@ -50,7 +52,10 @@ export const api = {
       method: "POST",
       body: JSON.stringify(payload),
     }),
+  getFootfall: (id: string, dayType: DayType) =>
+    request<FootfallResponse>(`/api/buildings/${id}/footfall?day_type=${dayType}`),
   getRenderMode: () => request<{ mode: RenderMode }>("/api/visualize/mode"),
+  getBuildingPhoto: (id: string) => request<BuildingPhotoResponse>(`/api/buildings/${id}/photo`),
   renderSpace: (id: string, payload: SpaceRenderRequest) =>
     request<SpaceRenderResponse>(`/api/buildings/${id}/visualize`, {
       method: "POST",

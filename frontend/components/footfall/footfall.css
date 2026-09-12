@@ -1,0 +1,19 @@
+/* 유동인구 지도(Leaflet) 전용 스타일. 나머지 레이아웃은 Tailwind 유틸리티를 쓴다. */
+.footfall-map-wrap { position: relative; isolation: isolate; }
+.footfall-map { height: 340px; width: 100%; background: #eceee6; font-family: inherit; border-radius: 8px; }
+.footfall-map .leaflet-tile-pane { filter: saturate(.2) contrast(.92); }
+.footfall-map .leaflet-control-attribution { font-size: 9px; background: #ffffffdc; }
+.footfall-map .leaflet-control-zoom { border: 1px solid #e2ddd3; border-radius: 6px; overflow: hidden; }
+.footfall-map .leaflet-control-zoom a { color: #5d574c; }
+.footfall-map .leaflet-popup-content { font-family: inherit; line-height: 1.7; color: #2b2823; }
+.footfall-map .leaflet-popup-content p { margin: 5px 0; font-size: 11px; }
+.footfall-map-label {
+  background: #fffefaee; border: none; box-shadow: 0 1px 4px #3e352b15; border-radius: 3px;
+  padding: 2px 6px; color: #413b33; font-family: inherit; font-size: 10px; font-weight: 700;
+}
+.footfall-map-label:before { display: none; }
+.footfall-map-status {
+  position: absolute; inset: 0; display: grid; place-items: center; z-index: 500;
+  background: #f3f1ecd0; font-size: 12px; color: #6b655c; text-align: center; padding: 16px; border-radius: 8px;
+}
+.footfall-map-status button { margin-top: 8px; text-decoration: underline; cursor: pointer; }

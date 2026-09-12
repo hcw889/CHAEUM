@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.models.schemas import SpaceRenderRequest, SpaceRenderResponse
-from app.services import space_render
+from app.models.schemas import BuildingPhotoResponse, SpaceRenderRequest, SpaceRenderResponse
+from app.services import building_photo, space_render
 from app.services.data_provider import DataProvider, get_data_provider
 
 router = APIRouter(prefix="/api", tags=["visualize"])
@@ -16,6 +16,27 @@ def get_render_mode():
     사전에 구분해 안내 문구를 띄우는 용도.
     """
     return {"mode": space_render.resolve_mode()}
+
+
+@router.get("/buildings/{building_id}/photo", response_model=BuildingPhotoResponse)
+def get_building_photo(building_id: str, provider: DataProvider = Depends(get_data_provider)):
+    """
+    매물에 딸린 공간 사진. 시각화 화면이 "현재" 이미지로 바로 띄운다.
+
+    사용자(팝업 브랜드·예비창업자)는 공간을 찾는 쪽이라 공실 사진을 갖고 있지 않다.
+    실제 촬영본이 app/data/photos/에 있으면 그것을, 없으면 매물 속성으로 그린
+    참고용 이미지를 돌려준다 (source 필드로 구분).
+    """
+    building = provider.get_building(building_id)
+    if building is None:
+        raise HTTPException(status_code=404, detail="건물을 찾을 수 없습니다.")
+
+    image, source = building_photo.load_photo(building)
+    return BuildingPhotoResponse(
+        image=space_render.to_data_url(image),
+        source=source,
+        has_after=building_photo.find_after_file(building_id) is not None,
+    )
 
 
 @router.post("/buildings/{building_id}/visualize", response_model=SpaceRenderResponse)

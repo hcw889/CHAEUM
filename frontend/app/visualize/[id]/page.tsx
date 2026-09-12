@@ -13,6 +13,7 @@ import { useStoredRole } from "@/lib/role";
 import {
   RENDER_MODE_LABELS,
   type Building,
+  type BuildingPhotoResponse,
   type BusinessFitCandidate,
   type MatchRequest,
   type RenderMode,
@@ -56,6 +57,9 @@ export default function VisualizePage() {
   const [building, setBuilding] = useState<Building | null>(null);
   const [top, setTop] = useState<BusinessFitCandidate | null>(null);
   const [renderMode, setRenderMode] = useState<RenderMode | null>(null);
+  // 매물에 딸린 공간 사진. 사용자는 공간을 "찾는" 쪽이라 공실 사진을 갖고 있지 않으므로
+  // 업로드를 요구하지 않고 매물 데이터에서 받아온다.
+  const [buildingPhoto, setBuildingPhoto] = useState<BuildingPhotoResponse | null>(null);
 
   const [concept, setConcept] = useState("");
   const [photo, setPhoto] = useState<string | null>(null);
@@ -76,11 +80,17 @@ export default function VisualizePage() {
       })
       .catch((err) => setError(err instanceof Error ? err.message : "불러오기 실패"));
 
+    api.getBuildingPhoto(id).then(setBuildingPhoto).catch(() => setBuildingPhoto(null));
+
     // 모드를 미리 알아둬야 "실제 생성"인지 "미리보기"인지 버튼 옆에 안내할 수 있다.
     api.getRenderMode().then(({ mode }) => setRenderMode(mode)).catch(() => setRenderMode("mock"));
   }, [id, matchRequest]);
 
   const isBrand = role === "brand";
+  // 생성 모델이 없어도 이 매물에 시공 후 촬영본이 있으면 실제 전/후 사진이 나온다.
+  // 버튼 옆 안내가 백엔드의 실제 동작과 어긋나지 않도록 매물별로 계산한다.
+  const effectiveMode: RenderMode | null =
+    renderMode === "mock" && buildingPhoto?.has_after && !photo ? "demo" : renderMode;
 
   async function handlePhoto(file: File | undefined) {
     if (!file) return;
@@ -159,9 +169,28 @@ export default function VisualizePage() {
                     onClick={() => fileRef.current?.click()}
                     className="rounded-xl border border-border px-4 py-2 text-sm font-medium hover:border-accent"
                   >
-                    사진 업로드
+                    다른 사진으로 해보기
                   </button>
-                  <span className="text-sm text-muted">{photoName ?? "선택 안 함 — 기본 이미지로 생성"}</span>
+                  {photoName ? (
+                    <span className="flex items-center gap-2 text-sm text-muted">
+                      {photoName}
+                      <button
+                        onClick={() => {
+                          setPhoto(null);
+                          setPhotoName(null);
+                        }}
+                        className="text-xs underline hover:text-foreground"
+                      >
+                        매물 사진으로 되돌리기
+                      </button>
+                    </span>
+                  ) : (
+                    <span className="text-sm text-muted">
+                      {buildingPhoto?.source === "file"
+                        ? "매물 등록 사진 사용 중"
+                        : "매물 참고 이미지 사용 중 (촬영 사진 미등록)"}
+                    </span>
+                  )}
                 </div>
                 <input
                   ref={fileRef}
@@ -202,8 +231,8 @@ export default function VisualizePage() {
                 >
                   {rendering ? "생성 중…" : result ? "다시 생성" : "컨셉 이미지 생성"}
                 </button>
-                {renderMode && (
-                  <span className="text-xs text-muted">현재 모드: {RENDER_MODE_LABELS[renderMode]}</span>
+                {effectiveMode && (
+                  <span className="text-xs text-muted">현재 모드: {RENDER_MODE_LABELS[effectiveMode]}</span>
                 )}
               </div>
             </div>
@@ -212,11 +241,17 @@ export default function VisualizePage() {
           <Card>
             <BeforeAfterSlider
               beforeLabel="현재"
-              afterLabel={result ? `${concept} 적용` : "적용 후"}
+              afterLabel={
+                result?.mode === "demo" ? "시공 후" : result ? `${concept} 적용` : "적용 후"
+              }
               before={
-                result ? (
+                (result?.before_image ?? photo ?? buildingPhoto?.image) ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={result.before_image} alt="현재 공간" className="h-full w-full object-cover" />
+                  <img
+                    src={result?.before_image ?? photo ?? buildingPhoto?.image}
+                    alt="현재 공간"
+                    className="h-full w-full object-cover"
+                  />
                 ) : (
                   <div
                     className="flex h-full w-full flex-col items-center justify-center gap-2 text-white"
@@ -248,6 +283,12 @@ export default function VisualizePage() {
                   생성 방식: <span className="font-medium">{RENDER_MODE_LABELS[result.mode]}</span> · {result.model}
                 </p>
                 {result.note && <p className="text-danger">{result.note}</p>}
+                {result.mode === "demo" && (
+                  <p>
+                    * 실제로 리뉴얼된 이 매물의 시공 전/후 촬영본입니다. AI 생성 결과가 아니며, 입력한 컨셉에 따라
+                    바뀌지 않습니다.
+                  </p>
+                )}
                 {result.mode === "mock" && (
                   <p>
                     * 실제 diffusion 생성이 아니라 색보정 기반 미리보기입니다. 백엔드에 HF_TOKEN을 설정하면 실제

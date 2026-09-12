@@ -1,0 +1,275 @@
+{
+  "data_reference_month": "2026-08",
+  "description": "전주 원도심 주변 유동인구 측정 구역 정의. 좌표와 구역 반경은 지도 표시용 대표값이며, sk_area_code는 SK open API 유동인구 상품의 지역(행정동/집계구) 코드를 넣는 자리다. 코드가 비어 있으면 좌표 기반 호출로 폴백하고, 그마저 불가하면 시연용 가상 수치를 생성한다.",
+  "search_radius_m": 1500,
+  "min_areas": 4,
+  "max_areas": 8,
+  "buildings": {
+    "b1": {
+      "lat": 35.816,
+      "lng": 127.148,
+      "region": "팔달로"
+    },
+    "b2": {
+      "lat": 35.818,
+      "lng": 127.143,
+      "region": "객사길"
+    },
+    "b3": {
+      "lat": 35.826,
+      "lng": 127.138,
+      "region": "태평동"
+    },
+    "b4": {
+      "lat": 35.818,
+      "lng": 127.152,
+      "region": "경원동"
+    },
+    "b5": {
+      "lat": 35.85,
+      "lng": 127.161,
+      "region": "전주역"
+    },
+    "b6": {
+      "lat": 35.8135,
+      "lng": 127.1487,
+      "region": "풍남동"
+    },
+    "b7": {
+      "lat": 35.8235,
+      "lng": 127.1487,
+      "region": "노송동"
+    },
+    "b8": {
+      "lat": 35.8155,
+      "lng": 127.1455,
+      "region": "중앙동"
+    },
+    "b9": {
+      "lat": 35.829,
+      "lng": 127.135,
+      "region": "진북동"
+    },
+    "b10": {
+      "lat": 35.8085,
+      "lng": 127.139,
+      "region": "완산동"
+    },
+    "b11": {
+      "lat": 35.8195,
+      "lng": 127.1395,
+      "region": "다가동"
+    },
+    "b12": {
+      "lat": 35.8355,
+      "lng": 127.16,
+      "region": "인후동"
+    },
+    "b13": {
+      "lat": 35.814,
+      "lng": 127.1495,
+      "region": "전동"
+    },
+    "b14": {
+      "lat": 35.8175,
+      "lng": 127.144,
+      "region": "고사동"
+    },
+    "b15": {
+      "lat": 35.8232,
+      "lng": 127.1425,
+      "region": "서노송동"
+    }
+  },
+  "areas": [
+    {
+      "id": "gaeksa",
+      "name": "객사길",
+      "lat": 35.8185,
+      "lng": 127.143,
+      "radius_m": 260,
+      "profile": "commercial",
+      "sk_area_code": null
+    },
+    {
+      "id": "wedding",
+      "name": "웨딩거리",
+      "lat": 35.8175,
+      "lng": 127.1405,
+      "radius_m": 240,
+      "profile": "commercial",
+      "sk_area_code": null
+    },
+    {
+      "id": "cinema",
+      "name": "영화의거리",
+      "lat": 35.8158,
+      "lng": 127.1424,
+      "radius_m": 240,
+      "profile": "youth",
+      "sk_area_code": null
+    },
+    {
+      "id": "paldal",
+      "name": "팔달로 중앙",
+      "lat": 35.816,
+      "lng": 127.148,
+      "radius_m": 280,
+      "profile": "commercial",
+      "sk_area_code": null
+    },
+    {
+      "id": "market",
+      "name": "중앙시장",
+      "lat": 35.815,
+      "lng": 127.1455,
+      "radius_m": 220,
+      "profile": "market",
+      "sk_area_code": null
+    },
+    {
+      "id": "gyeongwon",
+      "name": "경원동 로터리",
+      "lat": 35.818,
+      "lng": 127.152,
+      "radius_m": 240,
+      "profile": "office",
+      "sk_area_code": null
+    },
+    {
+      "id": "pungnammun",
+      "name": "풍남문광장",
+      "lat": 35.8129,
+      "lng": 127.148,
+      "radius_m": 260,
+      "profile": "tourism",
+      "sk_area_code": null
+    },
+    {
+      "id": "hanok",
+      "name": "한옥마을 입구",
+      "lat": 35.8146,
+      "lng": 127.153,
+      "radius_m": 300,
+      "profile": "tourism",
+      "sk_area_code": null
+    },
+    {
+      "id": "taepyeong",
+      "name": "태평동 주민센터",
+      "lat": 35.826,
+      "lng": 127.138,
+      "radius_m": 240,
+      "profile": "residential",
+      "sk_area_code": null
+    },
+    {
+      "id": "seonosong",
+      "name": "서노송예술촌",
+      "lat": 35.8235,
+      "lng": 127.142,
+      "radius_m": 240,
+      "profile": "residential",
+      "sk_area_code": null
+    },
+    {
+      "id": "jinbuk",
+      "name": "진북동 학원가",
+      "lat": 35.8288,
+      "lng": 127.1345,
+      "radius_m": 240,
+      "profile": "academy",
+      "sk_area_code": null
+    },
+    {
+      "id": "station",
+      "name": "전주역 광장",
+      "lat": 35.85,
+      "lng": 127.161,
+      "radius_m": 300,
+      "profile": "station",
+      "sk_area_code": null
+    },
+    {
+      "id": "firstmeet",
+      "name": "첫마중길",
+      "lat": 35.8465,
+      "lng": 127.1575,
+      "radius_m": 260,
+      "profile": "commercial",
+      "sk_area_code": null
+    },
+    {
+      "id": "station_food",
+      "name": "전주역 먹자골목",
+      "lat": 35.8482,
+      "lng": 127.1585,
+      "radius_m": 220,
+      "profile": "youth",
+      "sk_area_code": null
+    },
+    {
+      "id": "ua",
+      "name": "우아동 아파트단지",
+      "lat": 35.8528,
+      "lng": 127.1668,
+      "radius_m": 280,
+      "profile": "residential",
+      "sk_area_code": null
+    },
+    {
+      "id": "geumam",
+      "name": "금암광장",
+      "lat": 35.8404,
+      "lng": 127.1348,
+      "radius_m": 260,
+      "profile": "office",
+      "sk_area_code": null
+    },
+    {
+      "id": "angol",
+      "name": "안골사거리",
+      "lat": 35.833,
+      "lng": 127.156,
+      "radius_m": 260,
+      "profile": "residential",
+      "sk_area_code": null
+    },
+    {
+      "id": "inhu",
+      "name": "인후동 아중리 상가",
+      "lat": 35.839,
+      "lng": 127.165,
+      "radius_m": 280,
+      "profile": "commercial",
+      "sk_area_code": null
+    },
+    {
+      "id": "edu",
+      "name": "전주교대 앞",
+      "lat": 35.83,
+      "lng": 127.1562,
+      "radius_m": 240,
+      "profile": "academy",
+      "sk_area_code": null
+    },
+    {
+      "id": "wansan",
+      "name": "완산칠봉 입구",
+      "lat": 35.807,
+      "lng": 127.136,
+      "radius_m": 260,
+      "profile": "residential",
+      "sk_area_code": null
+    },
+    {
+      "id": "jeondong",
+      "name": "전동성당 앞",
+      "lat": 35.8138,
+      "lng": 127.1487,
+      "radius_m": 220,
+      "profile": "tourism",
+      "sk_area_code": null
+    }
+  ]
+}

@@ -7,6 +7,8 @@
 
 실행 모드는 환경에 따라 3단계로 폴백한다.
 
+    demo   : 해당 매물에 시공 후 실제 촬영본({id}.after.*)이 있고 생성 모델이 연결되지
+             않은 경우. 컨셉과 무관한 고정 이미지이므로 UI에 그렇게 표시한다.
     hf_api : HF_TOKEN 있음 -> HuggingFace Inference Providers의 image-to-image.
              호스팅 API 스펙에 mask_image 파라미터가 없으므로 마스크 없이
              프롬프트 기반 편집만 수행한다 (FLUX.1-Kontext 계열).
@@ -119,7 +121,7 @@ def decode_data_url(data_url: str):
     return Image.open(io.BytesIO(base64.b64decode(raw))).convert("RGB")
 
 
-def _to_data_url(image) -> str:
+def to_data_url(image) -> str:
     buf = io.BytesIO()
     image.save(buf, format="PNG")
     return "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode()
@@ -134,12 +136,17 @@ def _fit(image):
     return image.resize((w, h))
 
 
-def _placeholder_source(building: Optional[dict]):
-    """사진 업로드가 없을 때 쓰는 기본 이미지 — 건물 thumbnail_color 기반 단색 배경."""
-    from PIL import Image
+def _building_source(building: Optional[dict]):
+    """
+    사진 업로드가 없을 때 쓰는 기본 이미지 — 매물에 딸린 사진.
 
-    color = (building or {}).get("thumbnail_color", "#D8CFC4")
-    return Image.new("RGB", (768, 576), color)
+    시각화 화면의 사용자는 공간을 "찾는" 쪽이라 공실 사진을 갖고 있지 않다.
+    사진은 매물 데이터에서 온다 (building_photo.py 참고).
+    """
+    from app.services import building_photo
+
+    image, _source = building_photo.load_photo(building or {})
+    return image
 
 
 def auto_mask(image):
@@ -259,20 +266,23 @@ def render_space(
     note = None
 
     try:
-        source = decode_data_url(photo_data_url) if photo_data_url else _placeholder_source(building)
+        source = decode_data_url(photo_data_url) if photo_data_url else _building_source(building)
         mask = decode_data_url(mask_data_url).convert("L") if mask_data_url else None
     except Exception as exc:  # 잘못된 base64 / 손상된 이미지
         logger.warning("space_render: 입력 이미지 디코딩 실패 (%s)", exc)
-        source = _placeholder_source(building)
+        source = _building_source(building)
         mask = None
-        note = "업로드한 이미지를 읽지 못해 기본 이미지로 대체했습니다."
+        note = "업로드한 이미지를 읽지 못해 매물 사진으로 대체했습니다."
 
     source = _fit(source)
     if mask is not None:
         mask = mask.resize(source.size)
 
     if photo_data_url is None and note is None:
-        note = "사진을 업로드하면 실제 공간 사진을 기반으로 생성됩니다."
+        from app.services import building_photo
+
+        if building_photo.find_photo_file((building or {}).get("id", "")) is None:
+            note = "이 매물은 아직 실제 촬영 사진이 없어 참고용 공간 이미지를 사용했습니다."
 
     cache_key = _cache_key(mode, prompt, strength, source)
     cached = _load_cached(cache_key)
@@ -281,10 +291,28 @@ def render_space(
             "mode": mode,
             "model": "cached",
             "prompt": prompt,
-            "before_image": _to_data_url(source),
+            "before_image": to_data_url(source),
             "after_image": cached,
             "note": note,
         }
+
+    # 생성 모델이 없고 이 매물에 시공 후 실제 촬영본이 있으면, 색보정 미리보기보다
+    # 그 사진을 보여주는 편이 정확하다. 단 컨셉 입력을 반영한 결과가 아니므로
+    # mode를 "demo"로 구분해 UI가 생성물로 표시하지 않게 한다.
+    # (사용자가 직접 사진을 올린 경우엔 그 공간의 전/후가 아니므로 쓰지 않는다.)
+    if mode == "mock" and photo_data_url is None:
+        from app.services import building_photo
+
+        curated = building_photo.load_after_photo((building or {}).get("id", ""))
+        if curated is not None:
+            return {
+                "mode": "demo",
+                "model": "curated-photo",
+                "prompt": prompt,
+                "before_image": to_data_url(source),
+                "after_image": to_data_url(curated),
+                "note": None,
+            }
 
     try:
         result, model = _RENDERERS[mode](source, mask, prompt, strength)
@@ -303,8 +331,8 @@ def render_space(
         "mode": mode,
         "model": model,
         "prompt": prompt,
-        "before_image": _to_data_url(source),
-        "after_image": _to_data_url(result),
+        "before_image": to_data_url(source),
+        "after_image": to_data_url(result),
         "note": note,
     }
 

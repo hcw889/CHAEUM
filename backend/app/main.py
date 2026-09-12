@@ -1,10 +1,22 @@
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+# backend/.env 를 읽어 환경변수로 올린다 (SK_OPENAPI_APP_KEY, HF_TOKEN, ANTHROPIC_API_KEY 등).
+# 이미 셸에 설정된 값은 덮어쓰지 않으며, .env가 없으면 그냥 넘어간다.
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+except ImportError:  # python-dotenv 미설치 환경 — 셸 환경변수만 사용한다.
+    pass
 
 from app.routers import (
     business_fit,
     buildings,
     dashboard,
+    footfall,
     match,
     permits,
     regions,
@@ -33,6 +45,7 @@ app.include_router(permits.router)
 app.include_router(report.router)
 app.include_router(match.router)
 app.include_router(regions.router)
+app.include_router(footfall.router)
 app.include_router(visualize.router)
 
 

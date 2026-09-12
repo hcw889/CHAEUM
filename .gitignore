@@ -24,3 +24,12 @@ frontend/playwright-report/
 *.key
 *.p12
 credentials.json
+
+# 매물 사진 — 로컬 데모용. 출처/저작권이 확인된 것만 선별해 올릴 것이므로
+# 기본적으로 추적하지 않는다 (README는 넣는 방법 안내이므로 예외).
+# 사진이 없는 환경에서는 매물 속성으로 그린 참고용 이미지로 자동 대체된다.
+backend/app/data/photos/*
+!backend/app/data/photos/README.md
+
+# 작업 중 끌어온 원본 스크린샷 (photos/에 복사본이 있다)
+/스크린샷*.png

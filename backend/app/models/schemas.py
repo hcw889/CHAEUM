@@ -116,6 +116,12 @@ class SpaceRenderRequest(BaseModel):
     strength: float = Field(0.65, ge=0.1, le=1.0)
 
 
+class BuildingPhotoResponse(BaseModel):
+    image: str  # data URL
+    source: str  # file(실제 촬영본) | placeholder(참고용 생성 이미지)
+    has_after: bool = False  # 시공 후 촬영본이 있어 demo 모드로 보여줄 수 있는 매물인지
+
+
 class SpaceRenderResponse(BaseModel):
     mode: str  # hf_api | local | mock
     model: str

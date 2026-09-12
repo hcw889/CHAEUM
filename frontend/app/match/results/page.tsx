@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/Card";
+import FootfallPanel from "@/components/footfall/FootfallPanel";
 import { Wordmark } from "@/components/Logo";
 import { RankMedal } from "@/components/RankMedal";
 import { ScoreBarBreakdown } from "@/components/ScoreBarBreakdown";
@@ -149,6 +150,13 @@ export default function MatchResultsPage() {
             건물 상세 진단 보기 →
           </Link>
         </Card>
+      )}
+
+      {/* 선택한 추천 매물 주변의 시간대별 유동인구. 매칭 스코어링과는 독립된 별도 조회다. */}
+      {selectedMatch && (
+        <div className="mt-6">
+          <FootfallPanel buildingId={selectedMatch.building_id} address={selectedMatch.address} />
+        </div>
       )}
     </main>
   );
