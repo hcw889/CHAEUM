@@ -83,5 +83,175 @@
       "lighting_score": 75
     },
     "data_reference_month": "2026-07"
+  },
+  "b6": {
+    "id": "b6",
+    "name": "풍남문 앞 상가",
+    "address": "전북 전주시 완산구 풍남문3길 12",
+    "floor": 1,
+    "area_pyeong": 12.4,
+    "built_year": 1998,
+    "risk_grade": "주의",
+    "region": "풍남동",
+    "thumbnail_color": "#E3D9C6",
+    "diagnosis": {
+      "aging_score": 56.2,
+      "accessibility_score": 63.6,
+      "lighting_score": 57.4
+    },
+    "data_reference_month": "2026-04"
+  },
+  "b7": {
+    "id": "b7",
+    "name": "노송동 주거지 상가",
+    "address": "전북 전주시 완산구 노송여울길 8",
+    "floor": 2,
+    "area_pyeong": 19.7,
+    "built_year": 2010,
+    "risk_grade": "안전",
+    "region": "노송동",
+    "thumbnail_color": "#D6DCC9",
+    "diagnosis": {
+      "aging_score": 84.6,
+      "accessibility_score": 84.2,
+      "lighting_score": 80.1
+    },
+    "data_reference_month": "2026-05"
+  },
+  "b8": {
+    "id": "b8",
+    "name": "중앙시장 골목 상가",
+    "address": "전북 전주시 완산구 중앙시장길 5",
+    "floor": 1,
+    "area_pyeong": 15.3,
+    "built_year": 1985,
+    "risk_grade": "위험",
+    "region": "중앙동",
+    "thumbnail_color": "#E8D8C3",
+    "diagnosis": {
+      "aging_score": 36.4,
+      "accessibility_score": 47.8,
+      "lighting_score": 42.9
+    },
+    "data_reference_month": "2026-06"
+  },
+  "b9": {
+    "id": "b9",
+    "name": "진북동 학원가 상가",
+    "address": "전북 전주시 덕진구 진북로 34",
+    "floor": 3,
+    "area_pyeong": 23.1,
+    "built_year": 2015,
+    "risk_grade": "안전",
+    "region": "진북동",
+    "thumbnail_color": "#DAD0DD",
+    "diagnosis": {
+      "aging_score": 89.8,
+      "accessibility_score": 83.2,
+      "lighting_score": 90.0
+    },
+    "data_reference_month": "2026-07"
+  },
+  "b10": {
+    "id": "b10",
+    "name": "완산동 주택가 상가",
+    "address": "전북 전주시 완산구 완산길 19",
+    "floor": 1,
+    "area_pyeong": 16.8,
+    "built_year": 1993,
+    "risk_grade": "주의",
+    "region": "완산동",
+    "thumbnail_color": "#D2DED6",
+    "diagnosis": {
+      "aging_score": 58.6,
+      "accessibility_score": 70.7,
+      "lighting_score": 68.0
+    },
+    "data_reference_month": "2026-08"
+  },
+  "b11": {
+    "id": "b11",
+    "name": "다가공원 앞 상가",
+    "address": "전북 전주시 완산구 다가로 27",
+    "floor": 2,
+    "area_pyeong": 13.9,
+    "built_year": 2003,
+    "risk_grade": "안전",
+    "region": "다가동",
+    "thumbnail_color": "#E4CFC9",
+    "diagnosis": {
+      "aging_score": 87.1,
+      "accessibility_score": 87.4,
+      "lighting_score": 90.1
+    },
+    "data_reference_month": "2026-04"
+  },
+  "b12": {
+    "id": "b12",
+    "name": "인후동 아파트단지 상가",
+    "address": "전북 전주시 덕진구 인후로 88",
+    "floor": 1,
+    "area_pyeong": 21.4,
+    "built_year": 1990,
+    "risk_grade": "주의",
+    "region": "인후동",
+    "thumbnail_color": "#D7D9E2",
+    "diagnosis": {
+      "aging_score": 60.5,
+      "accessibility_score": 71.4,
+      "lighting_score": 62.4
+    },
+    "data_reference_month": "2026-05"
+  },
+  "b13": {
+    "id": "b13",
+    "name": "전동성당 인근 상가",
+    "address": "전북 전주시 완산구 전동성당길 6",
+    "floor": 2,
+    "area_pyeong": 17.6,
+    "built_year": 2018,
+    "risk_grade": "위험",
+    "region": "전동",
+    "thumbnail_color": "#EADFD1",
+    "diagnosis": {
+      "aging_score": 48.2,
+      "accessibility_score": 51.2,
+      "lighting_score": 51.8
+    },
+    "data_reference_month": "2026-06"
+  },
+  "b14": {
+    "id": "b14",
+    "name": "고사동 번화가 상가",
+    "address": "전북 전주시 완산구 국민의거리 15",
+    "floor": 1,
+    "area_pyeong": 14.2,
+    "built_year": 1996,
+    "risk_grade": "주의",
+    "region": "고사동",
+    "thumbnail_color": "#CFE0DA",
+    "diagnosis": {
+      "aging_score": 60.4,
+      "accessibility_score": 62.7,
+      "lighting_score": 59.4
+    },
+    "data_reference_month": "2026-07"
+  },
+  "b15": {
+    "id": "b15",
+    "name": "서노송광장 인근 상가",
+    "address": "전북 전주시 완산구 서노송광장길 9",
+    "floor": 3,
+    "area_pyeong": 18.5,
+    "built_year": 2008,
+    "risk_grade": "위험",
+    "region": "서노송동",
+    "thumbnail_color": "#E1D4C8",
+    "diagnosis": {
+      "aging_score": 43.1,
+      "accessibility_score": 36.3,
+      "lighting_score": 35.4
+    },
+    "data_reference_month": "2026-08"
   }
 }

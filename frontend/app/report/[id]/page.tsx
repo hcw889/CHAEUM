@@ -6,7 +6,9 @@ import { BuildingPageHeader } from "@/components/BuildingPageHeader";
 import { Card } from "@/components/Card";
 import { DataFreshness } from "@/components/DataFreshness";
 import { RiskBadge } from "@/components/RiskBadge";
+import { Skeleton, SkeletonCardGrid } from "@/components/Skeleton";
 import { api } from "@/lib/api";
+import { formatCurrency, formatScore } from "@/lib/format";
 import type { ReportSummary } from "@/lib/types";
 
 export default function ReportPage() {
@@ -30,7 +32,21 @@ export default function ReportPage() {
       </div>
 
       {!report ? (
-        <p className="text-muted">리포트를 생성하는 중...</p>
+        <>
+          <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <Skeleton className="mb-2 h-4 w-32" />
+              <Skeleton className="mb-2 h-7 w-56" />
+              <Skeleton className="h-4 w-64" />
+            </div>
+          </div>
+          <Card className="mb-4">
+            <Skeleton className="mb-3 h-3 w-full" />
+            <Skeleton className="mb-2 h-3 w-full" />
+            <Skeleton className="h-3 w-2/3" />
+          </Card>
+          <SkeletonCardGrid count={3} />
+        </>
       ) : (
         <>
           <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
@@ -41,7 +57,7 @@ export default function ReportPage() {
             </div>
             <button
               onClick={() => window.print()}
-              className="no-print rounded-xl bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-opacity hover:opacity-90"
+              className="no-print rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-opacity hover:opacity-90"
             >
               PDF 다운로드
             </button>
@@ -59,10 +75,10 @@ export default function ReportPage() {
               {report.building.name}({report.building.address})은 {report.building.built_year}년에 준공된{" "}
               {report.building.floor}층, {report.building.area_pyeong}평 규모의 상가로, 종합 리스크 등급은 &apos;
               {report.building.risk_grade}&apos;입니다. 업종 적합도 분석 결과 <b>{report.top_business.type}</b>이(가){" "}
-              {report.top_business.fit_score}점으로 가장 높은 적합도를 보였으며, 예상 임대료는 월{" "}
-              {report.top_business.estimated_rent.toLocaleString()}원입니다. 인근 상권은 평균 경쟁포화도{" "}
-              {report.dashboard.avg_competition_saturation}점, 평균 유동인구 지수 {report.dashboard.avg_foot_traffic}점
-              수준으로 추정됩니다.
+              {formatScore(report.top_business.fit_score)}점으로 가장 높은 적합도를 보였으며, 예상 임대료는 월{" "}
+              {formatCurrency(report.top_business.estimated_rent)}입니다. 인근 상권은 평균 경쟁포화도{" "}
+              {formatScore(report.dashboard.avg_competition_saturation)}점, 평균 유동인구 지수{" "}
+              {formatScore(report.dashboard.avg_foot_traffic)}점 수준으로 추정됩니다.
             </p>
           </Card>
 
@@ -70,12 +86,12 @@ export default function ReportPage() {
             <Card>
               <p className="mb-1 text-sm text-muted">추천 업종</p>
               <p className="text-xl font-semibold">{report.top_business.type}</p>
-              <p className="text-xs text-muted">적합도 {report.top_business.fit_score}점</p>
+              <p className="text-xs text-muted">적합도 {formatScore(report.top_business.fit_score)}점</p>
             </Card>
             <Card>
               <p className="mb-1 text-sm text-muted">건물 컨디션</p>
               <p className="text-xl font-semibold">
-                {Math.round(
+                {formatScore(
                   (report.building.diagnosis.aging_score +
                     report.building.diagnosis.accessibility_score +
                     report.building.diagnosis.lighting_score) /
@@ -87,7 +103,7 @@ export default function ReportPage() {
             </Card>
             <Card>
               <p className="mb-1 text-sm text-muted">평균 추정 임대료</p>
-              <p className="text-xl font-semibold">{Math.round(report.dashboard.avg_estimated_rent / 10000)}만원</p>
+              <p className="text-xl font-semibold">{formatScore(report.dashboard.avg_estimated_rent / 10_000)}만원</p>
               <p className="text-xs text-muted">인근 업종 평균 (월)</p>
             </Card>
           </div>

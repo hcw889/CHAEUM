@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { BeforeAfterSlider } from "@/components/BeforeAfterSlider";
 import { BuildingPageHeader } from "@/components/BuildingPageHeader";
 import { Card } from "@/components/Card";
+import { Skeleton } from "@/components/Skeleton";
 import { api } from "@/lib/api";
 import type { Building, BusinessFitCandidate } from "@/lib/types";
 
@@ -37,7 +38,9 @@ export default function VisualizePage() {
       </p>
 
       {!building || !top ? (
-        <p className="text-muted">불러오는 중...</p>
+        <Card>
+          <Skeleton className="aspect-[4/3] w-full" />
+        </Card>
       ) : (
         <>
           <Card>
@@ -66,7 +69,7 @@ export default function VisualizePage() {
 
           <Link
             href={`/report/${id}`}
-            className="mt-8 inline-flex w-full items-center justify-center rounded-xl bg-accent py-3 font-medium text-accent-foreground transition-opacity hover:opacity-90 sm:w-auto sm:px-8"
+            className="mt-8 inline-flex w-full items-center justify-center rounded-md bg-accent py-3 font-medium text-accent-foreground transition-opacity hover:opacity-90 sm:w-auto sm:px-8"
           >
             리포트 보기 →
           </Link>

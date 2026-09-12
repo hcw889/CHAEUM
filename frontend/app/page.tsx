@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { LogoMark } from "@/components/Logo";
 import { RoleCard } from "@/components/RoleCard";
 import { saveRole } from "@/lib/role";
 import { getRoleRoute } from "@/lib/roleRoutes";
@@ -49,7 +50,10 @@ export default function OnboardingPage() {
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 py-16">
       <div className="mb-12 text-center">
         <p className="mb-3 text-sm font-medium tracking-wide text-accent">CHAEUM</p>
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">채움</h1>
+        <h1 className="flex items-center justify-center gap-2 text-3xl font-bold tracking-tight sm:text-4xl">
+          <LogoMark size={32} />
+          채움
+        </h1>
         <p className="mt-4 text-balance text-muted">
           전북 원도심의 비어있는 상가에, 데이터로 다음 이야기를 채웁니다.
           <br />

@@ -4,8 +4,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/Card";
+import { Wordmark } from "@/components/Logo";
 import { RankMedal } from "@/components/RankMedal";
 import { ScoreBarBreakdown } from "@/components/ScoreBarBreakdown";
+import { SkeletonCardGrid } from "@/components/Skeleton";
+import { formatScore } from "@/lib/format";
 import type { MatchCandidate, MatchRequest, ScoreBreakdown } from "@/lib/types";
 
 // matching_agents.PRIORITY_WEIGHTS(backend)와 동일한 값. 결과 화면의 기여도 막대그래프 표시에만 사용.
@@ -36,21 +39,26 @@ export default function MatchResultsPage() {
   const [selected, setSelected] = useState<string | null>(null);
 
   useEffect(() => {
-    try {
-      const reqRaw = sessionStorage.getItem("chaeum_match_request");
-      const resultRaw = sessionStorage.getItem("chaeum_match_result");
-      if (!reqRaw || !resultRaw) {
+    // sessionStorage is browser-only; schedule this after hydration so the
+    // initial server/client trees remain consistent.
+    const timer = window.setTimeout(() => {
+      try {
+        const reqRaw = sessionStorage.getItem("chaeum_match_request");
+        const resultRaw = sessionStorage.getItem("chaeum_match_result");
+        if (!reqRaw || !resultRaw) {
+          router.replace("/match/new");
+          return;
+        }
+        const req: MatchRequest = JSON.parse(reqRaw);
+        const result: { matches: MatchCandidate[] } = JSON.parse(resultRaw);
+        setRequest(req);
+        setMatches(result.matches);
+        setSelected(result.matches[0]?.building_id ?? null);
+      } catch {
         router.replace("/match/new");
-        return;
       }
-      const req: MatchRequest = JSON.parse(reqRaw);
-      const result: { matches: MatchCandidate[] } = JSON.parse(resultRaw);
-      setRequest(req);
-      setMatches(result.matches);
-      setSelected(result.matches[0]?.building_id ?? null);
-    } catch {
-      router.replace("/match/new");
-    }
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, [router]);
 
   const top3 = useMemo(() => matches?.filter((m) => m.rank) ?? [], [matches]);
@@ -72,7 +80,7 @@ export default function MatchResultsPage() {
   if (!matches || !request) {
     return (
       <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-10">
-        <p className="text-muted">불러오는 중...</p>
+        <SkeletonCardGrid count={3} />
       </main>
     );
   }
@@ -80,8 +88,8 @@ export default function MatchResultsPage() {
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-10">
       <div className="mb-6 flex items-center justify-between">
-        <Link href="/" className="text-lg font-semibold tracking-tight">
-          채움
+        <Link href="/" className="text-lg">
+          <Wordmark />
         </Link>
         <Link href="/match/new" className="text-sm text-muted hover:text-foreground">
           조건 다시 입력 →
@@ -105,7 +113,7 @@ export default function MatchResultsPage() {
                 <RankMedal rank={m.rank} />
                 <span className="text-sm font-semibold leading-snug">{m.address}</span>
               </div>
-              <p className="text-3xl font-bold tracking-tight">{m.final_score}</p>
+              <p className="text-3xl font-bold tracking-tight">{formatScore(m.final_score)}</p>
               <p className="text-xs text-muted">종합 매칭 점수</p>
             </Card>
           </button>
@@ -118,12 +126,12 @@ export default function MatchResultsPage() {
             <button
               key={m.building_id}
               onClick={() => setSelected(m.building_id)}
-              className={`flex w-full items-center justify-between rounded-xl border px-4 py-3 text-left transition-colors ${
+              className={`flex w-full items-center justify-between rounded-md border px-4 py-3 text-left transition-colors ${
                 selected === m.building_id ? "border-accent bg-accent-soft" : "border-border bg-surface"
               }`}
             >
               <span className="font-medium">{m.address}</span>
-              <span className="text-sm text-muted">{m.final_score}점</span>
+              <span className="text-sm text-muted">{formatScore(m.final_score)}점</span>
             </button>
           ))}
         </div>
@@ -137,7 +145,7 @@ export default function MatchResultsPage() {
 
           <Link
             href={`/diagnosis/${selectedMatch.building_id}`}
-            className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-accent py-3 font-medium text-accent-foreground transition-opacity hover:opacity-90 sm:w-auto sm:px-8"
+            className="mt-6 inline-flex w-full items-center justify-center rounded-md bg-accent py-3 font-medium text-accent-foreground transition-opacity hover:opacity-90 sm:w-auto sm:px-8"
           >
             건물 상세 진단 보기 →
           </Link>

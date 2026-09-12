@@ -1,3 +1,5 @@
+import { formatScore } from "@/lib/format";
+
 function levelOf(score: number): { label: string; color: string } {
   if (score >= 75) return { label: "양호", color: "var(--safe)" };
   if (score >= 50) return { label: "보통", color: "var(--caution)" };
@@ -15,7 +17,7 @@ export function ScoreMeter({ label, score }: { label: string; score: number }) {
         </span>
       </div>
       <div className="mb-1.5 flex items-baseline gap-1">
-        <span className="text-2xl font-bold tracking-tight">{score}</span>
+        <span className="text-2xl font-bold tracking-tight">{formatScore(score)}</span>
         <span className="text-sm text-muted">/100</span>
       </div>
       <div className="h-1.5 w-full overflow-hidden rounded-full bg-border">

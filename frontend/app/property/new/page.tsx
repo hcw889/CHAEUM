@@ -27,8 +27,10 @@ export default function PropertyInputPage() {
   const [demoBuildings, setDemoBuildings] = useState<BuildingSummary[]>([]);
 
   useEffect(() => {
-    setRole(loadRole());
+    // Keep the first hydrated render aligned with SSR before reading storage.
+    const timer = window.setTimeout(() => setRole(loadRole()), 0);
     api.listBuildings().then(setDemoBuildings).catch(() => setDemoBuildings([]));
+    return () => window.clearTimeout(timer);
   }, []);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -77,7 +79,7 @@ export default function PropertyInputPage() {
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="예: 전북 전주시 완산구 객사길 45"
-              className="w-full rounded-xl border border-border bg-background px-4 py-2.5 outline-none focus:border-accent"
+              className="w-full rounded-md border border-border bg-background px-4 py-2.5 outline-none focus:border-accent"
             />
           </div>
 
@@ -89,7 +91,7 @@ export default function PropertyInputPage() {
                 value={floor}
                 onChange={(e) => setFloor(e.target.value)}
                 placeholder="예: 1"
-                className="w-full rounded-xl border border-border bg-background px-4 py-2.5 outline-none focus:border-accent"
+                className="w-full rounded-md border border-border bg-background px-4 py-2.5 outline-none focus:border-accent"
               />
             </div>
             <div>
@@ -99,7 +101,7 @@ export default function PropertyInputPage() {
                 value={areaPyeong}
                 onChange={(e) => setAreaPyeong(e.target.value)}
                 placeholder="예: 15"
-                className="w-full rounded-xl border border-border bg-background px-4 py-2.5 outline-none focus:border-accent"
+                className="w-full rounded-md border border-border bg-background px-4 py-2.5 outline-none focus:border-accent"
               />
             </div>
           </div>
@@ -110,7 +112,7 @@ export default function PropertyInputPage() {
               type="file"
               accept="image/*"
               onChange={(e) => setPhotoName(e.target.files?.[0]?.name ?? null)}
-              className="w-full rounded-xl border border-dashed border-border bg-background px-4 py-2.5 text-sm text-muted file:mr-3 file:rounded-lg file:border-0 file:bg-accent-soft file:px-3 file:py-1.5 file:text-accent"
+              className="w-full rounded-md border border-dashed border-border bg-background px-4 py-2.5 text-sm text-muted file:mr-3 file:rounded-sm file:border-0 file:bg-accent-soft file:px-3 file:py-1.5 file:text-accent"
             />
             <p className="mt-1.5 text-xs text-muted">
               현재는 목업 단계로, 사진은 업로드 여부만 기록되며 실제 이미지 진단(CV 모델)은 추후 연동됩니다.
@@ -122,7 +124,7 @@ export default function PropertyInputPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-xl bg-accent py-3 font-medium text-accent-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
+            className="w-full rounded-md bg-accent py-3 font-medium text-accent-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
           >
             {loading ? "진단 중..." : "이 건물 진단하기"}
           </button>

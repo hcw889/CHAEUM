@@ -1,3 +1,4 @@
+import { formatPercent, formatScore } from "@/lib/format";
 import type { ScoreBreakdown } from "@/lib/types";
 
 const FACTOR_LABELS: Record<string, string> = {
@@ -33,7 +34,7 @@ export function ScoreBarBreakdown({ breakdown, factors = FACTOR_ORDER, labels = 
               <div className="mb-1.5 flex flex-col gap-0.5 text-sm sm:flex-row sm:items-baseline sm:justify-between sm:gap-2">
                 <span className="font-medium text-foreground">{labels[factor] ?? factor}</span>
                 <span className="text-muted">
-                  가중치 {Math.round(weight * 100)}% · 원점수 {raw} · 기여도 {contribution}
+                  가중치 {formatPercent(weight * 100, 0)} · 원점수 {formatScore(raw)} · 기여도 {formatScore(contribution)}
                 </span>
               </div>
               <div className="h-2 w-full overflow-hidden rounded-full bg-border">

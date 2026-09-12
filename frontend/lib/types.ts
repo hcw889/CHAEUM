@@ -112,7 +112,24 @@ export interface MatchResponse {
 }
 
 export const BUSINESS_TYPE_OPTIONS = ["카페", "학원", "병원", "편의점", "스터디카페"];
-export const REGION_OPTIONS = ["상관없음", "팔달로", "객사길", "태평동", "경원동", "전주역"];
+export const REGION_OPTIONS = [
+  "상관없음",
+  "팔달로",
+  "객사길",
+  "태평동",
+  "경원동",
+  "전주역",
+  "풍남동",
+  "노송동",
+  "중앙동",
+  "진북동",
+  "완산동",
+  "다가동",
+  "인후동",
+  "전동",
+  "고사동",
+  "서노송동",
+];
 export const STYLE_OPTIONS: { value: string; label: string }[] = [
   { value: "유동인구중심", label: "유동인구중심형" },
   { value: "조용한골목상권", label: "조용한골목상권형" },
