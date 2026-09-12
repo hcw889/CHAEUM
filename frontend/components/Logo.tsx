@@ -1,8 +1,8 @@
 import Image from "next/image";
 
-// public/logo-mark.png은 원본 심볼에서 투명 여백을 잘라낸 512x487 이미지라 정사각이
+// public/logo-mark.png은 원본 심볼에서 투명 여백을 잘라낸 512x496 이미지라 정사각이
 // 아니다. size는 "높이" 기준으로 받고 너비는 이 비율로 계산해 왜곡 없이 렌더한다.
-const MARK_RATIO = 512 / 487;
+const MARK_RATIO = 512 / 496;
 
 export function LogoMark({ size = 22, priority = false }: { size?: number; priority?: boolean }) {
   return (
