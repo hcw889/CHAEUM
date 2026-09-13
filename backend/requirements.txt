@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 fastapi==0.115.0
 uvicorn[standard]==0.30.6
-pydantic==2.9.2
-anthropic==0.69.0
+pydantic==2.13.5
+# 에이전트 5(추천 사유)·6(Space Vision)의 LLM 호출. app/services/llm.py 한 곳에서만 쓴다.
+google-genai==2.23.0
 # backend/.env 자동 로드 (app/main.py). uvicorn[standard]에 딸려오지만 의존을 명시해 둔다.
 python-dotenv==1.2.3
 
@@ -12,7 +13,7 @@ langgraph==1.2.11
 
 # 공공데이터포털 API 호출 (상가정보/건축물대장) + 카카오 로컬 지오코딩 +
 # SK 유동인구. FastAPI TestClient도 httpx를 쓰므로 테스트 의존이기도 하다.
-httpx==0.27.2
+httpx==0.28.1
 
 # 테스트 (pytest tests/)
 pytest==8.3.3

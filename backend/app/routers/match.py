@@ -25,6 +25,10 @@ _NEUTRAL_MARKET_ENTRY = {"foot_traffic_index": 50, "competition_saturation_index
 # 상위 SCORING_LIMIT건만 본 스코어링에 넣고, 화면에는 RESPONSE_LIMIT건만 돌려준다.
 SCORING_LIMIT = 40
 RESPONSE_LIMIT = 12
+# 추천 사유(LLM)는 응답 상위 이만큼만 생성한다. 호출 1건이 4~6초라 40건 전부
+# 생성하면 검색이 수 분 단위가 되고, 그중 대부분은 RESPONSE_LIMIT에서 잘려 버려진다.
+# 나머지 매물은 matching_agents.fallback_explanation()의 템플릿 문구를 쓴다.
+EXPLANATION_LIMIT = 5
 
 # 요청 평수 대비 허용 범위. 너무 좁히면 후보가 0건이 되므로 넉넉하게 둔다.
 AREA_MIN_RATIO = 0.5
@@ -263,8 +267,8 @@ def match_buildings(payload: MatchRequest, provider: DataProvider = Depends(get_
     matches = []
     for building, raw_entry in zip(buildings, raw_entries):
         # 매물 1건당 budget/market_fit/building_condition/space_vision을 병렬
-        # fan-out으로 실행하고, aggregate(기존 orchestrator 가중합 그대로) →
-        # explanation 순으로 이어지는 LangGraph StateGraph. 계산식은
+        # fan-out으로 실행하고 aggregate(기존 orchestrator 가중합 그대로)로 모으는
+        # LangGraph StateGraph. 추천 사유는 순위 확정 후 따로 생성한다. 계산식은
         # matching_agents.py/space_vision_agent.py에서 그대로 재사용한다
         # (match_orchestrator.py는 실행 순서만 담당).
         # building["photo_url"]은 실제 상가 사진이 아닌 플레이스홀더 스톡이미지다.
@@ -288,7 +292,7 @@ def match_buildings(payload: MatchRequest, provider: DataProvider = Depends(get_
                 "address": building["address"],
                 "final_score": result["final_score"],
                 "agent_scores": result["agent_scores"],
-                "explanation": result["explanation"],
+                "explanation": matching_agents.fallback_explanation(payload.business_type),
                 "photo_url": building.get("photo_url"),
                 "lat": building.get("lat"),
                 "lng": building.get("lng"),
@@ -305,6 +309,12 @@ def match_buildings(payload: MatchRequest, provider: DataProvider = Depends(get_
                 "nearby_store_count": raw_entry.get("nearby_store_count"),
                 "nearby_stores": building.get("nearby_store_names") or [],
                 "location": get_building_location(building),
+                # 순위가 확정된 뒤 상위 몇 건만 LLM에 넘기기 위해 입력을 들고 있는다.
+                # 응답 직전에 제거한다.
+                "_explanation_input": (
+                    building,
+                    {**result["agent_scores"], "business_type": payload.business_type},
+                ),
             }
         )
 
@@ -312,6 +322,11 @@ def match_buildings(payload: MatchRequest, provider: DataProvider = Depends(get_
     matches = matches[:RESPONSE_LIMIT]
     for i, m in enumerate(matches):
         m["rank"] = RANK_LABELS[i] if i < len(RANK_LABELS) else None
+
+    targets = [m.pop("_explanation_input") for m in matches]
+    explanations = match_orchestrator.generate_explanations(targets[:EXPLANATION_LIMIT])
+    for m, text in zip(matches, explanations):
+        m["explanation"] = text
 
     return MatchResponse(
         matches=matches,

@@ -18,6 +18,11 @@ import pytest
 os.environ.setdefault("CHAEUM_LIVE_SEARCH", "0")
 os.environ["CHAEUM_LIVE_SEARCH"] = "0"
 
+# 같은 이유로 LLM 키도 비운다. backend/.env에 GEMINI_API_KEY가 채워져 있으면
+# app/main.py의 load_dotenv가 그대로 올려서, 매칭 테스트가 매물마다 Gemini를
+# 호출하게 된다. load_dotenv는 이미 설정된 값을 덮어쓰지 않으므로 여기서 선점한다.
+os.environ["GEMINI_API_KEY"] = ""
+
 
 @pytest.fixture(autouse=True)
 def _reset_provider_singleton():

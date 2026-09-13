@@ -1,7 +1,7 @@
 """
 채움(Chaeum) 예비창업자 매칭 flow — space_vision_agent.
 
-Vision-LLM(Anthropic API) 단일 호출로 상가 외관 사진에서 공간 특징(쇼윈도/간판/
+Vision-LLM(Gemini API) 단일 호출로 상가 외관 사진에서 공간 특징(쇼윈도/간판/
 유리비율/테라스/노출도/유동인구·차량 체감 등)을 추출하고, 이를 노출성/접근성/
 팝업 적합도 점수로 변환한다. YOLO 등 별도 CV 모델은 쓰지 않는다.
 
@@ -13,10 +13,16 @@ final_score/agent_scores 계산에는 전혀 관여하지 않는다. 라우터�
 from __future__ import annotations
 
 import json
-import os
+import logging
 import re
 from pathlib import Path
 from typing import Any, Optional
+
+import httpx
+
+from app.services import llm
+
+logger = logging.getLogger(__name__)
 
 CACHE_PATH = Path(__file__).resolve().parent.parent / "data" / "space_vision_cache.json"
 
@@ -46,6 +52,46 @@ _PROMPT = """이 상가 외관 사진을 보고 아래 JSON 형식으로만 답�
 
 _JSON_BLOCK_RE = re.compile(r"\{.*\}", re.DOTALL)
 
+# _PROMPT의 필드 목록과 1:1로 맞물리는 응답 스키마. Gemini에 JSON 형식을 강제해
+# 설명 텍스트가 섞여 들어오는 경우를 줄인다 (_JSON_BLOCK_RE 폴백은 그대로 남겨 둔다).
+_FEATURES_SCHEMA: dict[str, Any] = {
+    "type": "object",
+    "properties": {
+        "show_window_count": {"type": "integer"},
+        "signage": {"type": "boolean"},
+        "glass_ratio": {"type": "number"},
+        "terrace": {"type": "boolean"},
+        "exposure_score": {"type": "number"},
+        "aging_signs": {"type": "boolean"},
+        "foot_traffic_estimate": {"type": "string", "enum": ["낮음", "보통", "높음"]},
+        "vehicle_presence": {"type": "string", "enum": ["낮음", "보통", "높음"]},
+    },
+    "required": [
+        "show_window_count",
+        "signage",
+        "glass_ratio",
+        "terrace",
+        "exposure_score",
+        "aging_signs",
+        "foot_traffic_estimate",
+        "vehicle_presence",
+    ],
+}
+
+
+# Gemini가 인라인 이미지로 받아주는 mime. 원격 응답의 Content-Type이 이 밖이면
+# 확장자 기반 추정으로 되돌린다.
+_SUPPORTED_MEDIA_TYPES = {
+    "image/png",
+    "image/jpeg",
+    "image/webp",
+    "image/heic",
+    "image/heif",
+    "image/gif",
+    "image/bmp",
+    "image/tiff",
+}
+
 _MEDIA_TYPES = {
     ".jpg": "image/jpeg",
     ".jpeg": "image/jpeg",
@@ -62,19 +108,28 @@ def _is_remote(path: str) -> bool:
     return path.startswith("http://") or path.startswith("https://")
 
 
-def _build_image_source(image_path: str) -> dict[str, Any]:
-    if _is_remote(image_path):
-        return {"type": "url", "url": image_path}
+def _load_image(image_path: str) -> Optional[tuple[bytes, str]]:
+    """
+    이미지를 (바이트, mime_type)으로 읽는다. 실패하면 None.
 
-    import base64
+    Anthropic은 원격 URL을 넘기면 서버가 대신 받아줬지만, Gemini는 임의의 https 주소를
+    받아주지 않는다(Files API 업로드가 필요). 목업 매물의 photo_url이 전부 원격이라
+    여기서 직접 내려받아 인라인 바이트로 넘긴다.
+    """
+    try:
+        if _is_remote(image_path):
+            response = httpx.get(image_path, timeout=10.0, follow_redirects=True)
+            response.raise_for_status()
+            media_type = response.headers.get("content-type", "").split(";")[0].strip()
+            if media_type not in _SUPPORTED_MEDIA_TYPES:
+                media_type = _MEDIA_TYPES.get(Path(image_path).suffix.lower(), "image/jpeg")
+            return response.content, media_type
 
-    data = Path(image_path).read_bytes()
-    media_type = _MEDIA_TYPES.get(Path(image_path).suffix.lower(), "image/jpeg")
-    return {
-        "type": "base64",
-        "media_type": media_type,
-        "data": base64.standard_b64encode(data).decode("utf-8"),
-    }
+        media_type = _MEDIA_TYPES.get(Path(image_path).suffix.lower(), "image/jpeg")
+        return Path(image_path).read_bytes(), media_type
+    except Exception:
+        logger.warning("상가 사진 로드 실패 (%s)", image_path, exc_info=True)
+        return None
 
 
 def _parse_features(text: str) -> Optional[dict[str, Any]]:
@@ -95,44 +150,37 @@ def _parse_features(text: str) -> Optional[dict[str, Any]]:
 
 def analyze_storefront_features(image_path: str) -> dict:
     """
-    Vision-LLM(Anthropic API, model="claude-sonnet-4-6")에 이미지+프롬프트를 전달해
-    상가 외관 사진의 공간 특징을 추출한다.
+    Vision-LLM(Gemini)에 이미지+프롬프트를 전달해 상가 외관 사진의 공간 특징을 추출한다.
 
-    API 키 없음/네트워크 차단/타임아웃/응답 파싱 실패 등 모든 실패 케이스에서
-    FALLBACK_FEATURES를 반환하며, 어떤 경우에도 예외를 전파하지 않는다
+    API 키 없음/네트워크 차단/타임아웃/이미지 로드 실패/응답 파싱 실패 등 모든 실패
+    케이스에서 FALLBACK_FEATURES를 반환하며, 어떤 경우에도 예외를 전파하지 않는다
     (matching_agents.explanation_agent와 동일한 폴백 패턴 — 데모 중 500 방지).
     """
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
-    if not api_key:
+    if not llm.is_configured():
         return dict(FALLBACK_FEATURES)
 
-    try:
-        import anthropic
-
-        client = anthropic.Anthropic(api_key=api_key, timeout=15.0)
-        message = client.messages.create(
-            model="claude-sonnet-4-6",
-            max_tokens=300,
-            messages=[
-                {
-                    "role": "user",
-                    "content": [
-                        {"type": "image", "source": _build_image_source(image_path)},
-                        {"type": "text", "text": _PROMPT},
-                    ],
-                }
-            ],
-        )
-        text = "".join(block.text for block in message.content if getattr(block, "type", None) == "text").strip()
-        parsed = _parse_features(text)
-        if not parsed:
-            return dict(FALLBACK_FEATURES)
-        # 일부 키만 파싱된 경우를 대비해 폴백값 위에 덮어쓴다.
-        return {**FALLBACK_FEATURES, **parsed}
-    except Exception:
-        # 네트워크 차단, API 키 오류, 타임아웃, 이미지 로드 실패, 파싱 실패 등
-        # 모든 실패 케이스에서 데모가 멈추지 않도록 폴백값으로 대체한다.
+    image = _load_image(image_path)
+    if image is None:
         return dict(FALLBACK_FEATURES)
+
+    # 8개 필드짜리 JSON이라 출력은 150토큰 이하지만, 상한에 사고 토큰이 함께 잡히므로
+    # 여유를 둔다 (llm.THINKING_LEVEL 주석 참고).
+    text = llm.generate_text(
+        _PROMPT,
+        image=image,
+        json_schema=_FEATURES_SCHEMA,
+        max_output_tokens=2048,
+        timeout_s=15.0,
+    )
+    if not text:
+        return dict(FALLBACK_FEATURES)
+
+    parsed = _parse_features(text)
+    if not parsed:
+        logger.warning("Vision 응답을 JSON으로 파싱하지 못했다: %.200s", text)
+        return dict(FALLBACK_FEATURES)
+    # 일부 키만 파싱된 경우를 대비해 폴백값 위에 덮어쓴다.
+    return {**FALLBACK_FEATURES, **parsed}
 
 
 def _build_visual_summary(
@@ -222,6 +270,10 @@ def space_vision_agent(building_photo_path: Optional[str]) -> dict:
     return calculate_space_score(features)
 
 
+# 폴백 입력으로 나오는 점수 묶음. 캐시에 넣으면 안 되는 값인지 판별하는 데 쓴다.
+_FALLBACK_SCORE = calculate_space_score(FALLBACK_FEATURES)
+
+
 def _load_cache() -> dict[str, Any]:
     try:
         return json.loads(CACHE_PATH.read_text(encoding="utf-8"))
@@ -255,6 +307,14 @@ def get_space_vision(building_id: str, building_photo_path: Optional[str]) -> di
     # 실데이터 매물(상가정보+건축물대장 조인)은 외관 사진이 없어 수백 건이 들어오는데,
     # 그걸 전부 캐시에 쓰면 파일만 불어나고 매 요청마다 디스크 쓰기가 반복된다.
     if not building_photo_path:
+        return result
+
+    # 사진이 있어도 폴백으로 떨어진 결과는 캐시하지 않는다. 캐시는 building_id 기준
+    # 영구 저장이라, 키 미설정이나 일시적 API 실패로 나온 값을 한 번 넣으면 그 매물이
+    # 영영 폴백에 묶인다 (캐시가 폴백 상수로만 차 있던 원인이 이것이다). 테스트도
+    # 목업 15건에 /match를 돌리므로, 이 가드가 없으면 테스트를 실행할 때마다
+    # app/data/의 캐시 파일이 폴백값으로 덮인다.
+    if result == _FALLBACK_SCORE:
         return result
 
     _cache[building_id] = result

@@ -31,8 +31,7 @@ PAYLOAD = {
 }
 
 
-def test_match_and_legacy_location_lookup_share_demo_coordinates(monkeypatch):
-    monkeypatch.setenv("ANTHROPIC_API_KEY", "")
+def test_match_and_legacy_location_lookup_share_demo_coordinates():
     locations_response = client.get("/api/buildings/locations")
     assert locations_response.status_code == 200
     locations = locations_response.json()
@@ -51,7 +50,6 @@ def test_match_and_legacy_location_lookup_share_demo_coordinates(monkeypatch):
 
 
 def test_missing_coordinates_do_not_change_recommendations(monkeypatch):
-    monkeypatch.setenv("ANTHROPIC_API_KEY", "")
     baseline = client.post("/api/match", json=PAYLOAD).json()["matches"]
     monkeypatch.setattr(building_location, "_demo_locations", lambda: {})
     result = client.post("/api/match", json=PAYLOAD).json()["matches"]

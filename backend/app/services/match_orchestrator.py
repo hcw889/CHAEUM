@@ -8,20 +8,25 @@ space_vision_agent의 계산식은 이 모듈에서 단 한 줄도 바꾸지 않
 "실행 레이어"만 제공한다:
 
     START ─┬─> budget_node ──────────────┐
-           ├─> market_fit_node ──────────┼─> aggregate_node ─> explanation_node ─> END
+           ├─> market_fit_node ──────────┼─> aggregate_node ─> END
            ├─> building_condition_node ──┘
-           └─> space_vision_node ────────────────────────────────────────────────> END
+           └─> space_vision_node ──────────────────────────────> END
 
 budget/market_fit/building_condition은 서로 독립적이라 병렬 fan-out으로 실행되고,
-aggregate_node(기존 orchestrator의 가중합 계산을 그대로 이식)가 세 결과를 모은 뒤
-explanation_node를 실행한다. space_vision_node는 4-agent 스코어링과 완전히
-독립적이라 병렬로 실행되며 final_score/agent_scores 계산에는 전혀 관여하지 않는다.
+aggregate_node(기존 orchestrator의 가중합 계산을 그대로 이식)가 세 결과를 모은다.
+space_vision_node는 4-agent 스코어링과 완전히 독립적이라 병렬로 실행되며
+final_score/agent_scores 계산에는 전혀 관여하지 않는다.
+
+추천 사유 생성(explanation_agent)은 이 그래프에 들어 있지 않다. 매물마다 실행하면
+정렬 뒤 버려질 매물까지 LLM을 호출하게 되어, 라우터가 순위를 확정한 다음
+generate_explanations()로 상위 몇 건에만 호출한다.
 
 각 노드는 실패 시 그래프 전체가 죽지 않도록 노드 레벨에서 예외를 흡수한다.
 """
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Optional, TypedDict
 
 from langgraph.graph import END, START, StateGraph
@@ -50,9 +55,9 @@ class MatchState(TypedDict, total=False):
     space_vision: Optional[dict[str, Any]]
 
     # --- 최종 산출물 (응답 스키마와 1:1 대응) ---
+    # explanation은 그래프 밖에서 생성한다 (generate_explanations 참고).
     final_score: float
     agent_scores: dict[str, float]
-    explanation: str
 
 
 def _budget_node(state: MatchState) -> dict:
@@ -112,22 +117,6 @@ def _aggregate_node(state: MatchState) -> dict:
     }
 
 
-def _explanation_node(state: MatchState) -> dict:
-    scores = {
-        "budget": state["budget_score"],
-        "market_fit": state["market_fit_score"],
-        "condition": state["building_condition_score"],
-        "business_type": state["business_type"],
-    }
-    try:
-        explanation = matching_agents.explanation_agent(state["building"], scores)
-    except Exception:
-        # explanation_agent는 이미 내부에서 모든 실패 케이스를 폴백 처리하지만,
-        # 노드 레벨에서도 동일한 폴백 패턴을 한 번 더 보장한다.
-        explanation = matching_agents._fallback_explanation(scores["business_type"])
-    return {"explanation": explanation}
-
-
 def _build_graph():
     graph = StateGraph(MatchState)
 
@@ -136,7 +125,6 @@ def _build_graph():
     graph.add_node("building_condition", _building_condition_node)
     graph.add_node("space_vision", _space_vision_node)
     graph.add_node("aggregate", _aggregate_node)
-    graph.add_node("explanation", _explanation_node)
 
     # 병렬 fan-out: budget/market_fit/building_condition/space_vision은 서로 독립적이다.
     graph.add_edge(START, "budget")
@@ -149,8 +137,7 @@ def _build_graph():
     graph.add_edge("market_fit", "aggregate")
     graph.add_edge("building_condition", "aggregate")
 
-    graph.add_edge("aggregate", "explanation")
-    graph.add_edge("explanation", END)
+    graph.add_edge("aggregate", END)
     # space_vision은 4-agent 스코어링과 무관하게 독립적으로 끝난다.
     graph.add_edge("space_vision", END)
 
@@ -187,3 +174,35 @@ def run_match_for_building(
         "photo_url": photo_url,
     }
     return _compiled_graph.invoke(initial_state)
+
+
+# 추천 사유 생성은 동시에 몇 건까지 던질지. 대상이 상위 5건뿐이라 전부 한 번에 보낸다.
+EXPLANATION_WORKERS = 5
+
+
+def _one_explanation(target: tuple[dict[str, Any], dict[str, Any]]) -> str:
+    building, scores = target
+    try:
+        return matching_agents.explanation_agent(building, scores)
+    except Exception:
+        # explanation_agent는 이미 내부에서 모든 실패 케이스를 폴백 처리하지만,
+        # 스레드에서 올라온 예외가 응답 전체를 죽이지 않도록 한 번 더 감싼다.
+        return matching_agents.fallback_explanation(scores.get("business_type", "이 업종"))
+
+
+def generate_explanations(
+    targets: list[tuple[dict[str, Any], dict[str, Any]]],
+    *,
+    max_workers: int = EXPLANATION_WORKERS,
+) -> list[str]:
+    """
+    (building, scores) 목록을 받아 같은 순서의 추천 사유 문자열 목록을 돌려준다.
+
+    LLM 호출 1건이 실측 4~6초라 순차로 돌리면 건수만큼 그대로 곱해진다. 매물 사이에
+    의존관계가 없으므로 스레드풀로 동시에 던져 전체 대기를 1건 수준으로 줄인다
+    (explanation_agent는 blocking HTTP 호출이라 스레드로 충분하다).
+    """
+    if not targets:
+        return []
+    with ThreadPoolExecutor(max_workers=min(max_workers, len(targets))) as pool:
+        return list(pool.map(_one_explanation, targets))

@@ -9,9 +9,7 @@ market_raw_scores / market_fit_score / building_condition_score를 그대로 재
 
 from __future__ import annotations
 
-import os
-
-from app.services import scoring
+from app.services import llm, scoring
 
 # 보증금 mock 데이터가 없으므로, 월세 추정치의 배수로 보증금을 추정한다.
 # (전주 원도심 상가 관행상 월세의 약 10배 수준을 mock 기준으로 사용)
@@ -97,50 +95,36 @@ def building_condition_agent(building_diagnosis: dict) -> dict:
     return {"score": score, "detail": detail}
 
 
-def _fallback_explanation(business_type: str) -> str:
+def fallback_explanation(business_type: str) -> str:
+    """LLM을 호출하지 않는(또는 실패한) 매물에 쓰는 템플릿 문구."""
     return f"예산 조건과 {business_type} 상권 적합도가 특히 잘 맞는 매물입니다."
 
 
 def explanation_agent(building: dict, scores: dict) -> str:
     """
     3개 에이전트 점수를 받아 "왜 이 매물이 맞는지" 한 줄 자연어 생성.
-    Anthropic API 호출을 시도하고, 실패/타임아웃/키 미설정 시 템플릿으로 폴백한다
-    (데모 중 죽지 않도록 반드시 예외를 흡수한다).
+    Gemini 호출을 시도하고, 실패/타임아웃/키 미설정 시 템플릿으로 폴백한다
+    (데모 중 죽지 않도록 llm.generate_text가 모든 예외를 흡수하고 None을 돌려준다).
     """
     business_type = scores.get("business_type", "이 업종")
-    fallback = _fallback_explanation(business_type)
+    fallback = fallback_explanation(business_type)
 
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
-    if not api_key:
-        return fallback
-
-    try:
-        import anthropic
-
-        client = anthropic.Anthropic(api_key=api_key, timeout=5.0)
-        message = client.messages.create(
-            model="claude-sonnet-4-6",
-            max_tokens=200,
-            messages=[
-                {
-                    "role": "user",
-                    "content": (
-                        f"매물 주소: {building.get('address', '')}\n"
-                        f"예산적합도 {scores.get('budget')}점, "
-                        f"상권적합도 {scores.get('market_fit')}점, "
-                        f"건물컨디션 {scores.get('condition')}점.\n"
-                        f"'{business_type}' 창업 희망자에게 이 매물이 왜 적합한지 "
-                        "한국어 한 문장으로만 설명해줘."
-                    ),
-                }
-            ],
-        )
-        text = "".join(block.text for block in message.content if getattr(block, "type", None) == "text").strip()
-        return text or fallback
-    except Exception:
-        # 네트워크 차단, API 키 오류, 타임아웃, 모델명 오류 등 모든 실패 케이스에서
-        # 데모가 멈추지 않도록 템플릿 문구로 폴백한다.
-        return fallback
+    prompt = (
+        f"매물 주소: {building.get('address', '')}\n"
+        f"예산적합도 {scores.get('budget')}점, "
+        f"상권적합도 {scores.get('market_fit')}점, "
+        f"건물컨디션 {scores.get('condition')}점.\n"
+        f"'{business_type}' 창업 희망자에게 이 매물이 왜 적합한지 "
+        "한국어 한 문장으로만 설명해줘."
+    )
+    # 한 문장이라 출력 자체는 100토큰 이하지만, 상한에 사고 토큰이 함께 잡히므로
+    # 여유를 둔다 (llm.THINKING_LEVEL 주석 참고).
+    #
+    # timeout은 Anthropic 시절의 5초에서 올렸다. 실측 응답이 4~6초라 5초로 두면
+    # 절반가량이 타임아웃으로 폴백해, 어떤 매물은 LLM 문장이고 어떤 매물은 템플릿인
+    # 뒤섞인 결과가 나온다.
+    text = llm.generate_text(prompt, max_output_tokens=1024, timeout_s=15.0)
+    return text or fallback
 
 
 def orchestrator(scores: dict, priority_weights: dict) -> float:
