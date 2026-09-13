@@ -36,3 +36,6 @@ backend/app/data/photos/*
 # 건축물대장 응답의 런타임 디스크 캐시 (app/services/register_cache.py).
 # 라이브 검색이 스스로 채우는 파생 데이터라 추적하지 않는다. 지워도 다시 채워진다.
 backend/app/data/cache/
+
+# 심사 발표 대비 내부 자료. 팀 내부에서만 돌려 보는 문서라 저장소에 올리지 않는다.
+심사_예상질문_모범답안.md
