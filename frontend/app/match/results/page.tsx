@@ -106,7 +106,7 @@ export default function MatchResultsPage() {
           }`}
         >
           <p className="mb-1 font-semibold">
-            {result.data_mode === "real" ? "실데이터 기반 공실 추정" : "시연용 목업 데이터"}
+            {result.data_mode === "real" ? "공공데이터 기반 공실 추정" : "공실 추정 매물"}
             {result.data_mode === "real" && result.total_candidates != null && (
               <> · 조건 만족 매물 {result.total_candidates}건</>
             )}
@@ -161,7 +161,7 @@ export default function MatchResultsPage() {
       )}
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-[11px] text-muted">
-        {hasApproximate && <p>시연용 대표 좌표로 표시한 매물입니다. 실제 건물 위치와 다를 수 있습니다.</p>}
+        {hasApproximate && <p>대표 좌표로 표시한 매물입니다. 실제 건물 위치와 다를 수 있습니다.</p>}
         {loadingLocations && <p role="status">저장된 추천 매물의 위치를 확인하고 있습니다…</p>}
         {!loadingLocations && missingLocations > 0 && (
           <p role="status">

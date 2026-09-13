@@ -16,7 +16,7 @@ test("화면 대부분을 차지하는 지도에 상위 3개 매물만 표시한
   const bounds = (await map.boundingBox())!;
   expect(bounds.width).toBeGreaterThan(1300);
   expect(bounds.height).toBeGreaterThan(700);
-  await expect(page.getByText(/시연용 대표 좌표/)).toBeVisible();
+  await expect(page.getByText(/대표 좌표/)).toBeVisible();
   expect(apiCalls).toEqual([]);
   const screenshot = testInfo.outputPath("overview.png");
   await page.screenshot({ path: screenshot });

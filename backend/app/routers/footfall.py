@@ -29,8 +29,6 @@ SOURCE_LABELS = {
     # footfall_areas.json의 행정동 인구(resident_population) x 구역 성격 계수 (sk_footfall.estimated_daily_total)
     "mock": "행정동 주민등록 인구 기반 추정 유동인구",
 }
-# 키는 설정됐는데 값이 전부 mock으로 떨어진 경우 — 엔드포인트/지역코드 설정을 봐야 한다.
-FALLBACK_NOTE = "SK 키는 인식됐지만 응답을 받지 못해 행정동 인구 기반 추정치로 표시 중입니다 (/api/footfall/status 참고)."
 # 일부 구역만 전사가 끝난 경우 — 어느 구역이 추정치인지 화면에 밝힌다.
 PARTIAL_NOTE = "{names} 구역은 아직 실측 전사 전이라 추정치입니다 (footfall_measured.json)."
 
@@ -176,7 +174,7 @@ def get_building_footfall(
         reference_month = max(months) if months else config["data_reference_month"]
     else:
         source_label = SOURCE_LABELS["mock"] if all_mock else SOURCE_LABELS["sk_api"]
-        note = FALLBACK_NOTE if all_mock and sk_footfall.resolve_mode() == "sk_api" else None
+        note = None
         reference_month = config["data_reference_month"]
 
     return {

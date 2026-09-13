@@ -72,7 +72,7 @@ test("없는 매물로 직접 진입하면 오류를 표시하고 다른 매물�
   await page.goto("/visualize/unknown");
   await expect(page.getByText("주변 유동인구를 불러오지 못했습니다.")).toBeVisible();
   await expect(page.getByText("하루 유동인구", { exact: true })).toHaveCount(0);
-  await page.getByRole("combobox", { name: "데모 매물" }).selectOption("b2");
+  await page.getByRole("combobox", { name: "매물 선택" }).selectOption("b2");
   await expect(page).toHaveURL("/diagnosis/b2#visualize");
   await expect(page.getByText(/전주시 태평동 2 반경/)).toBeVisible();
 });

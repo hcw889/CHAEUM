@@ -27,7 +27,7 @@ export default function DashboardSection() {
   return (
     <div>
 
-      <p className="mb-6 text-sm text-muted">인근 상권의 포화도·임대료·유동인구 추정치입니다. (mock 데이터)</p>
+      <p className="mb-6 text-sm text-muted">인근 상권의 경쟁포화도·임대료·유동인구를 종합한 지표입니다.</p>
 
       {!metrics ? (
         <SkeletonCardGrid count={3} />

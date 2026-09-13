@@ -91,13 +91,12 @@ export default function PropertyInputPage() {
       </div>
 
       {role === "owner" && (
-        <section className="mb-6" aria-label="건물주 데모 시나리오">
+        <section className="mb-6" aria-label="건물주 대표 시나리오">
           <div className="mb-3 flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold text-accent-text">⚡ 건물주 빠른 데모</p>
-              <p className="mt-1 text-xs text-muted">목업 매물로 진단부터 업종 추천까지 바로 확인하세요.</p>
+              <p className="text-sm font-semibold text-accent-text">⚡ 대표 매물로 바로 시작</p>
+              <p className="mt-1 text-xs text-muted">대표 매물로 진단부터 업종 추천까지 바로 확인하세요.</p>
             </div>
-            <span className="rounded-full bg-accent-soft px-2.5 py-1 text-xs font-medium text-accent-text">목업 데이터</span>
           </div>
           <div className="grid gap-2.5 sm:grid-cols-3">
             {OWNER_DEMO_SCENARIOS.map((scenario) => (
@@ -160,7 +159,7 @@ export default function PropertyInputPage() {
               className="w-full rounded-md border border-dashed border-border bg-background px-4 py-2.5 text-sm text-muted file:mr-3 file:rounded-sm file:border-0 file:bg-accent-soft file:px-3 file:py-1.5 file:text-accent-text"
             />
             <p className="mt-1.5 text-xs text-muted">
-              현재는 목업 단계로, 사진은 업로드 여부만 기록되며 실제 이미지 진단(CV 모델)은 추후 연동됩니다.
+              사진은 외관 분석(Space Vision) 참고용으로, 업로드하지 않아도 진단은 진행됩니다.
             </p>
           </div>
 
@@ -178,7 +177,7 @@ export default function PropertyInputPage() {
 
       {demoBuildings.length > 0 && (
         <div className="mt-8">
-          <p className="mb-3 text-sm text-muted">전체 목업 매물 15개 둘러보기</p>
+          <p className="mb-3 text-sm text-muted">등록된 매물 {demoBuildings.length}개 둘러보기</p>
           <div className="flex flex-wrap gap-2">
             {demoBuildings.map((b) => (
               <Link

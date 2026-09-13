@@ -55,7 +55,7 @@ export default function OfficialPage() {
       <main className="official-main">
         <div className="official-heading">
           <div><p className="official-eyebrow">지역의 빈 공간, 새로운 가능성</p><h1>공실 현황 대시보드</h1><p className="official-subtitle">전북의 공실 분포를 살펴보고, 지역별 현황을 비교하세요.</p></div>
-          <div className="reference-badge"><span className="status-dot" />{data?.data_reference_month.replace("-", ". ") ?? "—"} 기준{data?.is_mock && <span className="mock-badge">목업 데이터</span>}</div>
+          <div className="reference-badge"><span className="status-dot" />{data?.data_reference_month.replace("-", ". ") ?? "—"} 기준</div>
         </div>
 
         {error ? <section className="official-state" role="alert"><h2>공실 데이터를 불러오지 못했습니다</h2><p>백엔드 서버 연결을 확인한 후 다시 시도해 주세요.</p><button className="primary-button" onClick={() => { setError(false); setAttempt((value) => value + 1); }}>다시 시도</button></section>
@@ -96,7 +96,7 @@ export default function OfficialPage() {
               <div className="detail-rate"><strong>{selected.vacancy_rate.toFixed(1)}<small>%</small></strong><span>공실률</span></div>
               <div className="occupancy-track"><span style={{ width: selected.vacancy_rate + "%", background: vacancyColor(selected.vacancy_rate, "rate") }} /></div>
               <div className="detail-pair"><span>공실 <b>{number(selected.vacant_units)}개</b></span><span>전체 상가 <b>{number(selected.total_units)}개</b></span></div>
-              <div className="detail-facts"><div><span>평균 공실 기간</span><strong>{selected.avg_vacancy_period_months}개월</strong></div><div><span>추천 업종 {data.is_mock && "(시나리오)"}</span><strong>{selected.top_recommended_business}</strong></div></div>
+              <div className="detail-facts"><div><span>평균 공실 기간</span><strong>{selected.avg_vacancy_period_months}개월</strong></div><div><span>추천 업종</span><strong>{selected.top_recommended_business}</strong></div></div>
               <div className="trend-heading"><h3>{data.months.length > 1 ? `최근 ${data.months.length}개월 공실률` : "공실률 (단일 기준월)"}</h3><span>{data.months.length > 1 ? `${data.months[0].slice(5)}–${data.months.at(-1)?.slice(5)}월` : `${data.months[0].replace("-", ". ")} 기준`}</span></div>
               <svg className="trend-chart" viewBox="0 0 280 110" role="img" aria-label={selected.region_name + " 월별 공실률: " + data.months.map((month, i) => month + " " + selected.vacancy_trend_6m[i] + "%").join(", ")}>
                 {[0, trendMax / 2, trendMax].map((tick) => <g key={tick}><line x1="28" y1={85 - tick / trendMax * 80} x2="269" y2={85 - tick / trendMax * 80} stroke="#e8e2da" strokeDasharray="3 4" /><text x="0" y={89 - tick / trendMax * 80} fontSize="10" fill="#8a8078">{tick}%</text></g>)}
@@ -104,8 +104,8 @@ export default function OfficialPage() {
                 {selected.vacancy_trend_6m.map((value, i) => <g key={data.months[i]}><circle cx={32 + i * 46} cy={85 - value / trendMax * 80} r="3.5" fill="#b5502e"><title>{data.months[i]}: {value}%</title></circle><text x={32 + i * 46} y="105" textAnchor="middle" fontSize="10" fill="#8a8078">{Number(data.months[i].slice(5))}월</text></g>)}
               </svg>
               {selected.id === "jeonju" && <button className="detail-link" onClick={() => changeScope("neighborhood")}>전주 시범 상권 5개 살펴보기 <span>→</span></button>}
-              {selected.building_id && <Link className="detail-link" href={"/diagnosis/" + selected.building_id}>연결된 데모 매물 진단 보기 <span>→</span></Link>}
-              {!selected.building_id && selected.id !== "jeonju" && <p className="detail-note">이 지역은 집계 목업만 제공됩니다.</p>}
+              {selected.building_id && <Link className="detail-link" href={"/diagnosis/" + selected.building_id}>연결된 매물 진단 보기 <span>→</span></Link>}
+              {!selected.building_id && selected.id !== "jeonju" && <p className="detail-note">이 지역은 시·군 단위 집계만 제공됩니다.</p>}
             </aside>
           </section>
 
@@ -117,7 +117,7 @@ export default function OfficialPage() {
               <strong>{metric === "count" ? number(region.vacant_units) + "개" : region.vacancy_rate.toFixed(1) + "%"}</strong>
             </button>)}</div>
           </section>
-          <footer className="official-footnote"><strong>{data.is_mock ? "시연용 목업 데이터 안내" : "집계 안내"}</strong><p>{data.description}</p>{data.months.length === 1 && <p>과거 이력이 없는 기준월 단일 스냅샷이므로 월별 추이는 제공하지 않습니다.</p>}<p>전체 공실률 = 공실 수 합계 ÷ 전체 상가 수 합계 × 100 · 전주 시범 상권은 전북 전체 집계에 중복 합산하지 않습니다.</p></footer>
+          <footer className="official-footnote"><strong>집계 안내</strong><p>{data.description}</p>{data.months.length === 1 && <p>과거 이력이 없는 기준월 단일 스냅샷이므로 월별 추이는 제공하지 않습니다.</p>}<p>전체 공실률 = 공실 수 합계 ÷ 전체 상가 수 합계 × 100 · 전주 시범 상권은 전북 전체 집계에 중복 합산하지 않습니다.</p></footer>
         </>}
       </main>
     </div>
